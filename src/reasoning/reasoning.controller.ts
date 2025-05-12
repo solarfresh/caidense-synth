@@ -1,0 +1,45 @@
+/**
+ * Manages the recording and retrieval of intermediate thoughts for active or completed reasoning runs.
+ */
+export class IntermediateThoughtManager {
+    // Assuming storage mechanism (e.g., Map for in-memory, or injected Repository for DB)
+    // private thoughts: Map<string, IntermediateThought[]>; // Example for in-memory
+
+    /**
+     * @summary Initializes storage for a new reasoning run's thoughts.
+     * @param runId - The ID of the new reasoning run.
+     */
+    startNewRun(runId: string): void {
+        // ... Initialize storage for runId ...
+    }
+
+    /**
+     * @summary Adds details of a completed step to the thoughts for a specific run.
+     * @param runId - The ID of the reasoning run.
+     * @param stepNumber - The sequence number of the step.
+     * @param data - The data to record (prompt, input, output, etc.).
+     */
+    addThoughtStep(runId: string, stepNumber: number, data: IntermediateThoughtData): void {
+        // ... Add data to storage for runId and stepNumber ...
+    }
+
+    /**
+     * @summary Retrieves all recorded thought steps for a given reasoning run.
+     * @param runId - The ID of the reasoning run.
+     * @returns A list of intermediate thought steps.
+     */
+    getThoughtsForRun(runId: string): IntermediateThought[] {
+        // ... Retrieve data from storage for runId ...
+    }
+
+    /**
+     * @summary Removes the in-memory thoughts for a run (e.g., after persistence).
+     * @param runId - The ID of the reasoning run.
+     */
+    clearRunThoughts(runId: string): void {
+         // ... Remove data from in-memory storage ...
+    }
+
+    // ... potentially method to trigger saving to DB if not done step-by-step ...
+    // async saveRunThoughts(runId: string): Promise<void> { ... }
+}
