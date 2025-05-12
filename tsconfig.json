@@ -1,0 +1,84 @@
+{
+  "compilerOptions": {
+    /**
+     * Project Options
+     */
+    "target": "ES2022",              /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', 'ES2022', 'ESNext'. */
+    "module": "CommonJS",            /* Specify module code generation: 'None', 'CommonJS', 'AMD', 'System', 'UMD', 'ES6', 'ES2015', 'ES2020', 'ES2022', 'ESNext', 'Node16', 'NodeNext'. */
+    "lib": ["ES2022"],               /* Specify library files to be included in the compilation. */
+    "outDir": "./dist",              /* Redirect output structure to the directory. */
+    "rootDir": "./src",              /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "baseUrl": "./",                 /* Base directory to resolve non-absolute module names. */
+    // "paths": {},                  /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+    "sourceMap": true,               /* Generates corresponding '.map' file. */
+    "declaration": true,             /* Generates corresponding '.d.ts' file. Essential for a TypeScript library. */
+    "declarationMap": true,          /* Generates a sourcemap for each corresponding '.d.ts' file. */
+    "composite": false,              /* Enable constraints that allow a TypeScript project to be referenced by other projects. */
+    // "tsBuildInfoFile": "./node_modules/.tsbuildinfo", /* Specify file to store incremental compilation information. */
+    "removeComments": true,          /* Do not emit comments to output. */
+    "noEmit": false,                 /* Do not emit outputs. */
+    // "importHelpers": true,        /* Import emit helpers from 'tslib'. */
+    // "downlevelIteration": true,   /* Emit more compliant, but opaque and less performant JavaScript for iteration. */
+    "esModuleInterop": true,         /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
+    "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
+
+    /**
+     * Strict Type-Checking Options
+     */
+    "strict": true,                  /* Enable all strict type-checking options. */
+    "noImplicitAny": true,           /* Raise error on expressions and declarations with an implied 'any' type. */
+    "strictNullChecks": true,        /* Enable strict null checks. */
+    "strictFunctionTypes": true,     /* Enable strict checking of function types. */
+    "strictBindCallApply": true,     /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
+    "strictPropertyInitialization": true, /* Enable strict checking of property initialization in classes. */
+    "noImplicitThis": true,          /* Raise error on 'this' expressions with an implied 'any' type. */
+    "useUnknownInCatchVariables": true, /* Type catch clause variables as 'unknown' instead of 'any'. */
+    "alwaysStrict": true,            /* Parse in strict mode and emit "use strict" for each source file. */
+
+    /**
+     * Module Resolution Options
+     */
+    "moduleResolution": "Node",      /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    // "paths": {},                  /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+    // "rootDirs": [],               /* A list of root folders whose combined content represents the structure of the project at runtime. */
+    "resolveJsonModule": true,       /* Enable importing .json files */
+    // "typeRoots": [],              /* List of folders to include type definitions from. */
+    "types": ["node", "jest"],       /* Type declaration files to be included in compilation. Includes Node.js and Jest types. */
+    "allowSyntheticDefaultImports": true, /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. (often enabled by esModuleInterop) */
+    // "preserveSymlinks": true,     /* Do not resolve symlinks to their real path; resolve to the symlinked location. */
+    "allowJs": false,                /* Allow JavaScript files to be compiled. */
+    "checkJs": false,                /* Enable error reporting in .js files. */
+
+    /**
+     * Emit Options
+     */
+    // "newLine": "lf",              /* Set the newline character for emitting files. */
+    // "noEmitOnError": true,        /* Do not emit outputs if any errors were reported. */
+    // "noImplicitReturns": true,    /* Report error when not all code paths in a function return a value. */
+    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
+    // "noUncheckedIndexedAccess": true, /* Add 'undefined' to the index signature types. */
+    // "noPropertyAccessFromIndexSignature": true, /* Enforces using indexed accessors for keys declared using an index signature. */
+    // "allowUnusedLabels": true,    /* Disable error reporting for unused labels. */
+    // "allowUnreachableCode": true, /* Disable error reporting for unreachable code. */
+
+    /**
+     * Completeness Options
+     */
+    // "skipDefaultLibCheck": true,  /* Skip type checking of default library files. */
+    "skipLibCheck": true,            /* Skip type checking all .d.ts files. Improves compilation speed. */
+
+    /**
+     * Specific for NestJS/Decorators (If your library might use them or be used within NestJS)
+     */
+    "experimentalDecorators": true,  /* Enable experimental support for TC39 decorators. */
+    "emitDecoratorMetadata": true    /* Emit design-type metadata for decorated declarations. */
+  },
+  "include": [
+    "src/**/*"                       /* Include all files in the src directory */
+  ],
+  "exclude": [
+    "node_modules",                  /* Exclude the node_modules directory */
+    "dist",                          /* Exclude the output directory */
+    "**/*.spec.ts"                   /* Exclude test files - Jest typically handles these */
+  ]
+}

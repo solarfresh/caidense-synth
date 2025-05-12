@@ -1,9 +1,14 @@
 /**
  * Manages the recording and retrieval of intermediate thoughts for active or completed reasoning runs.
  */
+
+import { IntermediateThought, IntermediateThoughtData } from '../shared/interfaces/reasoning.interface';
+
+
 export class IntermediateThoughtManager {
     // Assuming storage mechanism (e.g., Map for in-memory, or injected Repository for DB)
     // private thoughts: Map<string, IntermediateThought[]>; // Example for in-memory
+    private thoughts: Map<string, IntermediateThought[]> = new Map<string, IntermediateThought[]>(); // Example for in-memory
 
     /**
      * @summary Initializes storage for a new reasoning run's thoughts.
@@ -11,6 +16,7 @@ export class IntermediateThoughtManager {
      */
     startNewRun(runId: string): void {
         // ... Initialize storage for runId ...
+        this.thoughts.set(runId, []);
     }
 
     /**
@@ -21,6 +27,13 @@ export class IntermediateThoughtManager {
      */
     addThoughtStep(runId: string, stepNumber: number, data: IntermediateThoughtData): void {
         // ... Add data to storage for runId and stepNumber ...
+        const thought: IntermediateThought = {
+            stepNumber,
+            data,
+        };
+        const existingThoughts = this.thoughts.get(runId) || [];
+        existingThoughts.push(thought);
+        this.thoughts.set(runId, existingThoughts);
     }
 
     /**
@@ -30,6 +43,7 @@ export class IntermediateThoughtManager {
      */
     getThoughtsForRun(runId: string): IntermediateThought[] {
         // ... Retrieve data from storage for runId ...
+        return this.thoughts.get(runId) || [];
     }
 
     /**
@@ -38,6 +52,7 @@ export class IntermediateThoughtManager {
      */
     clearRunThoughts(runId: string): void {
          // ... Remove data from in-memory storage ...
+        this.thoughts.delete(runId);
     }
 
     // ... potentially method to trigger saving to DB if not done step-by-step ...
