@@ -2,7 +2,7 @@
  * Manages the recording and retrieval of intermediate thoughts for active or completed reasoning runs.
  */
 
-import { IntermediateThought, IntermediateThoughtData } from '../shared/interfaces/reasoning.interface';
+import { IntermediateThought, IntermediateThoughtData } from '../../shared/interfaces/reasoning.interface';
 
 
 export class IntermediateThoughtManager {

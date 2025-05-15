@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 // Import the ReasoningStrategy class from your schema file
-import { ReasoningStrategy } from '../database/schemas/reasoning-strategy.schema';
+import { ReasoningStrategy } from '../../database/schemas/reasoning-strategy.schema';
 
 /**
  * @summary Repository for managing ReasoningStrategy documents in the database.

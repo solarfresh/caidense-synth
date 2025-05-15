@@ -1,0 +1,64 @@
+# Specify the Docker Compose file format version
+# Version 3.8 is common and supports features like build contexts and named volumes.
+version: '3.8'
+
+# Define the services that make up your application
+services:
+  # Service for the Caidense Strategy API backend
+  caidense-synth-api:
+    # Build the Docker image for the API service
+    build:
+      context: . # The build context is the current directory where docker-compose.yml is located
+      dockerfile: Dockerfile # The name of the Dockerfile to use (assumes you have one)
+    # Map ports from the host machine to the container
+    # Format: "HOST_PORT:CONTAINER_PORT"
+    ports:
+      - "3001:3000" # Map host port 3000 to container port 3000 (where NestJS typically runs)
+    env_file:
+      - ./docker-var.env # Specify the path to the environment file to load
+    # Specify service dependencies
+    # Ensures the 'mongo' service is started before the 'api' service.
+    depends_on:
+      - mongo
+    # Restart policy
+    # 'unless-stopped': Restart the container unless it's explicitly stopped by the user.
+    restart: unless-stopped
+    networks:
+      - caidense_network
+
+  # Service for the MongoDB database
+  mongo:
+    # Use the official MongoDB image from Docker Hub
+    # Using 'latest' is convenient but specific versions are recommended for production.
+    image: mongo:8.0.9
+    # Optional: Map MongoDB's default port (27017) to a host port if you need
+    # to access the database directly from your host machine (e.g., using a GUI tool).
+    # If you don't need host access, you can omit this ports mapping.
+    ports:
+      # Uncomment the line below to expose MongoDB on the host machine
+      - "27017:27017"
+      # Example mapping to a different host port to avoid conflicts if you have a local Mongo instance:
+      # - "27018:27017"
+      # Uncomment the line below to expose MongoDB on the host machine
+    # Define volumes for persistent data storage
+    volumes:
+      # Use a named volume for the MongoDB data directory (/data/db inside the container).
+      # Named volumes are the preferred way to persist data in Docker.
+      # This ensures your database data is not lost when the container is removed.
+      - mongo_data:/data/db
+    # Restart policy
+    restart: unless-stopped
+    networks:
+      - caidense_network
+
+# Define named volumes used by the services
+volumes:
+  # Define the 'mongo_data' named volume.
+  # Docker manages this volume in a dedicated area on the host machine.
+  mongo_data:
+    # You can specify a driver if needed, 'local' is the default.
+    driver: local
+
+networks:
+  caidense_network:
+    driver: bridge

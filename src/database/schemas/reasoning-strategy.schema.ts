@@ -2,7 +2,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { IntermediateThoughtData } from '../../shared/interfaces/reasoning.interface';
+import { IntermediateThoughtData } from '../../modules/shared/interfaces/reasoning.interface';
 
 export type ReasoningStrategyDocument = HydratedDocument<ReasoningStrategy>;
 
