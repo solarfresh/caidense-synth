@@ -13,6 +13,7 @@ export class GoogleGenaiController {
 
   @Post('google/dev/generate')
   async generateContentFromMLDev(@Body() promptDto: PromptDto): Promise<string> {
-    return this.GoogleGenaiService.generateContentFromMLDev(promptDto.prompt);
+    const response = await this.GoogleGenaiService.generateContentFromMLDev(promptDto.prompt);
+    return response.data
   }
 }

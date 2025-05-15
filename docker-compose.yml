@@ -36,7 +36,7 @@ services:
     # If you don't need host access, you can omit this ports mapping.
     ports:
       # Uncomment the line below to expose MongoDB on the host machine
-      - "27017:27017"
+      - "27018:27017"
       # Example mapping to a different host port to avoid conflicts if you have a local Mongo instance:
       # - "27018:27017"
       # Uncomment the line below to expose MongoDB on the host machine
@@ -56,9 +56,10 @@ volumes:
   # Define the 'mongo_data' named volume.
   # Docker manages this volume in a dedicated area on the host machine.
   mongo_data:
-    # You can specify a driver if needed, 'local' is the default.
-    driver: local
+    name: caidense-mongo-volume
+    external: true
 
 networks:
   caidense_network:
-    driver: bridge
+    name: caidense-network
+    external: true
