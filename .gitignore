@@ -1,5 +1,6 @@
 .vscode/*
 docker-compose.override.yml
+docker-var.override.env
 
 # Logs
 logs
