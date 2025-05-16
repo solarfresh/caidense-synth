@@ -17,7 +17,7 @@ export class GoogleGenaiService {
     this.model = process.env.GENAI_MODEL
   }
 
-  async generateContentFromMLDev(contents: string): Promise<GenerateContentResponse> {
+  async generateContentFromAiStudio(contents: string): Promise<GenerateContentResponse> {
     try {
       return await this.genAi.models.generateContent({
         model: this.model,

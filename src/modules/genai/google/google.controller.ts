@@ -1,3 +1,4 @@
+import { GenerateContentResponse } from '@google/genai';
 import {
   Body,
   Controller,
@@ -11,9 +12,8 @@ import { GoogleGenaiService } from './google.service';
 export class GoogleGenaiController {
   constructor(private readonly GoogleGenaiService: GoogleGenaiService) {}
 
-  @Post('google/dev/generate')
-  async generateContentFromMLDev(@Body() promptDto: PromptDto): Promise<string> {
-    const response = await this.GoogleGenaiService.generateContentFromMLDev(promptDto.prompt);
-    return response.data
+  @Post('google/aistudio/generate')
+  async generateContentFromAiStudio(@Body() promptDto: PromptDto): Promise<GenerateContentResponse> {
+    return await this.GoogleGenaiService.generateContentFromAiStudio(promptDto.prompt);
   }
 }
