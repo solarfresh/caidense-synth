@@ -1,7 +1,7 @@
 import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Prompt } from './prompt/prompt.interface';
+import { PromptText } from './text.interface';
 
 
 @Schema({
@@ -10,7 +10,7 @@ import { Prompt } from './prompt/prompt.interface';
     virtuals: true,
   },
 })
-export class PromptDocument extends Document implements Prompt {
+export class PromptTextDocument extends Document implements PromptText {
   @Prop({ type: String, required: true })
   name: string;
 
@@ -36,4 +36,4 @@ export class PromptDocument extends Document implements Prompt {
   updatedAt: Date;
 }
 
-export const PromptSchema = SchemaFactory.createForClass(PromptDocument);
+export const PromptTextSchema = SchemaFactory.createForClass(PromptTextDocument);

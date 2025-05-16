@@ -1,9 +1,9 @@
 import { BaseController } from '@/modules/base/base.controller';
 import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
-import { CreatePromptDto } from './dto/create-prompt.dto';
-import { UpdatePromptDto } from './dto/update-prompt.dto';
-import { PromptDocument } from '../prompt.schemas';
-import { PromptService } from '../prompt.service';
+import { CreatePromptTextDto } from './dto/create-text.dto';
+import { UpdatePromptTextDto } from './dto/update-text.dto';
+import { PromptTextDocument } from './text.schemas';
+import { PromptTextService } from './text.service';
 
 
 @Controller('prompt') // Define the specific base path for this controller
@@ -12,17 +12,17 @@ import { PromptService } from '../prompt.service';
 // @UseInterceptors(ClassSerializerInterceptor)
 // Apply guards if needed for this controller
 // @UseGuards(AuthGuard('jwt'))
-export class PromptController extends BaseController<PromptDocument, PromptService> {
+export class PromptTextController extends BaseController<PromptTextDocument, PromptTextService> {
   constructor(
-      private readonly reasoningTemplateService: PromptService, // Inject the specific service
+      private readonly promptTextService: PromptTextService, // Inject the specific service
   ) {
     // Call the constructor of the BaseController, passing the injected specific service.
-    super(reasoningTemplateService);
+    super(promptTextService);
    }
 
-  @Post()
+  @Post('text')
   // Apply ValidationPipe with the specific DTO
-  async create(@Body(ValidationPipe) createPromptDto: CreatePromptDto): Promise<PromptDocument> {
+  async create(@Body(ValidationPipe) createPromptDto: CreatePromptTextDto): Promise<PromptTextDocument> {
     // Call the base controller's create method, passing the validated DTO.
     // The base method will delegate to the service.
     return super.create(createPromptDto);
@@ -33,8 +33,8 @@ export class PromptController extends BaseController<PromptDocument, PromptServi
    * Can add specific query handling if needed.
    * @returns A Promise resolving to an array of ReasoningTemplat documents.
    */
-  @Get()
-  async findAll(): Promise<PromptDocument[]> {
+  @Get('text')
+  async findAll(): Promise<PromptTextDocument[]> {
      // Call the base controller's findAll method.
      // If you need filtering via query params, you'd add @Query() here
      // and potentially pass it to super.findAll().
@@ -48,19 +48,19 @@ export class PromptController extends BaseController<PromptDocument, PromptServi
    * @returns A Promise resolving to the found ReasoningTemplat document.
    */
 
-  @Get(':id')
-  async findById(@Param('id') id: string): Promise<PromptDocument> {
+  @Get('text/:id')
+  async findById(@Param('id') id: string): Promise<PromptTextDocument> {
      // Call the base controller's findById method.
      return super.findById(id);
   }
 
-  @Put(':id')
-  async update(@Param('id') id: string, @Body(ValidationPipe) updatePromptDto: UpdatePromptDto): Promise<PromptDocument> {
+  @Put('text/:id')
+  async update(@Param('id') id: string, @Body(ValidationPipe) updatePromptDto: UpdatePromptTextDto): Promise<PromptTextDocument> {
      // Call the base controller's update method, passing the ID and validated DTO.
      return super.update(id, updatePromptDto);
   }
 
-  @Delete(':id')
+  @Delete('text/:id')
   async deleteOne(@Param('id') id: string): Promise<void> {
     // Call the base controller's remove method.
     await super.deleteOne(id);

@@ -1,8 +1,8 @@
 import { DocumentStatus, Variable } from '@/modules/base/base.interface';
-import { PromptDocument } from '../prompt.schemas';
+import { PromptTextDocument } from '../text.schemas';
 
 
-export class ReasoningTemplateDto {
+export class PromptTextDto {
   _id: string;
   name: string;
   description?: string;
@@ -13,7 +13,7 @@ export class ReasoningTemplateDto {
   createdAt: Date; // Timestamps are typically represented as Date objects
   updatedAt: Date; // Timestamps are typically represented as Date objects
 
-  constructor(document: PromptDocument) {
+  constructor(document: PromptTextDocument) {
     // Use document.toJSON() to get a plain object that includes virtuals
     // and excludes internal Mongoose properties like __v by default.
     const plainObject = document.toJSON();

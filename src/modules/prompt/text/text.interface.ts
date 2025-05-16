@@ -2,7 +2,7 @@ import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { Document } from 'mongoose';
 
 
-export interface Prompt extends Document {
+export interface PromptText extends Document {
   /**
    * A human-readable name for the template.
    */

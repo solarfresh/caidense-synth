@@ -9,7 +9,7 @@ import {
   IsEnum
 } from 'class-validator';
 
-export class CreatePromptDto {
+export class CreatePromptTextDto {
   @IsString()
   @IsNotEmpty({ message: 'name statement is required' })
   name: string;
