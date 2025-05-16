@@ -1,20 +1,20 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
+import { Optional } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsNotEmpty, // Decorator to validate that a string, array, object, etc., is not empty
+  IsEnum, // Decorator to validate that a string, array, object, etc., is not empty
   IsOptional,
   IsString,
-  ValidateNested,
-  IsEnum
+  ValidateNested
 } from 'class-validator';
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
+import { UpdatePromptSetEntryDto } from './update-prompt-set-entry.dto';
 
 
-export class CreatePromptTextDto {
+export class UpdatePromptSetDto {
+  @Optional()
   @IsString()
-  @IsNotEmpty({ message: 'name statement is required' })
-  name: string;
+  name?: string;
 
   @IsOptional()
   @IsString()
@@ -25,14 +25,11 @@ export class CreatePromptTextDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @IsNotEmpty({ message: 'promptText statement is required' })
-  @IsString()
-  promptText: string;
-
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Object)
-  variables: CreateVariableDto[];
+  prompts?: UpdatePromptSetEntryDto[];
 
   @IsOptional()
   @IsEnum(DocumentStatus)

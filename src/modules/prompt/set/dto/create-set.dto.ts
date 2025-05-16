@@ -8,10 +8,10 @@ import {
   ValidateNested,
   IsEnum
 } from 'class-validator';
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
+import { CreatePromptSetEntryDto } from './create-prompt-set-entry.dto';
 
 
-export class CreatePromptTextDto {
+export class CreatePromptSetDto {
   @IsString()
   @IsNotEmpty({ message: 'name statement is required' })
   name: string;
@@ -25,14 +25,10 @@ export class CreatePromptTextDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @IsNotEmpty({ message: 'promptText statement is required' })
-  @IsString()
-  promptText: string;
-
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Object)
-  variables: CreateVariableDto[];
+  prompts: CreatePromptSetEntryDto[];
 
   @IsOptional()
   @IsEnum(DocumentStatus)

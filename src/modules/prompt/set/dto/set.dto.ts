@@ -1,20 +1,19 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
-import { PromptTextDocument } from '../text.schemas';
-import { VariableDto } from '@/modules/base/dto/variable.dto';
+import { PromptSetEntryDto } from './prompt-set-entry.dto';
+import { PromptSetDocument } from '../set.schemas';
 
 
-export class PromptTextDto {
+export class PromptSetDto {
   _id: string;
   name: string;
   description?: string;
   tags?: string[];
-  promptText: string;
-  variables: VariableDto[];
+  prompts: PromptSetEntryDto[];
   status: DocumentStatus; // Use the enum type
   createdAt: Date; // Timestamps are typically represented as Date objects
   updatedAt: Date; // Timestamps are typically represented as Date objects
 
-  constructor(document: PromptTextDocument) {
+  constructor(document: PromptSetDocument) {
     // Use document.toJSON() to get a plain object that includes virtuals
     // and excludes internal Mongoose properties like __v by default.
     const plainObject = document.toJSON();
@@ -25,8 +24,7 @@ export class PromptTextDto {
     this.name = plainObject.name;
     this.description = plainObject.description;
     this.tags = plainObject.tags;
-    this.promptText = plainObject.promptText;
-    this.variables = plainObject.variables;
+    this.prompts = plainObject.prompts;
     this.status = plainObject.status.toString(); // Convert status to string if it's an enum
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;
