@@ -1,21 +1,31 @@
 import {
-  IsNotEmpty, // Decorator to validate that a string, array, object, etc., is not empty
   IsOptional,
   IsString
 } from 'class-validator';
 
-export class CreateReasoningTemplateDto {
+export class CreateReasoningThinkingEdgeDto {
+
   @IsString()
-  @IsNotEmpty({ message: 'name statement is required' })
-  name: string;
+  source: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+  sourceHandle?: string;
+
+  @IsString()
+  target: string;
 
   @IsOptional()
   @IsString()
-  thinkingId?: string;
+  targetHandle?: string;
+
+  @IsOptional()
+  @IsString()
+  type?: string;
+
+  @IsOptional()
+  @IsString()
+  label?: string;
 
   // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,

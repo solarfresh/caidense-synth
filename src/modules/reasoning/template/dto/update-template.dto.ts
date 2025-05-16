@@ -1,6 +1,5 @@
 import {
   IsString,       // Decorator to validate that a property is a string
-  IsArray,        // Decorator to validate that a property is an array
   IsOptional,     // Decorator to validate that a property is optional (can be undefined or null)
   IsEnum,         // Decorator to validate that a property's value is one of the values in an enum
 } from 'class-validator';
@@ -14,6 +13,10 @@ export class UpdateReasoningTemplateDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  thinkingId?: string;
 
   @IsOptional()         // This field is not required for an update operation
   @IsEnum(DocumentStatus) // If present, validate that its value is one of the DocumentStatus enum members

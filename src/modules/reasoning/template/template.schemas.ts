@@ -17,6 +17,9 @@ export class ReasoningTemplateDocument extends Document implements ReasoningTemp
   @Prop({ type: String })
   description?: string;
 
+  @Prop({ type: Types.ObjectId})
+  thinkingId?: Types.ObjectId;
+
   @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
   status: DocumentStatus;
 

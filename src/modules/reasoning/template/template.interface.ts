@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { DocumentStatus } from '@/modules/base/base.interface';
 
 
@@ -16,7 +16,13 @@ export interface ReasoningTemplate extends Document {
   /**
    *
    */
+  activatedThinkingId?: Types.ObjectId
+
+  /**
+   *
+   */
   status: DocumentStatus;
+
   /**
    * Timestamp when the template was first created.
    */
