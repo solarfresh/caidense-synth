@@ -1,8 +1,8 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
+import { VariableDto } from '../../../base/dto/variable.dto';
 import { ReasoningThinkingDocument } from '../thinking.schemas';
 import { ReasoningThinkingEdgeDto } from './edge.dto';
 import { ReasoningThinkingNodeDto } from './node.dto';
-import { ReasoningThinkingVariableDto } from './variable.dto'
 
 
 export class ReasoningThinkingDto {
@@ -11,8 +11,8 @@ export class ReasoningThinkingDto {
   description?: string;
   nodes: ReasoningThinkingNodeDto[];
   edges: ReasoningThinkingEdgeDto[];
-  inputs: ReasoningThinkingVariableDto[];
-  outputs: ReasoningThinkingVariableDto[];
+  inputs: VariableDto[];
+  outputs: VariableDto[];
   reasoningTemplateId: string;
   status: DocumentStatus; // Use the enum type
   createdAt: Date; // Timestamps are typically represented as Date objects

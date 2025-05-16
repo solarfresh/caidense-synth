@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { CreateReasoningThinkingEdgeDto } from './create-edge.dto';
 import { CreateReasoningThinkingNodeDto } from './create-node.dto';
-import { CreateReasoningThinkingVariableDto } from './create-variable.dto';
+import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
 
 
@@ -34,13 +34,13 @@ export class CreateReasoningThinkingDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateReasoningThinkingVariableDto)
-  inputs: CreateReasoningThinkingVariableDto[];
+  @Type(() => CreateVariableDto)
+  inputs: CreateVariableDto[];
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateReasoningThinkingVariableDto)
-  outputs: CreateReasoningThinkingVariableDto[];
+  @Type(() => CreateVariableDto)
+  outputs: CreateVariableDto[];
 
   @IsString()
   @IsNotEmpty({ message: 'reasoningTemplateId is required' }) // Custom error message example

@@ -1,5 +1,5 @@
+import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { Document, Types } from 'mongoose';
-import { DocumentStatus } from '@/modules/base/base.interface';
 
 
 interface ThinkingStepConfig {
@@ -8,40 +8,6 @@ interface ThinkingStepConfig {
   // Example: { type: 'llm-call', model: string, promptTemplateId: string, ... }
   // Example: { type: 'tool-call', toolName: string, toolInputMapping: object, ... }
   [key: string]: any; // Placeholder - will be replaced by a specific union or interface later
-}
-
-/**
- * Defines the structure of a variable used in flow inputs or outputs.
- */
-export interface ThinkingVariable {
-  /**
-   * The unique name of the variable within the scope (inputs or outputs).
-   */
-  name: string;
-
-  /**
-   * The expected data type of the variable (e.g., 'string', 'number', 'object', 'boolean', 'array', 'any').
-   */
-  type: string;
-
-  /**
-   * Optional description of the variable's purpose or content.
-   */
-  description?: string;
-
-  /**
-   * Optional: Indicates if this variable is required.
-   */
-  required?: boolean;
-
-  /**
-   * Optional: Default value for the variable if not provided.
-   */
-  defaultValue?: any;
-
-  // Add validation rules, example values, etc., if needed
-  // validation?: object;
-  // example?: any;
 }
 
 /**
@@ -159,12 +125,12 @@ export interface ReasoningThinking extends Document {
   /**
    * Definition of the expected input variables for this flow version.
    */
-  inputs: ThinkingVariable[];
+  inputs: Variable[];
 
   /**
    * Definition of the expected output variables produced by this flow version.
    */
-  outputs: ThinkingVariable[];
+  outputs: Variable[];
 
   /**
    * The ID of the parent Reasoning Template this definition belongs to.
