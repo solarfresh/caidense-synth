@@ -13,4 +13,4 @@ import { ReasoningTemplateSchema, ReasoningTemplateDocument } from './template/t
   providers: [ReasoningTemplateService],
   exports: [ReasoningTemplateService],
 })
-export class ReasoningTemplateModule {}
+export class ReasoningModule {}

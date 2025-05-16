@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 
 // Feature Modules
-import { ReasoningTemplateModule } from '@/modules/reasoning/reasoning.module';
+import { ReasoningModule } from '@/modules/reasoning/reasoning.module';
 import { GenaiModule } from './modules/genai/genai.module';
 
 
@@ -19,7 +19,7 @@ import { GenaiModule } from './modules/genai/genai.module';
     }),
 
     DatabaseModule,
-    ReasoningTemplateModule,
+    ReasoningModule,
     GenaiModule,
   ],
   controllers: [AppController],
