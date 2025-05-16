@@ -4,7 +4,7 @@ import {
   IsString
 } from 'class-validator';
 
-export class UpdateReasoningThinkingVariableDto {
+export class UpdateVariableDto {
 
   @IsOptional()
   @IsString()

@@ -1,7 +1,7 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { ReasoningThinking, ThinkingEdge, ThinkingNode, ThinkingVariable } from './thinking.interface';
+import { ReasoningThinking, ThinkingEdge, ThinkingNode } from './thinking.interface';
 
 
 @Schema({
@@ -24,10 +24,10 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   edges: ThinkingEdge[];
 
   @Prop({ type: [Object] })
-  inputs: ThinkingVariable[];
+  inputs: Variable[];
 
   @Prop({ type: [Object] })
-  outputs: ThinkingVariable[];
+  outputs: Variable[];
 
   @Prop({ type: Types.ObjectId, required: true})
   reasoningTemplateId: Types.ObjectId;

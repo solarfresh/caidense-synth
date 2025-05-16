@@ -1,24 +1,19 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
-import { VariableDto } from '../../../base/dto/variable.dto';
-import { ReasoningThinkingDocument } from '../thinking.schemas';
-import { ReasoningThinkingEdgeDto } from './edge.dto';
-import { ReasoningThinkingNodeDto } from './node.dto';
+import { PromptSetEntryDto } from './prompt-set-entry.dto';
+import { PromptSetDocument } from '../set.schemas';
 
 
-export class ReasoningThinkingDto {
+export class PromptSetDto {
   _id: string;
   name: string;
   description?: string;
-  nodes: ReasoningThinkingNodeDto[];
-  edges: ReasoningThinkingEdgeDto[];
-  inputs: VariableDto[];
-  outputs: VariableDto[];
-  reasoningTemplateId: string;
+  tags?: string[];
+  prompts: PromptSetEntryDto[];
   status: DocumentStatus; // Use the enum type
   createdAt: Date; // Timestamps are typically represented as Date objects
   updatedAt: Date; // Timestamps are typically represented as Date objects
 
-  constructor(document: ReasoningThinkingDocument) {
+  constructor(document: PromptSetDocument) {
     // Use document.toJSON() to get a plain object that includes virtuals
     // and excludes internal Mongoose properties like __v by default.
     const plainObject = document.toJSON();
@@ -28,11 +23,8 @@ export class ReasoningThinkingDto {
     this._id = plainObject._id.toHexString();
     this.name = plainObject.name;
     this.description = plainObject.description;
-    this.nodes = plainObject.nodes;
-    this.edges = plainObject.edges;
-    this.inputs = plainObject.inputs;
-    this.outputs = plainObject.outputs;
-    this.reasoningTemplateId = plainObject.reasoningTemplateId.toString();
+    this.tags = plainObject.tags;
+    this.prompts = plainObject.prompts;
     this.status = plainObject.status.toString(); // Convert status to string if it's an enum
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

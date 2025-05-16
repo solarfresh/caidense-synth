@@ -4,7 +4,7 @@ import {
   IsString
 } from 'class-validator';
 
-export class CreateReasoningThinkingVariableDto {
+export class CreateVariableDto {
 
   @IsString()
   name: string;

@@ -1,4 +1,4 @@
-export class ReasoningThinkingVariableDto {
+export class VariableDto {
   _id: string;
   name: string;
   type: string;

@@ -1,16 +1,15 @@
 import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
+import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
 import { UpdateReasoningThinkingEdgeDto } from './update-edge.dto';
 import { UpdateReasoningThinkingNodeDto } from './update-node.dto';
-import { UpdateReasoningThinkingVariableDto } from './update-variable.dto';
 
 
 export class UpdateReasoningThinkingDto {
@@ -38,14 +37,14 @@ export class UpdateReasoningThinkingDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => UpdateReasoningThinkingVariableDto)
-  inputs?: UpdateReasoningThinkingVariableDto[];
+  @Type(() => UpdateVariableDto)
+  inputs?: UpdateVariableDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => UpdateReasoningThinkingVariableDto)
-  outputs?: UpdateReasoningThinkingVariableDto[];
+  @Type(() => UpdateVariableDto)
+  outputs?: UpdateVariableDto[];
 
   @IsOptional()
   @IsString()
