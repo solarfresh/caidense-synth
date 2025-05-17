@@ -1,12 +1,13 @@
 import { BaseController } from '@/modules/base/base.controller';
+import { VariableDto } from '@/modules/base/dto/variable.dto'; // Assuming variable.dto.ts exists
 import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { CreatePromptTextDto } from './dto/create-text.dto'; // Assuming create-text.dto.ts exists
 import { UpdatePromptTextDto } from './dto/update-text.dto'; // Assuming update-text.dto.ts exists
 import { PromptTextDocument } from './text.schemas'; // Assuming text.schemas.ts exists
 import { PromptTextService } from './text.service'; // Assuming text.service.ts exists
-
 // Import Swagger decorators
-import { ApiTags, ApiOperation, ApiParam, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('Prompt Texts') // Tag the controller for Swagger UI
@@ -86,6 +87,64 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     async deleteOne(@Param('id') id: string): Promise<void> {
         // Call the base controller's remove method.
         await super.deleteOne(id);
+    }
+
+    @Post('text/:id/variables')
+    @ApiOperation({ summary: 'Add a new variable to a prompt text document' })
+    @ApiParam({ name: 'id', description: 'ID of the prompt text document to add the variable to', type: String })
+    @ApiBody({ type: UpdateVariableDto, description: 'Data for the new variable to add' })
+    @ApiResponse({ status: 200, description: 'The variable has been successfully added. Returns the updated prompt text document.', type: VariableDto })
+    @ApiResponse({ status: 404, description: 'Not Found - Prompt text document with the given ID not found.' })
+    @ApiResponse({ status: 400, description: 'Bad Request - Invalid variable data provided.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - Failed to add the variable.' })
+    async createVariable(@Param('id') id: string, @Body(ValidationPipe) UpdateVariableDto: UpdateVariableDto): Promise<VariableDto> {
+        const variable = await this.promptTextService.createNestedDocument(id, 'variables', UpdateVariableDto);
+        return new VariableDto(variable);
+    }
+
+    @Get('text/:id/variables')
+    @ApiOperation({ summary: 'Retrieve all variables from a prompt text document' })
+    @ApiParam({ name: 'id', description: 'ID of the prompt text document to retrieve variables from', type: String })
+    @ApiResponse({ status: 200, description: 'Successfully retrieved variables from the prompt text document.', type: [VariableDto] })
+    @ApiResponse({ status: 404, description: 'Not Found - Prompt text document with the given ID not found.' })
+    async findVariables(@Param('id') id: string): Promise<VariableDto[]> {
+        const variables = await this.promptTextService.findNestedDocuments(id, 'variables');
+        return variables.map((variable) => new VariableDto(variable));
+    }
+
+    @Get('text/:id/variables/:variableId')
+    @ApiOperation({ summary: 'Retrieve a specific variable from a prompt text document' })
+    @ApiParam({ name: 'id', description: 'ID of the prompt text document to retrieve the variable from', type: String })
+    @ApiParam({ name: 'variableId', description: 'ID of the variable to retrieve', type: String })
+    @ApiResponse({ status: 200, description: 'Successfully retrieved the variable from the prompt text document.', type: VariableDto })
+    @ApiResponse({ status: 404, description: 'Not Found - Prompt text document or variable with the given ID not found.' })
+    async findNestedDocumentById(@Param('id') id: string, @Param('variableId') variableId: string): Promise<VariableDto> {
+        const variable = await this.promptTextService.findNestedDocumentById(id, 'variables', variableId);
+        return new VariableDto(variable);
+    }
+
+    @Put('text/:id/variables/:variableId')
+    @ApiOperation({ summary: 'Update a variable in a prompt text document' })
+    @ApiParam({ name: 'id', description: 'ID of the prompt text document to update the variable in', type: String })
+    @ApiParam({ name: 'variableId', description: 'ID of the variable to update', type: String })
+    @ApiBody({ type: UpdateVariableDto, description: 'Data for updating the variable' })
+    @ApiResponse({ status: 200, description: 'The variable has been successfully updated. Returns the updated prompt text document.', type: VariableDto })
+    @ApiResponse({ status: 404, description: 'Not Found - Prompt text document or variable with the given ID not found.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - Failed to update the variable.' })
+    async updateNestedDocumentById(@Param('id') id: string, @Param('variableId') variableId: string, @Body(ValidationPipe) updateVariableDto: UpdateVariableDto): Promise<VariableDto> {
+        const variable = await this.promptTextService.updateNestedDocumentById(id, 'variables', variableId, updateVariableDto);
+        return new VariableDto(variable);
+    }
+
+    @Delete('text/:id/variables/:variableId')
+    @ApiOperation({ summary: 'Delete a variable from a prompt text document' })
+    @ApiParam({ name: 'id', description: 'ID of the prompt text document to delete the variable from', type: String })
+    @ApiParam({ name: 'variableId', description: 'ID of the variable to delete', type: String })
+    @ApiResponse({ status: 200, description: 'The variable has been successfully deleted. Returns the updated prompt text document.', type: VariableDto })
+    @ApiResponse({ status: 404, description: 'Not Found - Prompt text document or variable with the given ID not found.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - Failed to delete the variable.' })
+    async deleteNestedDocumentById(@Param('id') id: string, @Param('variableId') variableId: string): Promise<void> {
+        await this.promptTextService.deleteNestedDocumentById(id, 'variables', variableId);
     }
 
     // Customized endpoints can be added here.

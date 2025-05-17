@@ -53,14 +53,16 @@ export class VariableDto {
   updatedAt: Date; // Assuming timestamps are tracked for variables
 
   // Add a constructor if you need to map from a source object
-  constructor(data: any) { // 'any' or a more specific source type
-    this._id = data._id; // Assuming _id is directly available or mapped
-    this.name = data.name;
-    this.type = data.type;
-    this.description = data.description;
-    this.required = data.required;
-    this.defaultValue = data.defaultValue;
-    this.createdAt = data.createdAt;
-    this.updatedAt = data.updatedAt;
+  constructor(document: any) { // 'any' or a more specific source type
+    const plainObject = document.toJSON ? document.toJSON() : document;
+
+    this._id = plainObject._id.toHexString(); // Assuming _id is directly available or mapped
+    this.name = plainObject.name;
+    this.type = plainObject.type;
+    this.description = plainObject.description;
+    this.required = plainObject.required;
+    this.defaultValue = plainObject.defaultValue;
+    this.createdAt = plainObject.createdAt;
+    this.updatedAt = plainObject.updatedAt;
   }
 }

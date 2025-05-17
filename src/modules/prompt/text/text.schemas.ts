@@ -2,6 +2,7 @@ import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { PromptText } from './text.interface';
+import { VariableSchema } from '@/modules/base/base.schemas';
 
 
 @Schema({
@@ -23,7 +24,7 @@ export class PromptTextDocument extends Document implements PromptText {
   @Prop({ type: String })
   promptText: string;
 
-  @Prop({ type: [Object] })
+  @Prop({ type: [VariableSchema] })
   variables: Variable[];
 
   @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })

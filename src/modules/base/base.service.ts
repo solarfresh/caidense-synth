@@ -149,5 +149,86 @@ export class BaseService<T extends Document> {
        throw new InternalServerErrorException(`Could not delete document with ID "${id}".`);
     }
   }
+
+  async createNestedDocument(id: string, fieldName: string, createDto: any): Promise<T> {
+    const updatedDocument = await this.model.findByIdAndUpdate(
+    id,
+    { $push: {[fieldName]: createDto }} as UpdateQuery<T>,
+    { new: true, runValidators: true }
+    ).exec();
+
+    if (!updatedDocument) {
+      throw new NotFoundException(`MainDocument with ID "${id}" not found`);
+    }
+    return updatedDocument[fieldName][updatedDocument[fieldName].length - 1];
+  }
+
+  async findNestedDocuments(id: string, fieldName: string): Promise<Partial<T>[]> {
+    const updatedDocument = await this.model.findById(id, {[fieldName]: 1}).exec();
+    if (!updatedDocument) {
+      throw new NotFoundException(`MainDocument with ID "${id}" not found`);
+    }
+
+    return updatedDocument[fieldName];
+  }
+
+  async findNestedDocumentById(id: string, fieldName: string, nestedId: string): Promise<T> {
+    const updatedDocument = await this.model.findById(id, {[fieldName]: {$elemMatch: {_id: nestedId}}}).exec();
+    if (!updatedDocument) {
+      throw new NotFoundException(`MainDocument with ID "${id}" not found`);
+    }
+    const nestedDocument = updatedDocument[fieldName].find((doc) => doc._id.toString() === nestedId);
+    if (!nestedDocument) {
+      throw new NotFoundException(`Nested document with ID "${nestedId}" not found in MainDocument with ID "${id}"`);
+    }
+    return nestedDocument;
+  }
+
+  async createNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<Partial<T>> {
+    const updatedDocument = await this.model.findOneAndUpdate(
+      { _id: id, [`${fieldName}._id`]: nestedId },
+      { $set: { [`${fieldName}.$`]: updateDto } } as UpdateQuery<T>,
+      { new: true, runValidators: true }
+    ).exec();
+    if (!updatedDocument) {
+      throw new NotFoundException(`MainDocument with ID "${id}" or NestedDocument with ID "${nestedId}" not found`);
+    }
+    const nestedDocument = updatedDocument[fieldName].find((doc) => doc._id.toString() === nestedId);
+    if (!nestedDocument) {
+      throw new NotFoundException(`NestedDocument with ID "${nestedId}" not found in MainDocument with ID "${id}"`);
+    }
+    return nestedDocument;
+  }
+
+  async updateNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<Partial<T>> {
+    const updatedDocument = await this.model.findOneAndUpdate(
+      { _id: id, [`${fieldName}._id`]: nestedId },
+      { $set: { [`${fieldName}.$`]: updateDto } } as UpdateQuery<T>,
+      { new: true, runValidators: true }
+    ).exec();
+
+    if (!updatedDocument) {
+      throw new NotFoundException(`MainDocument with ID "${id}" or NestedDocument with ID "${nestedId}" not found`);
+    }
+    const nestedDocument = updatedDocument[fieldName].find((doc) => doc._id.toString() === nestedId);
+    if (!nestedDocument) {
+      throw new NotFoundException(`NestedDocument with ID "${nestedId}" not found in MainDocument with ID "${id}"`);
+    }
+    return nestedDocument;
+  }
+
+  async deleteNestedDocumentById(id: string, fieldName: string, nestedId: string): Promise<Object> {
+    const updatedDocument = await this.model.findByIdAndUpdate(
+    id,
+    { $pull: {[fieldName]: {_id: nestedId}}} as UpdateQuery<T>,
+    { new: true, runValidators: true }
+    ).exec();
+
+    if (!updatedDocument) {
+      throw new NotFoundException(`MainDocument with ID "${id}" not found`);
+    }
+
+    return {deletedCount: 1}; // Or return a success message/object
+  }
   // Add more generic methods if needed, e.g., pagination, soft delete, etc.
 }
