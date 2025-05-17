@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { DocumentStatus } from '@/modules/base/base.interface';
 import { VariableDto } from '../../../base/dto/variable.dto';
 import { ReasoningThinkingDocument } from '../thinking.schemas';
@@ -5,18 +7,78 @@ import { ReasoningThinkingEdgeDto } from './edge.dto';
 import { ReasoningThinkingNodeDto } from './node.dto';
 
 
+/**
+ * Defines the data structure for representing a complete Reasoning Thinking document (flow) in API responses.
+ */
 export class ReasoningThinkingDto {
+  @ApiProperty({
+    description: 'The unique identifier (ID) of the reasoning thinking flow document.',
+    example: '60c8d6c1f5a4c8a7f0b1c2d5',
+  })
   _id: string;
+
+  @ApiProperty({ description: 'The name of the reasoning thinking flow.' })
   name: string;
+
+  @ApiProperty({
+    description: 'A brief description of the reasoning thinking flow (Optional).',
+    required: false,
+  })
   description?: string;
+
+  @ApiProperty({
+    description: 'An array of nodes within the thinking flow diagram.',
+    type: [ReasoningThinkingNodeDto],
+    isArray: true,
+  })
+  @Type(() => ReasoningThinkingNodeDto)
   nodes: ReasoningThinkingNodeDto[];
+
+  @ApiProperty({
+    description: 'An array of edges connecting nodes within the thinking flow diagram.',
+    type: [ReasoningThinkingEdgeDto],
+    isArray: true,
+  })
+  @Type(() => ReasoningThinkingEdgeDto)
   edges: ReasoningThinkingEdgeDto[];
+
+  @ApiProperty({
+    description: 'An array of input variables defined for the thinking flow.',
+    type: [VariableDto],
+    isArray: true,
+  })
+  @Type(() => VariableDto)
   inputs: VariableDto[];
+
+  @ApiProperty({
+    description: 'An array of output variables defined for the thinking flow.',
+    type: [VariableDto],
+    isArray: true,
+  })
+  @Type(() => VariableDto)
   outputs: VariableDto[];
+
+  @ApiProperty({
+    description: 'The ID of the associated reasoning template document.',
+    example: '60c8d6c1f5a4c8a7f0b1c2d3',
+  })
   reasoningTemplateId: string;
-  status: DocumentStatus; // Use the enum type
-  createdAt: Date; // Timestamps are typically represented as Date objects
-  updatedAt: Date; // Timestamps are typically represented as Date objects
+
+  @ApiProperty({
+    description: 'The publishing status of the reasoning thinking flow document.',
+    enum: DocumentStatus,
+    example: DocumentStatus.Finalized,
+  })
+  status: DocumentStatus;
+
+  @ApiProperty({ description: 'The timestamp when the reasoning thinking flow document was created.' })
+  @Type(() => Date)
+  createdAt: Date;
+
+  @ApiProperty({ description: 'The timestamp when the reasoning thinking flow was last updated.' })
+  @Type(() => Date)
+  updatedAt: Date;
+
 
   constructor(document: ReasoningThinkingDocument) {
     // Use document.toJSON() to get a plain object that includes virtuals
@@ -24,20 +86,19 @@ export class ReasoningThinkingDto {
     const plainObject = document.toJSON();
 
     // Map properties from the plain object to the DTO instance.
-    // Convert ObjectId to string representation.
+    // Convert ObjectId to string representation using toHexString() for consistency.
     this._id = plainObject._id.toHexString();
     this.name = plainObject.name;
     this.description = plainObject.description;
-    this.nodes = plainObject.nodes;
-    this.edges = plainObject.edges;
-    this.inputs = plainObject.inputs;
-    this.outputs = plainObject.outputs;
-    this.reasoningTemplateId = plainObject.reasoningTemplateId.toString();
-    this.status = plainObject.status.toString(); // Convert status to string if it's an enum
+
+    this.nodes = plainObject.nodes ? plainObject.nodes.map(node => new ReasoningThinkingNodeDto(node)) : [];
+    this.edges = plainObject.edges ? plainObject.edges.map(edge => new ReasoningThinkingEdgeDto(edge)) : [];
+    this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
+    this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
+
+    this.reasoningTemplateId = plainObject.reasoningTemplateId ? plainObject.reasoningTemplateId.toHexString() : undefined;
+    this.status = plainObject.status;
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;
-
-    // Map other properties if you added them to the DTO
-    // this.someOtherField = plainObject.someOtherField;
   }
 }
