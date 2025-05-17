@@ -20,7 +20,7 @@ export class PromptSetDocument extends Document implements PromptSet {
   @Prop({ type: [String]})
   tags?: string[];
 
-  @Prop({ type: [Object] })
+  @Prop({ type: [Object] }) // Assuming PromptSetEntry maps to a BSON Object or a subdocument schema if defined elsewhere
   prompts: PromptSetEntry[];
 
   @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
