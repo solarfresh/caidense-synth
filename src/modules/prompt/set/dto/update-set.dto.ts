@@ -1,40 +1,70 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
-import { Optional } from '@nestjs/common';
+// Removed unused Optional from @nestjs/common
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsEnum, // Decorator to validate that a string, array, object, etc., is not empty
-  IsOptional,
+  IsEnum,
+  IsOptional, // Decorator to validate that a value is optional
   IsString,
   ValidateNested
 } from 'class-validator';
-import { UpdatePromptSetEntryDto } from './update-prompt-set-entry.dto';
+import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
+import { UpdatePromptSetEntryDto } from './update-set-entry.dto';
 
 
 export class UpdatePromptSetDto {
-  @Optional()
+  @ApiProperty({
+    description: 'Optional new name for the prompt set.',
+    required: false, // Explicitly mark as optional for update DTO
+    example: 'Vision Setting Prompts v2', // Add an example
+  })
+  @IsOptional()
   @IsString()
   name?: string;
 
+  @ApiProperty({
+    description: 'Optional new description for the prompt set.',
+    required: false, // Explicitly mark as optional
+    example: 'Updated set focusing on refinement steps.', // Add an example
+  })
   @IsOptional()
   @IsString()
   description?: string;
 
+  @ApiProperty({
+    description: 'Optional new list of tags for categorizing the prompt set.',
+    required: false, // Explicitly mark as optional
+    isArray: true, // Explicitly mark as an array
+    example: ['vision', 'refinement'], // Add an example
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
 
+  @ApiProperty({
+    description: 'Optional array of updated or new prompt entries for this set.',
+    required: false, // Explicitly mark as optional
+    type: [UpdatePromptSetEntryDto], // Reference the nested DTO
+    isArray: true, // Explicitly mark as an array
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => Object)
-  prompts?: UpdatePromptSetEntryDto[];
+  @Type(() => UpdatePromptSetEntryDto) // Make sure to use UpdatePromptSetEntryDto here
+  prompts?: UpdatePromptSetEntryDto[]; // This field is optional
 
+  @ApiProperty({
+    description: 'Optional new publishing status for the prompt set.',
+    required: false, // Explicitly mark as optional
+    enum: DocumentStatus, // Reference the enum
+    example: DocumentStatus.Finalized, // Add an example
+  })
   @IsOptional()
   @IsEnum(DocumentStatus)
   status?: DocumentStatus;
-  // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
+
+  // Note: Fields like 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,
   // and thus are not included in the DTO used for *creating* the resource.
 }
