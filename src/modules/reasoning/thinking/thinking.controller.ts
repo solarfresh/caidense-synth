@@ -7,7 +7,8 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
-  ApiResponse
+  ApiResponse,
+  ApiTags
 } from '@nestjs/swagger';
 import { CreateReasoningNodeDto } from '../node/dto/create-node.dto';
 import { ReasoningNodeDto } from '../node/dto/node.dto';
@@ -19,7 +20,8 @@ import { ReasoningThinkingDocument } from './thinking.schemas';
 import { ReasoningThinkingService } from './thinking.service';
 
 
-@Controller('reasoning') // Define the specific base path for this controller
+@ApiTags('Reasoning Thinking') // Define the tag for Swagger documentation
+@Controller('reasoning/thinking') // Define the specific base path for this controller
 // Apply the ClassSerializerInterceptor here as well, or rely on the one in BaseController
 // If you want specific interceptors for this controller, apply them here.
 // @UseInterceptors(ClassSerializerInterceptor)
@@ -33,7 +35,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     super(reasoningThinkingService);
    }
 
-  @Post('thinking')
+  @Post()
   @ApiOperation({ summary: 'Create a new ReasoningThinking document' })
   @ApiBody({ type: CreateReasoningThinkingDto })
   @ApiResponse({
@@ -54,7 +56,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
    * Can add specific query handling if needed.
    * @returns A Promise resolving to an array of ReasoningTemplat documents.
    */
-  @Get('thinking')
+  @Get()
   @ApiOperation({ summary: 'Retrieve all ReasoningThinking documents' })
   @ApiResponse({
     status: 200,
@@ -75,7 +77,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
    * @returns A Promise resolving to the found ReasoningTemplat document.
    */
 
-  @Get('thinking/:id')
+  @Get(':id')
   @ApiOperation({ summary: 'Retrieve a ReasoningThinking document by ID' })
   @ApiParam({
     name: 'id',
@@ -89,7 +91,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
      return super.findById(id);
   }
 
-  @Put('thinking/:id')
+  @Put(':id')
   @ApiOperation({ summary: 'Update a ReasoningThinking document by ID' })
   @ApiParam({
     name: 'id',
@@ -112,7 +114,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
      return super.update(id, updateReasoningThinkingDto);
   }
 
-  @Delete('thinking/:id')
+  @Delete(':id')
   @ApiOperation({ summary: 'Delete a ReasoningThinking document by ID' })
   @ApiParam({ name: 'id', description: 'ID of the ReasoningThinking document to delete', type: String })
   @ApiResponse({ status: 200, description: 'The ReasoningThinking document has been successfully deleted.' })
