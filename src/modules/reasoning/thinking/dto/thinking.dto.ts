@@ -4,7 +4,7 @@ import { DocumentStatus } from '@/modules/base/base.interface';
 import { VariableDto } from '../../../base/dto/variable.dto';
 import { ReasoningThinkingDocument } from '../thinking.schemas';
 import { ReasoningThinkingEdgeDto } from './edge.dto';
-import { ReasoningThinkingNodeDto } from './node.dto';
+import { ReasoningNodeDto } from '@/modules/reasoning/node/dto/node.dto';
 
 
 /**
@@ -28,11 +28,11 @@ export class ReasoningThinkingDto {
 
   @ApiProperty({
     description: 'An array of nodes within the thinking flow diagram.',
-    type: [ReasoningThinkingNodeDto],
+    type: [ReasoningNodeDto],
     isArray: true,
   })
-  @Type(() => ReasoningThinkingNodeDto)
-  nodes: ReasoningThinkingNodeDto[];
+  @Type(() => ReasoningNodeDto)
+  nodes: ReasoningNodeDto[];
 
   @ApiProperty({
     description: 'An array of edges connecting nodes within the thinking flow diagram.',
@@ -91,7 +91,7 @@ export class ReasoningThinkingDto {
     this.name = plainObject.name;
     this.description = plainObject.description;
 
-    this.nodes = plainObject.nodes ? plainObject.nodes.map(node => new ReasoningThinkingNodeDto(node)) : [];
+    this.nodes = plainObject.nodes ? plainObject.nodes.map(node => new ReasoningNodeDto(node)) : [];
     this.edges = plainObject.edges ? plainObject.edges.map(edge => new ReasoningThinkingEdgeDto(edge)) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];

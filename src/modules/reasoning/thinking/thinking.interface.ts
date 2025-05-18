@@ -1,49 +1,7 @@
 import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { Document, Types } from 'mongoose';
+import { ReasoningNode } from '../node/node.interface';
 
-
-interface ThinkingStepConfig {
-  // Depending on the 'type' property of IFlowNode,
-  // this object will have different properties.
-  // Example: { type: 'llm-call', model: string, promptTemplateId: string, ... }
-  // Example: { type: 'tool-call', toolName: string, toolInputMapping: object, ... }
-  [key: string]: any; // Placeholder - will be replaced by a specific union or interface later
-}
-
-/**
- * Defines a node or step within a reasoning flow.
- */
-export interface ThinkingNode {
-  /**
-   * A unique identifier for this node within the specific flow definition.
-   */
-  id: string;
-
-  /**
-   * The type of operation or step this node represents (e.g., 'start', 'end', 'llm-call', 'tool-call', 'conditional', 'process', 'sub-flow').
-   */
-  type: string;
-
-  /**
-   * A human-readable label for this node.
-   */
-  label?: string;
-
-  /**
-   * Specific configuration for this node type.
-   * The structure depends on the 'type' property (e.g., LLM model, prompt ID, tool name).
-   */
-  config: ThinkingStepConfig; // Using the placeholder interface
-
-  /**
-   * Optional: Positioning information for visualizing the node in a UI.
-   */
-  // position?: { x: number; y: number };
-
-  // Add other node-specific properties if needed (e.g., style, data properties for UI)
-  // style?: object;
-  // data?: object; // Generic data container
-}
 
 /**
  * Defines an edge or connection between two nodes in a reasoning flow.
@@ -115,7 +73,7 @@ export interface ReasoningThinking extends Document {
   /**
    * An array of nodes (steps) within this flow definition.
    */
-  nodes: ThinkingNode[];
+  nodes: ReasoningNode[];
 
   /**
    * An array of edges connecting the nodes, defining the flow path.

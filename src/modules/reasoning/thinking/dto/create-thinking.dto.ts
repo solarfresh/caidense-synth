@@ -1,16 +1,16 @@
+import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
+import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
+import { CreateReasoningNodeDto } from '@/modules/reasoning/node/dto/create-node.dto';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateNested,
-  IsEnum
+  ValidateNested
 } from 'class-validator';
 import { CreateReasoningThinkingEdgeDto } from './create-edge.dto';
-import { CreateReasoningThinkingNodeDto } from './create-node.dto';
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
-import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
 
 
 export class CreateReasoningThinkingDto {
@@ -24,8 +24,8 @@ export class CreateReasoningThinkingDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateReasoningThinkingNodeDto)
-  nodes: CreateReasoningThinkingNodeDto[];
+  @Type(() => CreateReasoningNodeDto)
+  nodes: CreateReasoningNodeDto[];
 
   @IsArray()
   @ValidateNested({ each: true })
