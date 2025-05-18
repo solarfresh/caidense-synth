@@ -150,7 +150,7 @@ export class BaseService<T extends Document> {
     }
   }
 
-  async createNestedDocument(id: string, fieldName: string, createDto: any): Promise<T> {
+  async createNestedDocument(id: string, fieldName: string, createDto: any): Promise<any> {
     const updatedDocument = await this.model.findByIdAndUpdate(
     id,
     { $push: {[fieldName]: createDto }} as UpdateQuery<T>,
@@ -163,7 +163,7 @@ export class BaseService<T extends Document> {
     return updatedDocument[fieldName][updatedDocument[fieldName].length - 1];
   }
 
-  async findNestedDocuments(id: string, fieldName: string): Promise<Partial<T>[]> {
+  async findNestedDocuments(id: string, fieldName: string): Promise<any[]> {
     const updatedDocument = await this.model.findById(id, {[fieldName]: 1}).exec();
     if (!updatedDocument) {
       throw new NotFoundException(`MainDocument with ID "${id}" not found`);
@@ -172,7 +172,7 @@ export class BaseService<T extends Document> {
     return updatedDocument[fieldName];
   }
 
-  async findNestedDocumentById(id: string, fieldName: string, nestedId: string): Promise<T> {
+  async findNestedDocumentById(id: string, fieldName: string, nestedId: string): Promise<any> {
     const updatedDocument = await this.model.findById(id, {[fieldName]: {$elemMatch: {_id: nestedId}}}).exec();
     if (!updatedDocument) {
       throw new NotFoundException(`MainDocument with ID "${id}" not found`);
@@ -184,7 +184,7 @@ export class BaseService<T extends Document> {
     return nestedDocument;
   }
 
-  async createNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<Partial<T>> {
+  async createNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<any> {
     const updatedDocument = await this.model.findOneAndUpdate(
       { _id: id, [`${fieldName}._id`]: nestedId },
       { $set: { [`${fieldName}.$`]: updateDto } } as UpdateQuery<T>,
@@ -200,7 +200,7 @@ export class BaseService<T extends Document> {
     return nestedDocument;
   }
 
-  async updateNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<Partial<T>> {
+  async updateNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<any> {
     const updatedDocument = await this.model.findOneAndUpdate(
       { _id: id, [`${fieldName}._id`]: nestedId },
       { $set: { [`${fieldName}.$`]: updateDto } } as UpdateQuery<T>,

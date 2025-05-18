@@ -8,6 +8,7 @@ import { PromptTextService } from './text.service'; // Assuming text.service.ts 
 // Import Swagger decorators
 import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 
 
 @ApiTags('Prompt Texts') // Tag the controller for Swagger UI
@@ -97,8 +98,8 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     @ApiResponse({ status: 404, description: 'Not Found - Prompt text document with the given ID not found.' })
     @ApiResponse({ status: 400, description: 'Bad Request - Invalid variable data provided.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error - Failed to add the variable.' })
-    async createVariable(@Param('id') id: string, @Body(ValidationPipe) UpdateVariableDto: UpdateVariableDto): Promise<VariableDto> {
-        const variable = await this.promptTextService.createNestedDocument(id, 'variables', UpdateVariableDto);
+    async createVariable(@Param('id') id: string, @Body(ValidationPipe) createVariableDto: CreateVariableDto): Promise<VariableDto> {
+        const variable = await this.promptTextService.createNestedDocument(id, 'variables', createVariableDto);
         return new VariableDto(variable);
     }
 
@@ -118,7 +119,7 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     @ApiParam({ name: 'variableId', description: 'ID of the variable to retrieve', type: String })
     @ApiResponse({ status: 200, description: 'Successfully retrieved the variable from the prompt text document.', type: VariableDto })
     @ApiResponse({ status: 404, description: 'Not Found - Prompt text document or variable with the given ID not found.' })
-    async findNestedDocumentById(@Param('id') id: string, @Param('variableId') variableId: string): Promise<VariableDto> {
+    async findVariableById(@Param('id') id: string, @Param('variableId') variableId: string): Promise<VariableDto> {
         const variable = await this.promptTextService.findNestedDocumentById(id, 'variables', variableId);
         return new VariableDto(variable);
     }
@@ -131,7 +132,7 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     @ApiResponse({ status: 200, description: 'The variable has been successfully updated. Returns the updated prompt text document.', type: VariableDto })
     @ApiResponse({ status: 404, description: 'Not Found - Prompt text document or variable with the given ID not found.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error - Failed to update the variable.' })
-    async updateNestedDocumentById(@Param('id') id: string, @Param('variableId') variableId: string, @Body(ValidationPipe) updateVariableDto: UpdateVariableDto): Promise<VariableDto> {
+    async updateVariableById(@Param('id') id: string, @Param('variableId') variableId: string, @Body(ValidationPipe) updateVariableDto: UpdateVariableDto): Promise<VariableDto> {
         const variable = await this.promptTextService.updateNestedDocumentById(id, 'variables', variableId, updateVariableDto);
         return new VariableDto(variable);
     }
@@ -143,7 +144,7 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     @ApiResponse({ status: 200, description: 'The variable has been successfully deleted. Returns the updated prompt text document.', type: VariableDto })
     @ApiResponse({ status: 404, description: 'Not Found - Prompt text document or variable with the given ID not found.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error - Failed to delete the variable.' })
-    async deleteNestedDocumentById(@Param('id') id: string, @Param('variableId') variableId: string): Promise<void> {
+    async deleteVariableById(@Param('id') id: string, @Param('variableId') variableId: string): Promise<void> {
         await this.promptTextService.deleteNestedDocumentById(id, 'variables', variableId);
     }
 
