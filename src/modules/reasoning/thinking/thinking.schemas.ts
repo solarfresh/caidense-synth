@@ -13,6 +13,34 @@ import { ReasoningThinking, ThinkingEdge } from './thinking.interface';
     virtuals: true,
   },
 })
+export class ThinkingEdgeSchemaClass implements ThinkingEdge {
+  @Prop({ type: String, required: true })
+  source: string;
+
+  @Prop({ type: String })
+  sourceHandle?: string;
+
+  @Prop({ type: String, required: true })
+  target: string;
+
+  @Prop({ type: String })
+  targetHandle?: string;
+
+  @Prop({ type: String })
+  type?: string;
+
+  @Prop({ type: String })
+  label?: string;
+}
+
+export const ThinkingEdgeSchema = SchemaFactory.createForClass(ThinkingEdgeSchemaClass);
+
+@Schema({
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+  },
+})
 export class ReasoningThinkingDocument extends Document implements ReasoningThinking {
   @Prop({ type: String, required: true })
   name: string;
@@ -23,7 +51,7 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   @Prop({ type: [ReasoningNodeSchema] })
   nodes: ReasoningNode[];
 
-  @Prop({ type: [Object] })
+  @Prop({ type: [ThinkingEdgeSchema] })
   edges: ThinkingEdge[];
 
   @Prop({ type: [VariableSchema] })

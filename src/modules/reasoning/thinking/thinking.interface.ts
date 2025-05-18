@@ -8,12 +8,6 @@ import { ReasoningNode } from '../node/node.interface';
  */
 export interface ThinkingEdge {
   /**
-   * A unique identifier for this edge within the specific flow definition.
-   * Can be generated (e.g., 'edge-sourceId-targetId').
-   */
-  id: string;
-
-  /**
    * The ID of the source node from which this edge originates.
    */
   source: string;
