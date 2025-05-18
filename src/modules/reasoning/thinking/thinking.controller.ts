@@ -2,7 +2,7 @@ import { BaseController } from '@/modules/base/base.controller';
 import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
 import { VariableDto } from '@/modules/base/dto/variable.dto';
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,

@@ -1,11 +1,71 @@
 import { DocumentStatus, Variable } from '@/modules/base/base.interface';
 import { VariableSchema } from '@/modules/base/base.schemas';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { ReasoningNode } from '../node/node.interface';
-import { ReasoningNodeSchema } from '../node/node.schemas';
-import { ReasoningThinking, ThinkingEdge } from './thinking.interface';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { ReasoningNodeConfig } from '../node/node.interface';
+import { ReasoningThinking, ThinkingEdge, ThinkingNode } from './thinking.interface';
 
+
+@Schema({
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+  },
+})
+export class ThinkingNodeClass implements ThinkingNode {
+  /**
+   * The type of the node, determining its function and behavior.
+   * Maps to ThinkingNode.type.
+   */
+  @Prop({ type: String, required: true })
+  type: string;
+
+  /**
+   * An optional label displayed on the node.
+   * Maps to ThinkingNode.label.
+   */
+  @Prop({ type: String })
+  label?: string;
+
+  /**
+   * Optional configuration object specific to the node type.
+   * Stored as a Mixed type to allow flexible structures.
+   * Maps to ThinkingNode.config.
+   */
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  config?: ReasoningNodeConfig;
+
+  /**
+   * Optional script code to be executed by this node type.
+   * Maps to script.
+   */
+  @Prop({ type: String })
+  script?: string;
+
+  /**
+   * Optional array defining the inputs specific to this node's logic.
+   * Stored as an array of embedded Variable documents.
+   * Maps to inputs.
+   */
+  @Prop({ type: [VariableSchema] })
+  inputs?: Variable[];
+
+  /**
+   * Optional array defining the outputs specific to this node's logic.
+   * Stored as an array of embedded Variable documents.
+   * Maps to outputs.
+   */
+  @Prop({ type: [VariableSchema] })
+  outputs?: Variable[];
+
+  @Prop(Date)
+  createdAt: Date;
+
+  @Prop(Date)
+  updatedAt: Date;
+}
+
+export const ThinkingNodeSchema = SchemaFactory.createForClass(ThinkingNodeClass);
 
 @Schema({
   timestamps: true,
@@ -48,8 +108,8 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   @Prop({ type: String })
   description?: string;
 
-  @Prop({ type: [ReasoningNodeSchema] })
-  nodes: ReasoningNode[];
+  @Prop({ type: [ThinkingNodeSchema] })
+  nodes: ThinkingNode[];
 
   @Prop({ type: [ThinkingEdgeSchema] })
   edges: ThinkingEdge[];

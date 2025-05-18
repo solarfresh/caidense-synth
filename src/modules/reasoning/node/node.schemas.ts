@@ -61,7 +61,6 @@ export class ReasoningNodeDocument extends Document implements ReasoningNode {
   @Prop({ type: [VariableSchema] })
   outputs?: Variable[];
 
-
   @Prop(Date)
   createdAt: Date;
 
