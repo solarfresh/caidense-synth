@@ -1,5 +1,5 @@
 import { ExecutionStatus } from './common.interface';
-import { ExcutionNode } from './node.interface';
+import { ExecutionNode } from '@caidense/reasoning/flow/flow.interface';
 import { TaskExecutionContext } from './task.interface';
 
 
@@ -36,7 +36,7 @@ export interface NodeExecutor {
    * @param context The current state of the flow execution.
    * @returns A Promise resolving to the outcome of the execution.
    */
-  execute(node: ExcutionNode, context: TaskExecutionContext): Promise<ExecutorExecutionResult>;
+  execute(node: ExecutionNode, context: TaskExecutionContext): Promise<ExecutorExecutionResult>;
 
   // Note on Node Type Registration:
   // The mapping of a node 'type' string (like 'aiCall') to an ExcutionNode

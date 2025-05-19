@@ -18,12 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-        "@/*": [
-            "src/*"
-        ],
         "@caidense/reasoning/*": [
-            "../libs/caidense-reasoning/src/*"
-        ],
+            "src/*"
+        ]
     }
   },
   "exclude": ["node_modules", "dist"]

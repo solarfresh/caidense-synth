@@ -1,4 +1,4 @@
-import { Variable } from '@/modules/base/base.interface';
+import { Variable } from '@caidense/reasoning/common/common.interface';
 import { VariableSchema } from '@/modules/base/base.schemas';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';

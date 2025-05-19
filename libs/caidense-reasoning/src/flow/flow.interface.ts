@@ -1,7 +1,7 @@
-import { Variable } from './common.interface';
+import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
-export interface ExcutionNodeConfig {
+export interface ExecutionNodeConfig {
   // Depending on the 'type' property of IFlowNode,
   // this object will have different properties.
   // Example: { type: 'llm-call', model: string, promptTemplateId: string, ... }
@@ -14,7 +14,7 @@ export interface ExcutionNodeConfig {
  * This interface represents a node's data within a potential flow execution context.
  * execution context.
  */
-export interface ExcutionNode {
+export interface ExecutionNode {
   /**
    * The type of the node, determining its function and behavior in the flow.
    * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
@@ -34,7 +34,7 @@ export interface ExcutionNode {
    * Contains parameters needed for the node's execution logic.
    * @example { templateId: 'abc123', analysisType: 'criteria_evaluation' }
    */
-  config?: ExcutionNodeConfig;
+  config?: ExecutionNodeConfig;
 
   /**
    * Optional array defining the inputs specific to this node's logic.
@@ -62,4 +62,54 @@ export interface ExcutionNode {
    * The timestamp when the node was last updated.
    */
   updatedAt: Date;
+}
+
+/**
+ * Defines an edge or connection between two nodes in a reasoning flow.
+ */
+export interface ExecutionEdge {
+  /**
+   * The ID of the source node from which this edge originates.
+   */
+  source: string;
+
+  /**
+   * Optional: The specific handle/port ID on the source node where the edge starts.
+   * Useful when a node has multiple output connection points (handles).
+   * If omitted, typically connects to a default or the only output handle.
+   *
+   * Example: If a 'Conditional' node has output handles 'true' and 'false',
+   * an edge representing the 'true' path would have sourceHandle: 'true'.
+   */
+  sourceHandle?: string;
+
+  /**
+   * The ID of the target node where this edge ends.
+   */
+  target: string;
+
+  /**
+   * Optional: The specific handle/port ID on the target node where the edge ends.
+   * Useful when a node has multiple input connection points (handles).
+   * If omitted, typically connects to a default or the only input handle.
+   *
+   * Example: If an 'Action' node has an input handle 'in',
+   * an edge connecting to it would have targetHandle: 'in'.
+   */
+  targetHandle?: string;
+
+  /**
+   * Optional: The type of the edge (e.g., 'default', 'conditional-true', 'conditional-false', 'error').
+   * Can influence visualization or execution logic.
+   */
+  type?: string;
+
+   /**
+   * Optional: A label for the edge (e.g., condition expression for conditional edges).
+   */
+  label?: string;
+
+  // Add other edge-specific properties if needed (e.g., style, animated)
+  // style?: object;
+  // animated?: boolean;
 }

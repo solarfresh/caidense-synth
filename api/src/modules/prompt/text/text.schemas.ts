@@ -1,8 +1,9 @@
-import { DocumentStatus, Variable } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@/modules/base/base.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { PromptText } from './text.interface';
 import { VariableSchema } from '@/modules/base/base.schemas';
+import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
 @Schema({

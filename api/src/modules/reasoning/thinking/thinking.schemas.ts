@@ -1,9 +1,11 @@
-import { DocumentStatus, Variable } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@/modules/base/base.interface';
 import { VariableSchema } from '@/modules/base/base.schemas';
+import { Variable } from '@caidense/reasoning/common/common.interface';
+import { ExecutionEdge, ExecutionNode } from '@caidense/reasoning/flow/flow.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { ReasoningNodeConfig } from '../node/node.interface';
-import { ReasoningThinking, ThinkingEdge, ThinkingNode } from './thinking.interface';
+import { ReasoningThinking } from './thinking.interface';
 
 
 @Schema({
@@ -12,7 +14,7 @@ import { ReasoningThinking, ThinkingEdge, ThinkingNode } from './thinking.interf
     virtuals: true,
   },
 })
-export class ThinkingNodeClass implements ThinkingNode {
+export class ThinkingNodeClass implements ExecutionNode {
   /**
    * The type of the node, determining its function and behavior.
    * Maps to ThinkingNode.type.
@@ -73,7 +75,7 @@ export const ThinkingNodeSchema = SchemaFactory.createForClass(ThinkingNodeClass
     virtuals: true,
   },
 })
-export class ThinkingEdgeSchemaClass implements ThinkingEdge {
+export class ThinkingEdgeSchemaClass implements ExecutionEdge {
   @Prop({ type: String, required: true })
   source: string;
 
@@ -109,10 +111,10 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   description?: string;
 
   @Prop({ type: [ThinkingNodeSchema] })
-  nodes: ThinkingNode[];
+  nodes: ExecutionNode[];
 
   @Prop({ type: [ThinkingEdgeSchema] })
-  edges: ThinkingEdge[];
+  edges: ExecutionEdge[];
 
   @Prop({ type: [VariableSchema] })
   inputs: Variable[];

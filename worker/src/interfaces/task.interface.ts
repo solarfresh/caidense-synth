@@ -1,5 +1,5 @@
 import { ExecutionStatus } from './common.interface';
-import { ExcutionNode } from './node.interface';
+import { ExecutionNode } from '@caidense/reasoning/flow/flow.interface';
 import { NodeExecutionHistoryEntry } from './executor.interface'
 
 
@@ -99,7 +99,7 @@ export interface NodeExecutionTask {
    * The definition of the ExcutionNode instance to be executed.
    * This includes the node's type, configuration, script (if any), inputs, outputs.
    */
-  node: ExcutionNode;
+  node: ExecutionNode;
 
   /**
    * The current state of the flow execution context when this node

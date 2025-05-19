@@ -1,4 +1,4 @@
-import { Variable } from '@/modules/base/base.interface';
+import { Variable } from '@caidense/reasoning/common/common.interface';
 import { Document } from 'mongoose';
 
 
