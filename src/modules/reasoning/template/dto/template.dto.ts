@@ -28,7 +28,7 @@ export class ReasoningTemplateDto {
     required: false,
     example: '60c8d6c1f5a4c8a7f0b1c2d4',
   })
-  thinkingId?: string;
+  activatedReasoningThinkingId?: string;
 
   @ApiProperty({
     description: 'The publishing status of the reasoning template document.',
@@ -60,7 +60,7 @@ export class ReasoningTemplateDto {
     this._id = plainObject._id.toHexString();
     this.name = plainObject.name;
     this.description = plainObject.description;
-    this.thinkingId = plainObject.thinkingId ? plainObject.thinkingId.toHexString() : undefined;
+    this.activatedReasoningThinkingId = plainObject.activatedReasoningThinkingId ? plainObject.activatedReasoningThinkingId.toHexString() : undefined;
     this.status = plainObject.status;
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

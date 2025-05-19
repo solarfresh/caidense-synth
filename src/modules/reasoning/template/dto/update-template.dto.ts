@@ -30,7 +30,7 @@ export class UpdateReasoningTemplateDto {
   })
   @IsOptional()
   @IsString()
-  thinkingId?: string;
+  activatedReasoningThinkingId?: string;
 
   @ApiProperty({
       description: 'The status of the reasoning template, which is optional.',
