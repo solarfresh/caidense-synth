@@ -23,9 +23,8 @@ export class ReasoningThinkingEdgeDto {
   source: string;
 
   @ApiProperty({
-    description: 'The handle ID on the source node (Optional).',
-    required: false,
-    example: 'handle-sourceA-bottom',
+    description: 'The specific handle/port ID on the source node where the edge starts.',
+    example: 'true',
   })
   sourceHandle?: string;
 
@@ -36,9 +35,8 @@ export class ReasoningThinkingEdgeDto {
   target: string;
 
   @ApiProperty({
-    description: 'The handle ID on the target node (Optional).',
-    required: false,
-    example: 'handle-targetB-top',
+    description: 'The specific handle/port ID on the target node where the edge ends.',
+    example: 'false',
   })
   targetHandle?: string;
 
