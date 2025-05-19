@@ -1,4 +1,5 @@
-import { ExecutionStatus } from './execution-status.enum';
+import { ExecutionStatus } from './common.interface';
+import { ExcutionNode } from './node.interface';
 import { TaskExecutionContext } from './task.interface';
 
 
@@ -49,7 +50,7 @@ export interface NodeExecutor {
 /**
  * Represents a single entry in the execution history, tracking a node's run.
  */
-interface NodeExecutionHistoryEntry {
+export interface NodeExecutionHistoryEntry {
   /**
    * The unique identifier of the node within the flow definition that was executed.
    */

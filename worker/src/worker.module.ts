@@ -1,9 +1,8 @@
-import { Module, Injectable } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, Transport, ClientProxy } from '@nestjs/microservices';
-import { WorkerService } from './worker.service'; // Service to handle incoming messages and orchestrate execution
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { NodeExecutorRegistry } from './execution/executor.registry'; // Registry for node executors
-import { NodeExecutor } from '../interfaces/executor.interface';
+import { NodeExecutor } from './interfaces/executor.interface';
+import { WorkerService } from './worker.service'; // Service to handle incoming messages and orchestrate execution
 // Import specific node executor implementations provided by this worker
 // Add more executors here as you implement different node types
 // import { AiCallExecutor } from './flow-execution/executors/ai-call.executor';

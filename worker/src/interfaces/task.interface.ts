@@ -1,5 +1,6 @@
-import { ExecutionStatus } from './execution-status.enum';
-import { ExcutionNode, NodeExecutionHistoryEntry } from './node.interface';
+import { ExecutionStatus } from './common.interface';
+import { ExcutionNode } from './node.interface';
+import { NodeExecutionHistoryEntry } from './executor.interface'
 
 
 /**

@@ -1,8 +1,8 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { MessagePattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { NodeExecutorRegistry } from './execution/executor.registry'; // Registry for node executors
 import { ExecutorExecutionResult, TaskExecutionResult } from './interfaces/executor.interface'; // Interface for executor execution result
 import { NodeExecutionTask } from './interfaces/task.interface'; // Interface for task payload received from Orchestrator
-import { NodeExecutorRegistry } from './execution/executor.registry'; // Registry for node executors
 
 
 @Injectable()

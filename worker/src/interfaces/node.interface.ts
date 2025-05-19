@@ -1,4 +1,3 @@
-import { ExecutionStatus } from './execution-status.enum';
 import { Variable } from './common.interface';
 
 
