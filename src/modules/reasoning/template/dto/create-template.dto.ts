@@ -1,9 +1,11 @@
+import { DocumentStatus } from '@/modules/base/base.interface';
+import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsEnum,
   IsNotEmpty, // Decorator to validate that a string, array, object, etc., is not empty
   IsOptional,
-  IsString
+  IsString,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 
 export class CreateReasoningTemplateDto {
@@ -30,6 +32,16 @@ export class CreateReasoningTemplateDto {
   @IsOptional()
   @IsString()
   thinkingId?: string;
+
+  @ApiProperty({
+    description: 'The publishing status of the reasoning template, which is optional.',
+    required: false, // Explicitly mark as not required
+    enum: DocumentStatus, // Reference the enum
+    example: DocumentStatus.Draft, // Add an example
+  })
+  @IsOptional()
+  @IsEnum(DocumentStatus)
+  status?: DocumentStatus;
 
   // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,
