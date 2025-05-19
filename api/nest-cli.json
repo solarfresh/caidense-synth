@@ -10,7 +10,7 @@
   "generateOptions": {
       "spec": true
   },
-  "monorepo": false,
+  "monorepo": true,
   "root": ".",
   "projects": {
     "caidense-synth-api": {
