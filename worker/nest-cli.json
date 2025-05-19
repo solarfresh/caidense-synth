@@ -13,7 +13,7 @@
   "monorepo": false,
   "root": ".",
   "projects": {
-    "caidense-synth-api": {
+    "caidense-synth-worker": {
       "type": "application",
       "root": ".",
       "entryFile": "main",

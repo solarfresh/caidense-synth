@@ -8,8 +8,8 @@ services:
   caidense-synth-api:
     # Build the Docker image for the API service
     build:
-      context: . # The build context is the current directory where docker-compose.yml is located
-      dockerfile: api/Dockerfile # The name of the Dockerfile to use (assumes you have one)
+      context: ./api # The build context is the current directory where docker-compose.yml is located
+      dockerfile: Dockerfile # The name of the Dockerfile to use (assumes you have one)
     # Map ports from the host machine to the container
     # Format: "HOST_PORT:CONTAINER_PORT"
     ports:
@@ -25,6 +25,15 @@ services:
     restart: unless-stopped
     networks:
       - caidense_network
+
+  caidense-synth-worker:
+    build:
+      context: ./worker # The build context is the current directory where docker-compose.yml is located
+      dockerfile: Dockerfile # The name of the Dockerfile to use (assumes you have one)
+    env_file:
+      - ./docker-var.env # Specify the path to the environment file to load
+    depends_on:
+      - rabbitmq
 
   # Service for the MongoDB database
   mongo:
@@ -47,6 +56,15 @@ services:
       # This ensures your database data is not lost when the container is removed.
       - mongo_data:/data/db
     # Restart policy
+    restart: unless-stopped
+    networks:
+      - caidense_network
+
+  rabbitmq:
+    image: rabbitmq:3.13.7-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     restart: unless-stopped
     networks:
       - caidense_network

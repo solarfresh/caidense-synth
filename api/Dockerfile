@@ -3,7 +3,7 @@
 # Using a specific version (e.g., 20) is better than 'latest' for reproducibility.
 # For a smaller final image, you might consider using a '-alpine' variant
 # in a multi-stage build for the final runtime stage.
-FROM node:20 AS builder
+FROM node:lts-alpine3.20
 
 # Set the working directory inside the container.
 # All subsequent instructions will be executed in this directory (/app).
