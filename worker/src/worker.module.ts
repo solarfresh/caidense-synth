@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NodeExecutorRegistry } from './execution/executor.registry'; // Registry for node executors
 import { NodeExecutor } from './interfaces/executor.interface';
 import { WorkerService } from './worker.service'; // Service to handle incoming messages and orchestrate execution
+import { MessageModule } from './message/message.module';
 // Import specific node executor implementations provided by this worker
 // Add more executors here as you implement different node types
 // import { AiCallExecutor } from './flow-execution/executors/ai-call.executor';
@@ -17,6 +18,7 @@ import { WorkerService } from './worker.service'; // Service to handle incoming 
       isGlobal: true, // Make configuration available globally within this worker
       // envFilePath: ['./.env', './docker-var.env'], // Specify env files if needed
     }),
+    MessageModule
     // ... import other modules required by executors (e.g., HttpModule, MongooseModule if needed, but generally keep workers stateless)
   ],
   controllers: [
@@ -27,13 +29,13 @@ import { WorkerService } from './worker.service'; // Service to handle incoming 
   ],
   providers: [
     // The main service that consumes messages and orchestrates execution
-    WorkerService,
     // Provide all specific node executor implementations
     // AiCallExecutor,
     // SumCompareExecutor,
     // ... list other executors here
 
     // Provide the NodeExecutorRegistry and populate it with executors
+    WorkerService,
     {
       provide: NodeExecutorRegistry, // Provide the registry class
       useFactory: (...executors: NodeExecutor[]) => {

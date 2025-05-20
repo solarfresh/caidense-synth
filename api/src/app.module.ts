@@ -10,6 +10,7 @@ import { DatabaseModule } from './database/database.module';
 import { PromptModule } from '@/modules/prompt/prompt.module'
 import { ReasoningModule } from '@/modules/reasoning/reasoning.module';
 import { GenaiModule } from './modules/genai/genai.module';
+import { MessageModule } from './modules/message/message.module';
 
 
 @Module({
@@ -23,6 +24,7 @@ import { GenaiModule } from './modules/genai/genai.module';
     PromptModule,
     ReasoningModule,
     GenaiModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
