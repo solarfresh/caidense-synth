@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as amqp from 'amqplib';
 
 @Injectable()
-export class MessageConsumer implements OnModuleInit, OnModuleDestroy {
+export class ExecutionProducer implements OnModuleInit, OnModuleDestroy {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
   private readonly queueName = process.env.RABBITMQ_QUEUE_NAME || 'caidense_queue';
@@ -13,17 +13,19 @@ export class MessageConsumer implements OnModuleInit, OnModuleDestroy {
       this.connection = await amqp.connect(this.rabbitmqUrl);
       this.channel = await this.connection.createChannel();
       await this.channel.assertQueue(this.queueName, { durable: false });
-      console.log(`Consumer connected to RabbitMQ and listening on queue: ${this.queueName}`);
-
-      this.channel.consume(this.queueName, (msg) => {
-        if (msg !== null) {
-          console.log(`Received message: ${msg.content.toString()}`);
-          this.channel.ack(msg);
-        }
-      });
+      console.log(`Producer connected to RabbitMQ and ready to send to queue: ${this.queueName}`);
     } catch (error) {
-      console.error('Failed to connect to RabbitMQ or assert queue for consumer:', error);
+      console.error('Failed to connect to RabbitMQ or assert queue for producer:', error);
     }
+  }
+
+  async sendMessage(message: string) {
+    if (!this.channel) {
+      console.error('RabbitMQ channel is not initialized for producer.');
+      return;
+    }
+    this.channel.sendToQueue(this.queueName, Buffer.from(message));
+    console.log(`Sent message: "${message}" to queue: ${this.queueName}`);
   }
 
   async onModuleDestroy() {
@@ -33,6 +35,6 @@ export class MessageConsumer implements OnModuleInit, OnModuleDestroy {
     if (this.connection) {
       await this.connection.close();
     }
-    console.log('Consumer disconnected from RabbitMQ.');
+    console.log('Producer disconnected from RabbitMQ.');
   }
 }

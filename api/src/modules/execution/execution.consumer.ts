@@ -1,11 +1,14 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as amqp from 'amqplib';
+import { BaseRabbitMQService } from '@caidense/reasoning/message/message.service';
+import { ExecutionConfig } from '@caidense/reasoning/message/message.interface';
+
 
 @Injectable()
-export class MessageConsumer implements OnModuleInit, OnModuleDestroy {
+export class ExecutionConsumer implements OnModuleInit, OnModuleDestroy {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
-  private readonly queueName = process.env.RABBITMQ_QUEUE_NAME || 'caidense_queue';
+  private readonly queueName = process.env.RABBITMQ_WORKER_QUEUE_NAME || 'caidense_queue';
   private readonly rabbitmqUrl = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672';
 
   async onModuleInit() {
