@@ -2,6 +2,65 @@ import { ExecutionInstanceState, ExecutionInstanceStateStore } from '@/state/sta
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 
 
+/**
+ * A mock in-memory implementation of ExecutionInstanceStateStore for demonstration.
+ * In a real application, this would interact with a database.
+ */
+export class InMemoryExecutionInstanceStateStore implements ExecutionInstanceStateStore {
+    private store: Map<string, ExecutionInstanceState> = new Map();
+
+    async saveState(state: ExecutionInstanceState): Promise<void> {
+        // Deep clone the state to prevent external modifications affecting the stored state
+        const stateToStore: ExecutionInstanceState = {
+            ...state,
+            currentNodeIds: new Set(state.currentNodeIds),
+            completedIncomingEdgeIds: new Map(
+                Array.from(state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])
+            ),
+            variables: new Map(state.variables),
+            startTime: new Date(state.startTime),
+            endTime: state.endTime ? new Date(state.endTime) : undefined,
+        };
+        this.store.set(state.instanceId, stateToStore);
+        console.log(`[Store] State saved for instance: ${state.instanceId}`);
+    }
+
+    async getState(instanceId: string): Promise<ExecutionInstanceState | null> {
+        const state = this.store.get(instanceId);
+        if (state) {
+            // Return a deep clone to ensure the caller works with a mutable copy
+            return {
+                ...state,
+                currentNodeIds: new Set(state.currentNodeIds),
+                completedIncomingEdgeIds: new Map(
+                    Array.from(state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])
+                ),
+                variables: new Map(state.variables),
+                startTime: new Date(state.startTime),
+                endTime: state.endTime ? new Date(state.endTime) : undefined,
+            };
+        }
+        return null;
+    }
+
+    async deleteState(instanceId: string): Promise<void> {
+        this.store.delete(instanceId);
+        console.log(`[Store] State deleted for instance: ${instanceId}`);
+    }
+
+    async getInstancesByStatus(status: ExecutionInstanceState['status']): Promise<ExecutionInstanceState[]> {
+        const filtered = Array.from(this.store.values()).filter(s => s.status === status);
+        return filtered.map(s => ({
+            ...s,
+            currentNodeIds: new Set(s.currentNodeIds),
+            completedIncomingEdgeIds: new Map(Array.from(s.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])),
+            variables: new Map(s.variables),
+            startTime: new Date(s.startTime),
+            endTime: s.endTime ? new Date(s.endTime) : undefined,
+        }));
+    }
+}
+
 export class ExecutionInstanceStateTracker {
     private state: ExecutionInstanceState;
     private stateStore: ExecutionInstanceStateStore;

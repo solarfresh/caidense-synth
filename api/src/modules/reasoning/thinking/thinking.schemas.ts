@@ -23,11 +23,11 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   @Prop({ type: String })
   description?: string;
 
-  @Prop({ type: [ExecutionNodeSchema] })
-  nodes: ExecutionNode[];
+  @Prop({ type: Map, of: ExecutionNodeSchema })
+  nodes: Map<string, ExecutionNode>;
 
-  @Prop({ type: [ExecutionEdgeSchema] })
-  edges: ExecutionEdge[];
+  @Prop({ type: Map, of: ExecutionEdgeSchema })
+  edges: Map<string, ExecutionEdge>;
 
   @Prop({ type: [VariableSchema] })
   inputs: Variable[];

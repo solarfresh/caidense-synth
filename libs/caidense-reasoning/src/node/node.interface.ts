@@ -11,6 +11,10 @@ export enum ExecutionNodeType {
   TASK = 'task',
   GATEWAY = 'gateway',
   SCRIPT = 'script',
+  EXCLUSIVE_GATEWAY = 'exclusiveGateway',
+  INCLUSIVE_GATEWAY = 'inclusiveGateway',
+  PARALLEL_GATEWAY = 'parallelGateway',
+  EVENT_BASED_GATEWAY = 'eventBasedGateway',
 }
 
 export interface ExecutionNodeConfig {

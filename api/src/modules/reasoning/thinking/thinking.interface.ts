@@ -17,14 +17,14 @@ export interface ReasoningThinking extends Document {
   description?: string;
 
   /**
-   * An array of nodes (steps) within this flow definition.
+   * An map of nodes, where each key is a node ID and the value is an array of ExecutionNode objects.
    */
-  nodes: ExecutionNode[];
+  nodes: Map<string, ExecutionNode>;
 
   /**
-   * An array of edges connecting the nodes, defining the flow path.
+   * A map of edges, where each key is an edge ID and the value is an array of ExecutionEdge objects.
    */
-  edges: ExecutionEdge[];
+  edges: Map<string, ExecutionEdge>;
 
   /**
    * Definition of the expected input variables for this flow version.

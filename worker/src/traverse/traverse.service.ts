@@ -1,4 +1,5 @@
 import { ExecutionInstanceState } from '@/state/state.interface';
+import { ExecutionInstanceStateTracker } from '@/state/state.service';
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
@@ -6,11 +7,11 @@ import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 
 export class GraphTraversalEngine {
     private graph: ExecutionGraph;
-    private state: ExecutionInstanceState;
+    private stateTracker: ExecutionInstanceStateTracker;
 
-    constructor(graph: ExecutionGraph, initialState: ExecutionInstanceState) {
+    constructor(graph: ExecutionGraph, stateTracker : ExecutionInstanceStateTracker) {
         this.graph = graph;
-        this.state = initialState;
+        this.stateTracker  = stateTracker ;
     }
 
     /**
@@ -27,9 +28,10 @@ export class GraphTraversalEngine {
         }
 
         // Remove the completed node from active nodes
-        this.state.currentNodeIds.delete(completedNodeId);
+        this.stateTracker.completeNode(completedNodeId);
 
         const nodesToActivate: string[] = [];
+        // const currentVariables = this.stateTracker.getVariables();
 
         // Iterate over all outgoing sequence edges from the completed node
         for (const edgeId of completedNode.outgoing) {
@@ -67,10 +69,11 @@ export class GraphTraversalEngine {
 
         // If no new nodes were activated, and the process instance has no active nodes, it might be completed.
         // This is a simplified check, full completion check is more complex.
-        if (nodesToActivate.length === 0 && this.state.currentNodeIds.size === 0) {
+        const currentNodeIds = this.stateTracker.getCurrentState().currentNodeIds
+        if (nodesToActivate.length === 0 && currentNodeIds.size === 0) {
             // Check if all active paths have reached an EndEvent or are otherwise complete.
             // A more robust check for process completion would be needed here.
-            this.state.status = ExecutionStatus.COMPLETED;
+            this.stateTracker.setStatus(ExecutionStatus.COMPLETED);
         }
 
         return nodesToActivate;
@@ -81,7 +84,7 @@ export class GraphTraversalEngine {
      * @returns The ExecutionInstanceState object.
      */
     public getCurrentState(): ExecutionInstanceState {
-        return this.state;
+        return this.stateTracker.getCurrentState();
     }
 
     /**
@@ -90,7 +93,7 @@ export class GraphTraversalEngine {
      * @param nodesToActivate Array to collect activated nodes.
      */
     private activateNode(nodeId: string, nodesToActivate: string[]): void {
-        this.state.currentNodeIds.add(nodeId);
+        this.stateTracker.activateNode(nodeId);
         nodesToActivate.push(nodeId);
         console.log(`Node activated: ${nodeId}`);
     }
