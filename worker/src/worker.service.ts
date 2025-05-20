@@ -15,7 +15,7 @@ export class WorkerService {
   constructor(
     // Inject the NodeExecutorRegistry which was configured in the WorkerModule
     private readonly executorRegistry: NodeExecutorRegistry,
-    private readonly stateStore: InMemoryExecutionInstanceStateStore, // Inject the state store for execution instance state management
+    // private readonly stateStore: InMemoryExecutionInstanceStateStore, // Inject the state store for execution instance state management
   ) {}
 
   async runExecutionGraph(task: WorkerExecutionTask): Promise<ExecutionInstanceStateTracker> {
@@ -26,11 +26,12 @@ export class WorkerService {
         throw new Error("Process graph must contain a StartEvent node.");
     }
 
+    const stateStore = new InMemoryExecutionInstanceStateStore();
     const tracker = await ExecutionInstanceStateTracker.createNewInstance(
       correlationId,
       'initialNodeId',
       new Map([["orderAmount", 1200]]),
-      this.stateStore
+      stateStore
     );
     const engine = new GraphTraversalEngine(graph, tracker);
 

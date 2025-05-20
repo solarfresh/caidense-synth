@@ -15,7 +15,7 @@ export class ExecutionNodeClass implements ExecutionNode {
   /**
    * The type of the node, determining its function and behavior.
    */
-  @Prop({ type: ExecutionNodeType, required: true })
+  @Prop({ type: String, required: true })
   type: ExecutionNodeType;
 
   /**
@@ -35,7 +35,7 @@ export class ExecutionNodeClass implements ExecutionNode {
   /**
    * Optional array of IDs representing the incoming sequence edges to this node.
   */
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: [Types.ObjectId] })
   incoming?: string[];
 
   /**
@@ -56,7 +56,7 @@ export class ExecutionNodeClass implements ExecutionNode {
   /**
    * Optional array of IDs representing the outgoing sequence edges from this node.
    */
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: [Types.ObjectId] })
   outgoing?: string[];
 
   /**

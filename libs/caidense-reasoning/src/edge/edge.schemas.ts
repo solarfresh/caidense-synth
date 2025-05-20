@@ -10,13 +10,13 @@ import { Types } from 'mongoose';
   },
 })
 export class ExecutionEdgeSchemaClass implements ExecutionEdge {
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: String, required: true })
   source: string;
 
   @Prop({ type: String })
   sourceHandle?: string;
 
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: String, required: true })
   target: string;
 
   @Prop({ type: String })

@@ -8,7 +8,7 @@ export interface ExecutionEdge {
   /**
    * The ID of the source node from which this edge originates.
    */
-  source: Types.ObjectId;
+  source: string;
 
   /**
    * Optional: The specific handle/port ID on the source node where the edge starts.
@@ -23,7 +23,7 @@ export interface ExecutionEdge {
   /**
    * The ID of the target node where this edge ends.
    */
-  target: Types.ObjectId;
+  target: string;
 
   /**
    * Optional: The specific handle/port ID on the target node where the edge ends.

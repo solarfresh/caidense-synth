@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ReasoningNode } from '../node.interface';
-import { VariableDto } from '@caidense/reasoning/common/dto/variable.dto';
+import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
 
 /**
  * Defines the data structure for representing a Reasoning Node document in API responses.
