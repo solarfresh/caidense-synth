@@ -1,7 +1,7 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
 import { VariableSchema } from '@/modules/base/base.schemas';
 import { Variable } from '@caidense/reasoning/common/common.interface';
-import { ExecutionEdge, ExecutionNode } from '@caidense/reasoning/flow/flow.interface';
+import { ExecutionEdge, ExecutionNode } from '@caidense/reasoning/graph/graph.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { ReasoningNodeConfig } from '../node/node.interface';

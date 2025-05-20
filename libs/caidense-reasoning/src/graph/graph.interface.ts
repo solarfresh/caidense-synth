@@ -1,4 +1,5 @@
 import { Variable } from '@caidense/reasoning/common/common.interface';
+import { ExecutionNodeType } from '@caidense/reasoning/execution/execution.interface';
 
 
 export interface ExecutionNodeConfig {
@@ -17,11 +18,11 @@ export interface ExecutionNodeConfig {
 export interface ExecutionNode {
   /**
    * The type of the node, determining its function and behavior in the flow.
-   * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
+   * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'llmCall')
    * or a custom type representing specific logic (e.g., 'promptNode', 'decisionNode').
-   * @example 'aiCall'
+   * @example 'llmCall'
    */
-  type: string;
+  type: ExecutionNodeType;
 
   /**
    * An optional label or name displayed on the node in a visual representation.
@@ -37,6 +38,13 @@ export interface ExecutionNode {
   config?: ExecutionNodeConfig;
 
   /**
+   * Incoming array of IDs representing the incoming sequence edges to this node.
+   * These edges determine how the execution reaches this node.
+   * @example ['edge1', 'edge2']
+   */
+  incoming?: string[];
+
+  /**
    * Optional array defining the inputs specific to this node's logic.
    * These define what data the node expects from the execution context.
    */
@@ -46,6 +54,13 @@ export interface ExecutionNode {
    * Optional script code to be executed by this node type.
    */
   script?: string
+
+  /**
+   * Optional array of IDs representing the outgoing sequence edges from this node.
+   * These edges determine the next steps in the execution process.
+   * @example ['edge1', 'edge2']
+   */
+  outgoing?: string[];
 
   /**
    * Optional array defining the outputs specific to this node's logic.
@@ -112,4 +127,10 @@ export interface ExecutionEdge {
   // Add other edge-specific properties if needed (e.g., style, animated)
   // style?: object;
   // animated?: boolean;
+}
+
+// Represents the parsed process definition graph
+export interface ExecutionGraph {
+    nodes: Map<string, ExecutionNode>; // Map node ID to ExecutionNode object
+    edges: Map<string, ExecutionEdge>; // Map flow ID to ExecutionEdge object
 }

@@ -1,5 +1,5 @@
-import { ExecutionStatus } from './common.interface';
-import { ExecutionNode } from '@caidense/reasoning/flow/flow.interface';
+import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
+import { ExecutionNode } from '@caidense/reasoning/graph/graph.interface';
 import { TaskExecutionContext } from './task.interface';
 
 
