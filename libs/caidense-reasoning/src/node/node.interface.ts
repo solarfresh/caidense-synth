@@ -1,6 +1,22 @@
 import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
+export enum ExecutionNodeType {
+  SEQUENCE = 'sequence',
+  PARALLEL = 'parallel',
+  EXCLUSIVE = 'exclusive',
+  INCLUSIVE = 'inclusive',
+  START_EVENT = 'startEvent',
+  END_EVENT = 'endEvent',
+  TASK = 'task',
+  GATEWAY = 'gateway',
+  SCRIPT = 'script',
+  EXCLUSIVE_GATEWAY = 'exclusiveGateway',
+  INCLUSIVE_GATEWAY = 'inclusiveGateway',
+  PARALLEL_GATEWAY = 'parallelGateway',
+  EVENT_BASED_GATEWAY = 'eventBasedGateway',
+}
+
 export interface ExecutionNodeConfig {
   // Depending on the 'type' property of IFlowNode,
   // this object will have different properties.
@@ -17,11 +33,11 @@ export interface ExecutionNodeConfig {
 export interface ExecutionNode {
   /**
    * The type of the node, determining its function and behavior in the flow.
-   * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
+   * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'llmCall')
    * or a custom type representing specific logic (e.g., 'promptNode', 'decisionNode').
-   * @example 'aiCall'
+   * @example 'llmCall'
    */
-  type: string;
+  type: ExecutionNodeType;
 
   /**
    * An optional label or name displayed on the node in a visual representation.
@@ -37,6 +53,13 @@ export interface ExecutionNode {
   config?: ExecutionNodeConfig;
 
   /**
+   * Incoming array of IDs representing the incoming sequence edges to this node.
+   * These edges determine how the execution reaches this node.
+   * @example ['edge1', 'edge2']
+   */
+  incoming?: string[];
+
+  /**
    * Optional array defining the inputs specific to this node's logic.
    * These define what data the node expects from the execution context.
    */
@@ -46,6 +69,13 @@ export interface ExecutionNode {
    * Optional script code to be executed by this node type.
    */
   script?: string
+
+  /**
+   * Optional array of IDs representing the outgoing sequence edges from this node.
+   * These edges determine the next steps in the execution process.
+   * @example ['edge1', 'edge2']
+   */
+  outgoing?: string[];
 
   /**
    * Optional array defining the outputs specific to this node's logic.
@@ -62,54 +92,4 @@ export interface ExecutionNode {
    * The timestamp when the node was last updated.
    */
   updatedAt: Date;
-}
-
-/**
- * Defines an edge or connection between two nodes in a reasoning flow.
- */
-export interface ExecutionEdge {
-  /**
-   * The ID of the source node from which this edge originates.
-   */
-  source: string;
-
-  /**
-   * Optional: The specific handle/port ID on the source node where the edge starts.
-   * Useful when a node has multiple output connection points (handles).
-   * If omitted, typically connects to a default or the only output handle.
-   *
-   * Example: If a 'Conditional' node has output handles 'true' and 'false',
-   * an edge representing the 'true' path would have sourceHandle: 'true'.
-   */
-  sourceHandle?: string;
-
-  /**
-   * The ID of the target node where this edge ends.
-   */
-  target: string;
-
-  /**
-   * Optional: The specific handle/port ID on the target node where the edge ends.
-   * Useful when a node has multiple input connection points (handles).
-   * If omitted, typically connects to a default or the only input handle.
-   *
-   * Example: If an 'Action' node has an input handle 'in',
-   * an edge connecting to it would have targetHandle: 'in'.
-   */
-  targetHandle?: string;
-
-  /**
-   * Optional: The type of the edge (e.g., 'default', 'conditional-true', 'conditional-false', 'error').
-   * Can influence visualization or execution logic.
-   */
-  type?: string;
-
-   /**
-   * Optional: A label for the edge (e.g., condition expression for conditional edges).
-   */
-  label?: string;
-
-  // Add other edge-specific properties if needed (e.g., style, animated)
-  // style?: object;
-  // animated?: boolean;
 }

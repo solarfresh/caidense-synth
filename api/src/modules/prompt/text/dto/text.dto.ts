@@ -1,6 +1,6 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
 import { PromptTextDocument } from '../text.schemas'; // Assuming the corresponding Mongoose schema file is 'text.schemas.ts'
-import { VariableDto } from '@/modules/base/dto/variable.dto'; // Assuming this DTO exists and is correctly defined
+import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 
 /**

@@ -1,0 +1,180 @@
+import { ExecutionInstanceState, ExecutionInstanceStateStore } from '@/state/state.interface';
+import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
+
+
+/**
+ * A mock in-memory implementation of ExecutionInstanceStateStore for demonstration.
+ * In a real application, this would interact with a database.
+ */
+export class InMemoryExecutionInstanceStateStore implements ExecutionInstanceStateStore {
+    private store: Map<string, ExecutionInstanceState> = new Map();
+
+    async saveState(state: ExecutionInstanceState): Promise<void> {
+        // Deep clone the state to prevent external modifications affecting the stored state
+        const stateToStore: ExecutionInstanceState = {
+            ...state,
+            currentNodeIds: new Set(state.currentNodeIds),
+            completedIncomingEdgeIds: new Map(
+                Array.from(state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])
+            ),
+            variables: new Map(state.variables),
+            startTime: new Date(state.startTime),
+            endTime: state.endTime ? new Date(state.endTime) : undefined,
+        };
+        this.store.set(state.instanceId, stateToStore);
+        console.log(`[Store] State saved for instance: ${state.instanceId}`);
+    }
+
+    async getState(instanceId: string): Promise<ExecutionInstanceState | null> {
+        const state = this.store.get(instanceId);
+        if (state) {
+            // Return a deep clone to ensure the caller works with a mutable copy
+            return {
+                ...state,
+                currentNodeIds: new Set(state.currentNodeIds),
+                completedIncomingEdgeIds: new Map(
+                    Array.from(state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])
+                ),
+                variables: new Map(state.variables),
+                startTime: new Date(state.startTime),
+                endTime: state.endTime ? new Date(state.endTime) : undefined,
+            };
+        }
+        return null;
+    }
+
+    async deleteState(instanceId: string): Promise<void> {
+        this.store.delete(instanceId);
+        console.log(`[Store] State deleted for instance: ${instanceId}`);
+    }
+
+    async getInstancesByStatus(status: ExecutionInstanceState['status']): Promise<ExecutionInstanceState[]> {
+        const filtered = Array.from(this.store.values()).filter(s => s.status === status);
+        return filtered.map(s => ({
+            ...s,
+            currentNodeIds: new Set(s.currentNodeIds),
+            completedIncomingEdgeIds: new Map(Array.from(s.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])),
+            variables: new Map(s.variables),
+            startTime: new Date(s.startTime),
+            endTime: s.endTime ? new Date(s.endTime) : undefined,
+        }));
+    }
+}
+
+export class ExecutionInstanceStateTracker {
+    private state: ExecutionInstanceState;
+    private stateStore: ExecutionInstanceStateStore;
+
+    constructor(initialState: ExecutionInstanceState, stateStore: ExecutionInstanceStateStore) {
+        this.state = initialState;
+        this.stateStore = stateStore;
+        // Ensure sets and maps are correctly initialized even if loaded from plain object
+        this.state.currentNodeIds = new Set(initialState.currentNodeIds);
+        this.state.completedIncomingEdgeIds = new Map(initialState.completedIncomingEdgeIds.entries());
+        for (const [gatewayId, edgeSet] of this.state.completedIncomingEdgeIds.entries()) {
+            if (!(edgeSet instanceof Set)) {
+                this.state.completedIncomingEdgeIds.set(gatewayId, new Set(Array.from(edgeSet)));
+            }
+        }
+        this.state.variables = new Map(initialState.variables);
+    }
+
+    public static async createNewInstance(
+        instanceId: string,
+        initialNodeId: string,
+        initialVariables: Map<string, any>,
+        stateStore: ExecutionInstanceStateStore
+    ): Promise<ExecutionInstanceStateTracker> {
+        const now = new Date();
+        const newState: ExecutionInstanceState = {
+            instanceId,
+            currentNodeIds: new Set([initialNodeId]),
+            completedIncomingEdgeIds: new Map(),
+            variables: new Map(initialVariables),
+            status: ExecutionStatus.RUNNING,
+            startTime: now,
+            endTime: undefined,
+            error: undefined,
+          };
+        const tracker = new ExecutionInstanceStateTracker(newState, stateStore);
+        await tracker.persistState();
+        return tracker;
+    }
+
+    public static async loadInstance(instanceId: string, stateStore: ExecutionInstanceStateStore): Promise<ExecutionInstanceStateTracker | null> {
+        const state = await stateStore.getState(instanceId);
+        if (state) {
+            return new ExecutionInstanceStateTracker(state, stateStore);
+        }
+        return null;
+    }
+
+    public getCurrentState(): Readonly<ExecutionInstanceState> {
+        return {
+            ...this.state,
+            currentNodeIds: new Set(this.state.currentNodeIds),
+            completedIncomingEdgeIds: new Map(
+                Array.from(this.state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, new Set(value)])
+            ),
+            variables: new Map(this.state.variables),
+        };
+    }
+
+    public activateNode(nodeId: string): void {
+        this.state.currentNodeIds.add(nodeId);
+    }
+
+    public completeNode(nodeId: string): void {
+        this.state.currentNodeIds.delete(nodeId);
+    }
+
+    public setVariable(key: string, value: any): void {
+        this.state.variables.set(key, value);
+    }
+
+    public getVariable(key: string): any {
+        return this.state.variables.get(key);
+    }
+
+    public getVariables(): Map<string, any> {
+        return new Map(this.state.variables);
+    }
+
+    public recordCompletedIncomingFlow(gatewayId: string, incomingFlowId: string): void {
+        if (!this.state.completedIncomingEdgeIds.has(gatewayId)) {
+            this.state.completedIncomingEdgeIds.set(gatewayId, new Set<string>());
+        }
+        this.state.completedIncomingEdgeIds.get(gatewayId)!.add(incomingFlowId);
+    }
+
+    public hasCompletedIncomingFlow(gatewayId: string, incomingFlowId: string): boolean {
+        return this.state.completedIncomingEdgeIds.has(gatewayId) &&
+               this.state.completedIncomingEdgeIds.get(gatewayId)!.has(incomingFlowId);
+    }
+
+    public clearCompletedIncomingFlows(gatewayId: string): void {
+        this.state.completedIncomingEdgeIds.delete(gatewayId);
+    }
+
+    public setStatus(status: ExecutionStatus, errorMessage?: string): void {
+        this.state.status = status;
+        this.state.error = errorMessage;
+        if (status === ExecutionStatus.COMPLETED || status === ExecutionStatus.TERMINATED || status === ExecutionStatus.FAILED) {
+            this.state.endTime = new Date();
+        }
+    }
+
+    public async persistState(): Promise<void> {
+        const stateForStorage = {
+            ...this.state,
+            currentNodeIds: Array.from(this.state.currentNodeIds),
+            completedIncomingEdgeIds: Array.from(this.state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, Array.from(value)]),
+            variables: Array.from(this.state.variables.entries()),
+        };
+        await this.stateStore.saveState(stateForStorage as unknown as ExecutionInstanceState);
+    }
+
+    public getInstanceId(): string {
+        return this.state.instanceId;
+    }
+}

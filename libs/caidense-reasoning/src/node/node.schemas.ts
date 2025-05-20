@@ -1,31 +1,25 @@
 import { Variable } from '@caidense/reasoning/common/common.interface';
 import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
+import { ExecutionNode, ExecutionNodeConfig, ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
-import { ReasoningNode, ReasoningNodeConfig } from './node.interface';
+import { Schema as MongooseSchema, Types } from 'mongoose';
 
 
-/**
- * Represents a node within a reasoning thinking flow as stored in the database.
- * Corresponds to the ReasoningNode interface.
- */
 @Schema({
   timestamps: true,
   toJSON: {
     virtuals: true,
   },
 })
-export class ReasoningNodeDocument extends Document implements ReasoningNode {
+export class ExecutionNodeClass implements ExecutionNode {
   /**
    * The type of the node, determining its function and behavior.
-   * Maps to ReasoningNode.type.
    */
   @Prop({ type: String, required: true })
-  type: string;
+  type: ExecutionNodeType;
 
   /**
    * An optional label displayed on the node.
-   * Maps to ReasoningNode.label.
    */
   @Prop({ type: String })
   label?: string;
@@ -33,10 +27,24 @@ export class ReasoningNodeDocument extends Document implements ReasoningNode {
   /**
    * Optional configuration object specific to the node type.
    * Stored as a Mixed type to allow flexible structures.
-   * Maps to ReasoningNode.config.
+   * Maps to ThinkingNode.config.
    */
   @Prop({ type: MongooseSchema.Types.Mixed })
-  config?: ReasoningNodeConfig;
+  config?: ExecutionNodeConfig;
+
+  /**
+   * Optional array of IDs representing the incoming sequence edges to this node.
+  */
+  @Prop({ type: [Types.ObjectId] })
+  incoming?: string[];
+
+  /**
+   * Optional array defining the inputs specific to this node's logic.
+   * Stored as an array of embedded Variable documents.
+   * Maps to inputs.
+   */
+  @Prop({ type: [VariableSchema] })
+  inputs?: Variable[];
 
   /**
    * Optional script code to be executed by this node type.
@@ -46,12 +54,10 @@ export class ReasoningNodeDocument extends Document implements ReasoningNode {
   script?: string;
 
   /**
-   * Optional array defining the inputs specific to this node's logic.
-   * Stored as an array of embedded Variable documents.
-   * Maps to inputs.
+   * Optional array of IDs representing the outgoing sequence edges from this node.
    */
-  @Prop({ type: [VariableSchema] })
-  inputs?: Variable[];
+  @Prop({ type: [Types.ObjectId] })
+  outgoing?: string[];
 
   /**
    * Optional array defining the outputs specific to this node's logic.
@@ -68,4 +74,4 @@ export class ReasoningNodeDocument extends Document implements ReasoningNode {
   updatedAt: Date;
 }
 
-export const ReasoningNodeSchema = SchemaFactory.createForClass(ReasoningNodeDocument);
+export const ExecutionNodeSchema = SchemaFactory.createForClass(ExecutionNodeClass);

@@ -1,7 +1,9 @@
 import { BaseController } from '@/modules/base/base.controller';
 import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
-import { VariableDto } from '@/modules/base/dto/variable.dto';
+import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
+import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
+import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiBody,
@@ -11,10 +13,8 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { CreateReasoningNodeDto } from '../node/dto/create-node.dto';
-import { ReasoningNodeDto } from '../node/dto/node.dto';
 import { UpdateReasoningNodeDto } from '../node/dto/update-node.dto';
 import { CreateReasoningThinkingDto, CreateReasoningThinkingEdgeDto } from './dto/create-thinking.dto';
-import { ReasoningThinkingEdgeDto } from './dto/thinking.dto';
 import { UpdateReasoningThinkingDto, UpdateReasoningThinkingEdgeDto } from './dto/update-thinking.dto';
 import { ReasoningThinkingDocument } from './thinking.schemas';
 import { ReasoningThinkingService } from './thinking.service';
@@ -134,7 +134,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 201,
     description: 'The node has been successfully added.',
-    type: ReasoningNodeDto,
+    type: ExecutionNodeDto,
   })
   @ApiResponse({
     status: 404,
@@ -144,9 +144,9 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   async createNode(
     @Param('id') id: string,
     @Body(ValidationPipe) createReasoningNodeDto: CreateReasoningNodeDto,
-  ): Promise<ReasoningNodeDto> {
+  ): Promise<ExecutionNodeDto> {
         const node = await this.reasoningThinkingService.createNestedDocument(id, 'nodes', createReasoningNodeDto);
-        return new ReasoningNodeDto(node);
+        return new ExecutionNodeDto(node);
   }
 
   @Get(':id/nodes')
@@ -159,15 +159,15 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved nodes.',
-    type: [ReasoningNodeDto],
+    type: [ExecutionNodeDto],
   })
   @ApiResponse({
     status: 404,
     description: 'Not Found - Thinking flow document not found.',
   })
-  async findNodes(@Param('id') id: string): Promise<ReasoningNodeDto[]> {
+  async findNodes(@Param('id') id: string): Promise<ExecutionNodeDto[]> {
     const nodes = await this.reasoningThinkingService.findNestedDocuments(id, 'nodes');
-    return nodes.map((node) => new ReasoningNodeDto(node));
+    return nodes.map((node) => new ExecutionNodeDto(node));
   }
 
   @Get(':id/nodes/:nodeId')
@@ -181,7 +181,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved the node.',
-    type: ReasoningNodeDto,
+    type: ExecutionNodeDto,
   })
   @ApiResponse({
     status: 404,
@@ -190,9 +190,9 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   async findNodeById(
     @Param('id') id: string,
     @Param('nodeId') nodeId: string,
-  ): Promise<ReasoningNodeDto> {
+  ): Promise<ExecutionNodeDto> {
     const node = await this.reasoningThinkingService.findNestedDocumentById(id, 'nodes', nodeId);
-    return new ReasoningNodeDto(node);
+    return new ExecutionNodeDto(node);
   }
 
   @Put(':id/nodes/:nodeId')
@@ -207,7 +207,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 200,
     description: 'The node has been successfully updated.',
-    type: ReasoningNodeDto,
+    type: ExecutionNodeDto,
   })
   @ApiResponse({
     status: 404,
@@ -219,9 +219,9 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     @Param('id') id: string,
     @Param('nodeId') nodeId: string,
     @Body() updateReasoningNodeDto: UpdateReasoningNodeDto,
-  ): Promise<ReasoningNodeDto> {
+  ): Promise<ExecutionNodeDto> {
     const node = await this.reasoningThinkingService.updateNestedDocumentById(id, 'nodes', nodeId, updateReasoningNodeDto);
-    return new ReasoningNodeDto(node);
+    return new ExecutionNodeDto(node);
   }
 
   @Delete(':id/nodes/:nodeId')
@@ -259,7 +259,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 201,
     description: 'The edge has been successfully added.',
-    type: ReasoningThinkingEdgeDto,
+    type: ExecutionEdgeDto,
   })
   @ApiResponse({
     status: 404,
@@ -270,13 +270,13 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   async createEdge(
     @Param('id') id: string,
     @Body() createReasoningThinkingEdgeDto: CreateReasoningThinkingEdgeDto,
-  ): Promise<ReasoningThinkingEdgeDto> {
+  ): Promise<ExecutionEdgeDto> {
     const newEdge = await this.reasoningThinkingService.createNestedDocument(
       id,
       'edges',
       createReasoningThinkingEdgeDto,
     );
-    return new ReasoningThinkingEdgeDto(newEdge);
+    return new ExecutionEdgeDto(newEdge);
   }
 
   @Get(':id/edges')
@@ -289,18 +289,18 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved edges.',
-    type: [ReasoningThinkingEdgeDto],
+    type: [ExecutionEdgeDto],
   })
   @ApiResponse({
     status: 404,
     description: 'Not Found - Thinking flow document not found.',
   })
-  async findEdges(@Param('id') id: string): Promise<ReasoningThinkingEdgeDto[]> {
+  async findEdges(@Param('id') id: string): Promise<ExecutionEdgeDto[]> {
     const edges = await this.reasoningThinkingService.findNestedDocuments(
       id,
       'edges',
     );
-    return edges.map((edge) => new ReasoningThinkingEdgeDto(edge));
+    return edges.map((edge) => new ExecutionEdgeDto(edge));
   }
 
   @Get(':id/edges/:edgeId')
@@ -314,7 +314,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved the edge.',
-    type: ReasoningThinkingEdgeDto,
+    type: ExecutionEdgeDto,
   })
   @ApiResponse({
     status: 404,
@@ -323,13 +323,13 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   async findEdgeById(
     @Param('id') id: string,
     @Param('edgeId') edgeId: string,
-  ): Promise<ReasoningThinkingEdgeDto> {
+  ): Promise<ExecutionEdgeDto> {
     const edge = await this.reasoningThinkingService.findNestedDocumentById(
       id,
       'edges',
       edgeId,
     );
-    return new ReasoningThinkingEdgeDto(edge);
+    return new ExecutionEdgeDto(edge);
   }
 
   @Put(':id/edges/:edgeId')
@@ -344,7 +344,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({
     status: 200,
     description: 'The edge has been successfully updated.',
-    type: ReasoningThinkingEdgeDto,
+    type: ExecutionEdgeDto,
   })
   @ApiResponse({
     status: 404,
@@ -356,14 +356,14 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     @Param('id') id: string,
     @Param('edgeId') edgeId: string,
     @Body() updateReasoningThinkingEdgeDto: UpdateReasoningThinkingEdgeDto,
-  ): Promise<ReasoningThinkingEdgeDto> {
+  ): Promise<ExecutionEdgeDto> {
     const updatedEdge = await this.reasoningThinkingService.updateNestedDocumentById(
       id,
       'edges',
       edgeId,
       updateReasoningThinkingEdgeDto,
     );
-    return new ReasoningThinkingEdgeDto(updatedEdge);
+    return new ExecutionEdgeDto(updatedEdge);
   }
 
   @Delete(':id/edges/:edgeId')

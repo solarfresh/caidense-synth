@@ -1,5 +1,5 @@
-import { ExecutionStatus } from './common.interface';
-import { ExecutionNode } from '@caidense/reasoning/flow/flow.interface';
+import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
+import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
 import { TaskExecutionContext } from './task.interface';
 
 
@@ -101,7 +101,8 @@ export interface NodeExecutionHistoryEntry {
  * This payload contains the outcome of a single node's execution, along with
  * communication-specific details like the correlation ID.
  */
-export interface TaskExecutionResult extends ExecutorExecutionResult {
+export interface TaskExecutionResult {
+// export interface TaskExecutionResult extends ExecutorExecutionResult {
   /**
    * The unique identifier correlating this result back to the original
    * execution task request sent by the orchestrator.
