@@ -1,4 +1,4 @@
-import { ExecutionEdge } from '@caidense/reasoning/graph/graph.interface';
+import { ExecutionEdge } from '@caidense/reasoning/edge/edge.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 

@@ -1,10 +1,10 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
 import { Variable } from '@caidense/reasoning/common/common.interface';
 import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
-import { ExecutionEdge } from '@caidense/reasoning/graph/graph.interface';
-import { ExecutionEdgeSchema } from '@caidense/reasoning/graph/graph.schemas';
-import { ExecutionNodeSchema } from '@caidense/reasoning/node/node.schemas';
+import { ExecutionEdge } from '@caidense/reasoning/edge/edge.interface';
+import { ExecutionEdgeSchema } from '@caidense/reasoning/edge/edge.schemas';
 import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
+import { ExecutionNodeSchema } from '@caidense/reasoning/node/node.schemas';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ReasoningThinking } from './thinking.interface';
