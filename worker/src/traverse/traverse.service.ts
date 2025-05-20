@@ -1,6 +1,7 @@
 import { ExecutionInstanceState } from '@/execution/executor.interface';
-import { ExecutionNodeType, ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
+import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
+import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 
 
 export class GraphTraversalEngine {
@@ -50,7 +51,7 @@ export class GraphTraversalEngine {
                 case ExecutionNodeType.START_EVENT: // Usually only one starting point
                 case ExecutionNodeType.END_EVENT:
                     // For simple nodes, activate them directly
-                    this.activateNode(targetNode.id, nodesToActivate);
+                    this.activateNode(targetNode._id, nodesToActivate);
                     break;
 
                 // Add more cases as needed

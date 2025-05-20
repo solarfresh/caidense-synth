@@ -1,5 +1,5 @@
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
-import { ExecutionNode } from '@caidense/reasoning/graph/graph.interface';
+import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
 import { NodeExecutionHistoryEntry } from './executor.interface';
 
 

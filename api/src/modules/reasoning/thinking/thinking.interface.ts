@@ -1,6 +1,7 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
 import { Variable } from '@caidense/reasoning/common/common.interface';
-import { ExecutionEdge, ExecutionNode } from '@caidense/reasoning/graph/graph.interface';
+import { ExecutionEdge } from '@caidense/reasoning/graph/graph.interface';
+import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
 import { Document, Types } from 'mongoose';
 
 

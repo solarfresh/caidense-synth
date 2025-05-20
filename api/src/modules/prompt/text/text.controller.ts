@@ -1,5 +1,5 @@
 import { BaseController } from '@/modules/base/base.controller';
-import { VariableDto } from '@/modules/base/dto/variable.dto'; // Assuming variable.dto.ts exists
+import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { CreatePromptTextDto } from './dto/create-text.dto'; // Assuming create-text.dto.ts exists
 import { UpdatePromptTextDto } from './dto/update-text.dto'; // Assuming update-text.dto.ts exists
