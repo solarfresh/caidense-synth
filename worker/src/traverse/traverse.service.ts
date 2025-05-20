@@ -1,4 +1,4 @@
-import { ExecutionInstanceState } from '@/execution/executor.interface';
+import { ExecutionInstanceState } from '@/state/state.interface';
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';

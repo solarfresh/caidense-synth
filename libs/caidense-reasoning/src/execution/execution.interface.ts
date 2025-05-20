@@ -4,4 +4,5 @@ export enum ExecutionStatus {
   FAILED = 'failed',
   CANCELLED = 'cancelled',
   SKIPPED = 'skipped',
+  TERMINATED = 'terminated',
 }
