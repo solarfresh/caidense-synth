@@ -1,6 +1,6 @@
 import { DocumentStatus } from '@/modules/base/base.interface';
-import { VariableSchema } from '@/modules/base/base.schemas';
 import { Variable } from '@caidense/reasoning/common/common.interface';
+import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
 import { ExecutionEdge, ExecutionNode } from '@caidense/reasoning/graph/graph.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
