@@ -1,5 +1,5 @@
-import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto'; // Assuming this DTO exists and is correctly defined
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { UpdateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { Type } from 'class-transformer';
 import {

@@ -6,9 +6,8 @@ import { UpdatePromptTextDto } from './dto/update-text.dto'; // Assuming update-
 import { PromptTextDocument } from './text.schemas'; // Assuming text.schemas.ts exists
 import { PromptTextService } from './text.service'; // Assuming text.service.ts exists
 // Import Swagger decorators
-import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
+import { CreateVariableDto, UpdateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 
 
 @ApiTags('Prompt Texts') // Tag the controller for Swagger UI

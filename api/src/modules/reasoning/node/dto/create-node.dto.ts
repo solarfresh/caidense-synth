@@ -1,7 +1,7 @@
+import { CreateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsObject, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
+import { IsArray, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 
 /**

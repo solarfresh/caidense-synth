@@ -1,11 +1,12 @@
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto'; // Assuming this DTO exists and is correctly defined
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { CreateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { Type } from 'class-transformer';
 import {
   IsArray, // Decorator to validate nested objects or array of objects
   IsEnum // Decorator to validate that a value is one of the values in an enum
   ,
+
   IsNotEmpty, // Decorator to validate that a string, array, object, etc., is not empty
   IsOptional, // Decorator to mark a property as optional in the payload
   IsString, // Decorator to validate that a property is a string
