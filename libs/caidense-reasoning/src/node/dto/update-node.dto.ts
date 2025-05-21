@@ -13,8 +13,9 @@ export class UpdateExecutionNodeDto {
     description: 'The type of the node, determining its function and behavior in the flow.',
     example: 'systemLogic',
   })
+  @IsOptional()
   @IsString()
-  type: string;
+  type?: string;
 
   @ApiProperty({
     description: 'An optional label or name displayed on the node.',
