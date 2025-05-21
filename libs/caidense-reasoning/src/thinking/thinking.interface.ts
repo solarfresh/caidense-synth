@@ -18,12 +18,12 @@ export interface ReasoningThinking extends Document {
   /**
    * An map of nodes, where each key is a node ID and the value is an array of ExecutionNode objects.
    */
-  nodes: Map<string, ExecutionNode>;
+  nodes: ExecutionNode[];
 
   /**
    * A map of edges, where each key is an edge ID and the value is an array of ExecutionEdge objects.
    */
-  edges: Map<string, ExecutionEdge>;
+  edges: ExecutionEdge[];
 
   /**
    * Definition of the expected input variables for this flow version.

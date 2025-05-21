@@ -14,7 +14,7 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { CreateReasoningNodeDto } from '../node/dto/create-node.dto';
+import { CreateExecutionNodeDto } from '@caidense/reasoning/node/dto/create-node.dto';
 import { UpdateReasoningNodeDto } from '../node/dto/update-node.dto';
 import { CreateReasoningThinkingDto, CreateReasoningThinkingEdgeDto } from './dto/create-thinking.dto';
 import { UpdateReasoningThinkingDto, UpdateReasoningThinkingEdgeDto } from './dto/update-thinking.dto';
@@ -131,6 +131,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     description: 'ID of the thinking flow document',
     type: String,
   })
+  @ApiBody({ type: CreateExecutionNodeDto, description: 'Data for the new node to add' })
   @ApiResponse({
     status: 201,
     description: 'The node has been successfully added.',
@@ -143,9 +144,9 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid node data.' })
   async createNode(
     @Param('id') id: string,
-    @Body(ValidationPipe) createReasoningNodeDto: CreateReasoningNodeDto,
+    @Body(ValidationPipe) createExecutionNodeDto: CreateExecutionNodeDto,
   ): Promise<ExecutionNodeDto> {
-        const node = await this.reasoningThinkingService.createNestedDocument(id, 'nodes', createReasoningNodeDto);
+        const node = await this.reasoningThinkingService.createNestedDocument(id, 'nodes', createExecutionNodeDto);
         return new ExecutionNodeDto(node);
   }
 

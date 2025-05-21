@@ -1,4 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
+import {
+  IsBoolean,
+  IsOptional,
+  IsString
+} from 'class-validator';
+
 
 /**
  * Defines the data structure for representing a Variable used within a prompt text.
@@ -65,4 +71,28 @@ export class VariableDto {
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;
   }
+}
+
+export class CreateVariableDto {
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  type: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  required?: boolean;
+
+  @IsOptional()
+  defaultValue?: any;
+
+  // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
+  // are typically managed by the backend service and the database,
+  // and thus are not included in the DTO used for *creating* the resource.
 }
