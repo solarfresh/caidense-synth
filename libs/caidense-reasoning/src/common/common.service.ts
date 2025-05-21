@@ -1,11 +1,9 @@
-// src/common/base/base.service.ts
-
 import {
   Injectable,
-  NotFoundException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
-import { Model, Document, FilterQuery, UpdateQuery } from 'mongoose';
+import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
 // Import Document and Model from mongoose
 
 /**

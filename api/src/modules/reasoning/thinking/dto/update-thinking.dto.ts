@@ -1,6 +1,7 @@
-import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
 import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
 import { UpdateReasoningNodeDto } from '@/modules/reasoning/node/dto/update-node.dto';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -9,7 +10,6 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 
 export class UpdateReasoningThinkingEdgeDto {
@@ -134,7 +134,7 @@ export class UpdateReasoningThinkingDto {
   @ApiProperty({
     description: 'The publishing status of the reasoning thinking flow document.',
     enum: DocumentStatus,
-    example: DocumentStatus.Draft,
+    example: DocumentStatus.DRAFT,
   })
   @IsOptional()
   @IsEnum(DocumentStatus)

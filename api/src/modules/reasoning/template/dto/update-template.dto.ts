@@ -1,10 +1,10 @@
-import {
-  IsString,       // Decorator to validate that a property is a string
-  IsOptional,     // Decorator to validate that a property is optional (can be undefined or null)
-  IsEnum,         // Decorator to validate that a property's value is one of the values in an enum
-} from 'class-validator';
-import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { ApiProperty } from '@nestjs/swagger'; // Importing ApiProperty for Swagger documentation
+import {
+    IsEnum, // Decorator to validate that a property is a string
+    IsOptional,
+    IsString, // Decorator to validate that a property is a string
+} from 'class-validator';
 
 
 export class UpdateReasoningTemplateDto {
@@ -35,7 +35,7 @@ export class UpdateReasoningTemplateDto {
   @ApiProperty({
       description: 'The status of the reasoning template, which is optional.',
       enum: DocumentStatus,
-      example: DocumentStatus.Draft,
+      example: DocumentStatus.DRAFT,
   })
   @IsOptional()         // This field is not required for an update operation
   @IsEnum(DocumentStatus) // If present, validate that its value is one of the DocumentStatus enum members

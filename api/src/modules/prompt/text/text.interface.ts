@@ -1,6 +1,5 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus, Variable } from '@caidense/reasoning/common/common.interface';
 import { Document } from 'mongoose';
-import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
 export interface PromptText extends Document {

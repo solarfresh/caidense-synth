@@ -1,7 +1,7 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
-import { PromptSetEntryDto } from './set-entry.dto'; // Assuming this DTO exists and is correctly defined
 import { PromptSetDocument } from '../set.schemas';
+import { PromptSetEntryDto } from './set-entry.dto'; // Assuming this DTO exists and is correctly defined
 
 
 export class PromptSetDto {
@@ -37,7 +37,7 @@ export class PromptSetDto {
   @ApiProperty({
     description: 'The publishing status of the prompt set (draft or finalized).',
     enum: DocumentStatus, // Reference the enum
-    example: DocumentStatus.Finalized,
+    example: DocumentStatus.DRAFT,
   })
   status: DocumentStatus; // Use the enum type
 

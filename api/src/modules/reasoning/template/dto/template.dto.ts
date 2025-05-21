@@ -1,7 +1,7 @@
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ReasoningTemplateDocument } from '../template.schemas';
-import { DocumentStatus } from '@/modules/base/base.interface';
 
 /**
  * Defines the data structure for representing a single Reasoning Template document in API responses.
@@ -33,7 +33,7 @@ export class ReasoningTemplateDto {
   @ApiProperty({
     description: 'The publishing status of the reasoning template document.',
     enum: DocumentStatus,
-    example: DocumentStatus.Finalized,
+    example: DocumentStatus.DRAFT,
   })
   status: DocumentStatus;
 

@@ -1,15 +1,15 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto'; // Assuming this DTO exists and is correctly defined
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { Type } from 'class-transformer';
 import {
-  IsArray,
-  IsNotEmpty, // Decorator to validate that a string, array, object, etc., is not empty (less common in update DTOs)
+  IsArray, // Decorator to validate nested objects or array of objects
+  IsEnum // Decorator to validate that a value is one of the values in an enum
+  , // Decorator to validate that a string, array, object, etc., is not empty (less common in update DTOs)
   IsOptional, // Decorator to mark a property as optional in the payload
   IsString, // Decorator to validate that a property is a string
-  ValidateNested, // Decorator to validate nested objects or array of objects
-  IsEnum // Decorator to validate that a value is one of the values in an enum
+  ValidateNested
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
-import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto'; // Assuming this DTO exists and is correctly defined
 
 /**
  * Defines the data structure for updating an existing Prompt Text document.
@@ -74,7 +74,7 @@ export class UpdatePromptTextDto {
     description: 'Optional new publishing status for the prompt text document.',
     required: false, // Explicitly mark as not required
     enum: DocumentStatus, // Reference the enum
-    example: DocumentStatus.Finalized, // Add an example
+    example: DocumentStatus.DRAFT, // Add an example
   })
   @IsOptional() // Allows this field to be missing in the incoming payload
   @IsEnum(DocumentStatus) // Validates that the value, if present, is one of the enum values

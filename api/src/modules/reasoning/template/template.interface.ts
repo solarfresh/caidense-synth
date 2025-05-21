@@ -1,5 +1,5 @@
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Document, Types } from 'mongoose';
-import { DocumentStatus } from '@/modules/base/base.interface';
 
 
 export interface ReasoningTemplate extends Document {

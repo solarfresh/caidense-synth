@@ -1,4 +1,4 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
@@ -37,7 +37,7 @@ export class CreateReasoningTemplateDto {
     description: 'The publishing status of the reasoning template, which is optional.',
     required: false, // Explicitly mark as not required
     enum: DocumentStatus, // Reference the enum
-    example: DocumentStatus.Draft, // Add an example
+    example: DocumentStatus.DRAFT, // Add an example
   })
   @IsOptional()
   @IsEnum(DocumentStatus)

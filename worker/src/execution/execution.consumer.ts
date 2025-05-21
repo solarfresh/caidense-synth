@@ -8,12 +8,24 @@ import * as amqp from 'amqplib';
 export class ExecutionConsumer extends BaseRabbitMQService {
   private readonly requestQueue: string;
 
-  private requestHandler: ExecutionRequestHandler<any, any> = async (data, msg, channel) => {
+  private requestHandler: ExecutionRequestHandler<any, any> = async (thinkingId, msg, channel) => {
+    /**
+     * Handles the execution of the thinking process.
+     * @param thinkingId - The ID of the thinking process to be executed.
+     * @param msg - The message containing the request details.
+     * @param channel - The RabbitMQ channel for communication.
+     * @returns The result of the thinking process execution.
+     */
+
+    /**
+     * Obtain the thinking graph from the database using the thinkingId.
+     */
+
     // Default request handler implementation
-    console.log(`[WorkerService] Handling request: ${JSON.stringify(data)}`);
+    console.log(`[WorkerService] Handling request: ${JSON.stringify(thinkingId)}`);
     console.log(`[WorkerService] Message properties: ${JSON.stringify(msg.properties)}`);
     console.log(`[WorkerService] Message content: ${msg.content.toString()}`);
-    return { result: data };
+    return { result: thinkingId };
   };
 
   constructor(config: ExecutionConfig) {

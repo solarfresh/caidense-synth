@@ -1,7 +1,7 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
-import { PromptTextDocument } from '../text.schemas'; // Assuming the corresponding Mongoose schema file is 'text.schemas.ts'
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
+import { PromptTextDocument } from '../text.schemas'; // Assuming the corresponding Mongoose schema file is 'text.schemas.ts'
 
 /**
  * Defines the data structure for representing a single Prompt Text document in API responses.
@@ -43,7 +43,7 @@ export class PromptTextDto {
   @ApiProperty({
     description: 'The publishing status of the prompt text document (draft or finalized).',
     enum: DocumentStatus, // Reference the enum
-    example: DocumentStatus.Finalized,
+    example: DocumentStatus.DRAFT,
   })
   status: DocumentStatus; // Use the enum type (Assuming status is required or defaults in schema)
 

@@ -1,6 +1,7 @@
-import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
 import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 import { CreateReasoningNodeDto } from '@/modules/reasoning/node/dto/create-node.dto';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -10,7 +11,6 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 
 export class CreateReasoningThinkingEdgeDto {
@@ -129,7 +129,7 @@ export class CreateReasoningThinkingDto {
     description: 'The publishing status of the reasoning thinking, which is optional.',
     required: false,
     enum: DocumentStatus,
-    example: DocumentStatus.Draft,
+    example: DocumentStatus.DRAFT,
   })
   @IsOptional()
   @IsEnum(DocumentStatus)

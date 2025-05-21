@@ -1,5 +1,4 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
-import { Variable } from '@caidense/reasoning/common/common.interface';
+import { DocumentStatus, Variable } from '@caidense/reasoning/common/common.interface';
 import { ExecutionEdge } from '@caidense/reasoning/edge/edge.interface';
 import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
 import { Document, Types } from 'mongoose';

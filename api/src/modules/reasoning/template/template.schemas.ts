@@ -1,7 +1,7 @@
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ReasoningTemplate } from './template.interface';
-import { DocumentStatus } from '@/modules/base/base.interface';
 
 
 @Schema({

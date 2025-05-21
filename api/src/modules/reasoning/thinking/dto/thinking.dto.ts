@@ -1,10 +1,10 @@
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
+import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
+import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
+import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking.schemas';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { DocumentStatus } from '@/modules/base/base.interface';
-import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
-import { ReasoningThinkingDocument } from '../thinking.schemas';
-import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
-import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
 
 
 /**
@@ -63,7 +63,7 @@ export class ReasoningThinkingDto {
   @ApiProperty({
     description: 'The publishing status of the reasoning thinking flow document.',
     enum: DocumentStatus,
-    example: DocumentStatus.Finalized,
+    example: DocumentStatus.DRAFT,
   })
   status: DocumentStatus;
 

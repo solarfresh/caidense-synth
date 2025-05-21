@@ -4,6 +4,8 @@ import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
 import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
+import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking.schemas';
+import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiBody,
@@ -16,8 +18,6 @@ import { CreateReasoningNodeDto } from '../node/dto/create-node.dto';
 import { UpdateReasoningNodeDto } from '../node/dto/update-node.dto';
 import { CreateReasoningThinkingDto, CreateReasoningThinkingEdgeDto } from './dto/create-thinking.dto';
 import { UpdateReasoningThinkingDto, UpdateReasoningThinkingEdgeDto } from './dto/update-thinking.dto';
-import { ReasoningThinkingDocument } from './thinking.schemas';
-import { ReasoningThinkingService } from './thinking.service';
 
 
 @ApiTags('Reasoning Thinking') // Define the tag for Swagger documentation
