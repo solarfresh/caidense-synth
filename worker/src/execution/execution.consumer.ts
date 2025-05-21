@@ -11,7 +11,9 @@ export class ExecutionConsumer extends BaseRabbitMQService {
   private requestHandler: ExecutionRequestHandler<any, any> = async (data, msg, channel) => {
     // Default request handler implementation
     console.log(`[WorkerService] Handling request: ${JSON.stringify(data)}`);
-    return { result: 'success' };
+    console.log(`[WorkerService] Message properties: ${JSON.stringify(msg.properties)}`);
+    console.log(`[WorkerService] Message content: ${msg.content.toString()}`);
+    return { result: data };
   };
 
   constructor(config: ExecutionConfig) {

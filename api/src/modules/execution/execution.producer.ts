@@ -33,8 +33,8 @@ export class ExecutionProducer extends BaseRabbitMQService {
         if (msg !== null && msg.properties.correlationId) {
           const correlationId = msg.properties.correlationId;
           const content = msg.content.toString();
-          // Emit the message to the EventEmitter
           this.correlationIdEmitter.emit(correlationId, content);
+
           this.channel.ack(msg);
         }
       },
@@ -59,8 +59,8 @@ export class ExecutionProducer extends BaseRabbitMQService {
       const onResponse = (response: string) => {
         clearTimeout(timeout);
         try {
-          response = JSON.parse(response);
-          resolve(response);
+          console.log(`[RequesterService] Received response: ${response}`);
+          resolve(JSON.parse(response));
         } catch (error) {
           reject(new Error(`Failed to parse response: ${response}`));
         }

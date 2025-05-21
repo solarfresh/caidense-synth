@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ExecutionProducer } from './execution.producer';
+import { CreateExecutionDto } from './dto/create-execution.dto';
 
 
 @Controller('execution')
@@ -14,17 +15,19 @@ export class ExecutionController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @ApiBody({
     description: 'Message content to be sent to RabbitMQ',
-    type: String,
+    type: CreateExecutionDto,
   })
-  async sendMessage(@Body('message') message: string) {
-    if (!message) {
-      return { status: 'error', message: 'Message content is required.' };
+  async sendMessage(@Body() createExecutionDto: CreateExecutionDto) {
+    const thinkingId = createExecutionDto.thinkingId;
+    if (!thinkingId) {
+      return { status: 500, message: 'thinkingId content is required.' };
     }
     try {
-      const result = await this.executionProducer.sendMessage(message);
-      return { status: 'success', message: 'Message sent to RabbitMQ.', data: result };
+      const result = await this.executionProducer.sendMessage(thinkingId);
+      console.log('Message sent to RabbitMQ:', result);
+      return { status: 200, message: 'Message sent to RabbitMQ.', data: result };
     } catch (error) {
-      return { status: 'error', message: 'Failed to send message to RabbitMQ.', error: error.message };
+      return { status: 500, message: 'Failed to send thinkingId to RabbitMQ.', error: error.message };
     }
   }
 }
