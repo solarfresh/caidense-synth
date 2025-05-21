@@ -19,25 +19,13 @@ export class ExecutionGraphService {
    * @returns An ExecutionGraph object.
    */
   async convertToExecutionGraph(dto: ReasoningThinkingDto): Promise<ExecutionGraph> {
-    const nodesMap = new Map<string, ExecutionNodeDto>();
-    const edgesMap = new Map<string, ExecutionEdgeDto>();
-
-    // Populate the nodes map
-    await Promise.all([
-      dto.nodes.map(async node => {
-        // Assuming each ExecutionNodeDto has an 'id' property
-        nodesMap.set(node._id, node);
-      }),
-      dto.edges.map(async edge => {
-        // Assuming each ExecutionEdgeDto has an 'id' property
-        edgesMap.set(edge._id, edge);
-      })
-    ]);
+    const nodesMap = new Map(dto.nodes.map(node => [node._id, node]));
+    const edgesMap = new Map(dto.edges.map(edge => [edge._id, edge]));
 
     return {
       id: dto._id, // Use the _id from ReasoningThinkingDto as the graph id
       nodes: nodesMap,
-      edges: edgesMap,
+      edges: edgesMap
     };
   }
 
