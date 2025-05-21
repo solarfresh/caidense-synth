@@ -75,7 +75,6 @@ export class ReasoningThinkingDto {
   @Type(() => Date)
   updatedAt: Date;
 
-
   constructor(document: ReasoningThinkingDocument) {
     // Use document.toJSON() to get a plain object that includes virtuals
     // and excludes internal Mongoose properties like __v by default.

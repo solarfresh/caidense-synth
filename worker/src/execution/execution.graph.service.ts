@@ -23,16 +23,16 @@ export class ExecutionGraphService {
     const edgesMap = new Map<string, ExecutionEdgeDto>();
 
     // Populate the nodes map
-    dto.nodes.forEach(node => {
-      // Assuming each ExecutionNodeDto has an 'id' property
-      nodesMap.set(node._id, node);
-    });
-
-    // Populate the edges map
-    dto.edges.forEach(edge => {
-      // Assuming each ExecutionEdgeDto has an 'id' property
-      edgesMap.set(edge._id, edge);
-    });
+    await Promise.all([
+      dto.nodes.map(async node => {
+        // Assuming each ExecutionNodeDto has an 'id' property
+        nodesMap.set(node._id, node);
+      }),
+      dto.edges.map(async edge => {
+        // Assuming each ExecutionEdgeDto has an 'id' property
+        edgesMap.set(edge._id, edge);
+      })
+    ]);
 
     return {
       id: dto._id, // Use the _id from ReasoningThinkingDto as the graph id
@@ -51,7 +51,7 @@ export class ExecutionGraphService {
     const stateStore = new InMemoryExecutionInstanceStateStore();
     const tracker = await ExecutionInstanceStateTracker.createNewInstance(
       correlationId,
-      'initialNodeId',
+      startNode._id,
       new Map([["orderAmount", 1200]]),
       stateStore
     );

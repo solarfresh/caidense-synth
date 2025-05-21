@@ -22,7 +22,7 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   @Prop({ type: String })
   description?: string;
 
-  @Prop({type: [ExecutionNodeSchema]})
+  @Prop({ type: [ExecutionNodeSchema]})
   nodes: ExecutionNode[];
 
   @Prop({ type: [ExecutionEdgeSchema] })

@@ -149,15 +149,11 @@ export class BaseService<T extends Document> {
   }
 
   async createNestedDocument(id: string, fieldName: string, createDto: any): Promise<any> {
-    console.log('createDto', createDto);
-    console.log('fieldName', fieldName);
-    console.log('id', id);
     const updatedDocument = await this.model.findByIdAndUpdate(
     id,
     { $push: {[fieldName]: createDto }} as UpdateQuery<T>,
     { new: true, runValidators: true }
     ).exec();
-    console.log('updatedDocument', updatedDocument);
 
     if (!updatedDocument) {
       throw new NotFoundException(`MainDocument with ID "${id}" not found`);
