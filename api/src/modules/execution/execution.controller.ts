@@ -1,7 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ExecutionProducer } from './execution.producer';
 import { CreateExecutionDto } from './dto/create-execution.dto';
+import { ExecutionProducer } from './execution.producer';
 
 
 @Controller('execution')
@@ -17,6 +17,7 @@ export class ExecutionController {
     description: 'Message content to be sent to RabbitMQ',
     type: CreateExecutionDto,
   })
+  @HttpCode(HttpStatus.OK)
   async sendMessage(@Body() createExecutionDto: CreateExecutionDto) {
     const thinkingId = createExecutionDto.thinkingId;
     if (!thinkingId) {

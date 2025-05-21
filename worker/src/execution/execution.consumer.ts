@@ -1,5 +1,7 @@
+import { GraphService } from '@caidense/reasoning/graph/graph.service';
 import { ExecutionConfig, ExecutionRequestHandler } from '@caidense/reasoning/message/message.interface';
 import { BaseRabbitMQService } from '@caidense/reasoning/message/message.service';
+import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
 import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib';
@@ -8,14 +10,17 @@ import * as amqp from 'amqplib';
 @Injectable()
 export class ExecutionConsumer extends BaseRabbitMQService {
   private readonly requestQueue: string;
+  private readonly graphService: GraphService;
   private readonly reasoningThinkingService: ReasoningThinkingService;
 
   constructor(
     config: ExecutionConfig,
+    graphService: GraphService,
     reasoningThinkingService: ReasoningThinkingService
   ) {
     super(config);
     this.requestQueue = config.requestQueue;
+    this.graphService = graphService;
     this.reasoningThinkingService = reasoningThinkingService;
   }
 
@@ -31,14 +36,9 @@ export class ExecutionConsumer extends BaseRabbitMQService {
     /**
      * Obtain the thinking graph from the database using the thinkingId.
      */
-    const graph = await this.reasoningThinkingService.findById(thinkingId);
-    console.log(`[WorkerService] Graph obtained: ${JSON.stringify(graph)}`);
-
-    // Default request handler implementation
-    console.log(`[WorkerService] Handling request: ${JSON.stringify(thinkingId)}`);
-    console.log(`[WorkerService] Message properties: ${JSON.stringify(msg.properties)}`);
-    console.log(`[WorkerService] Message content: ${msg.content.toString()}`);
-    return { result: thinkingId };
+    const graphInstance = await this.reasoningThinkingService.findById(thinkingId);
+    const graph = new ReasoningThinkingDto(graphInstance);
+    return await this.graphService.runGraph(graph);
   };
 
   protected async setupChannel(channel: amqp.Channel): Promise<void> {
