@@ -34,6 +34,9 @@ services:
       - ./docker-var.env # Specify the path to the environment file to load
     depends_on:
       - rabbitmq
+    restart: unless-stopped
+    networks:
+      - caidense_network
 
   # Service for the MongoDB database
   mongo:
