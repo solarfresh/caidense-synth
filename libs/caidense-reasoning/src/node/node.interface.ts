@@ -2,6 +2,7 @@ import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
 export enum ExecutionNodeType {
+  DUMMY = 'dummy',
   SEQUENCE = 'sequence',
   PARALLEL = 'parallel',
   EXCLUSIVE = 'exclusive',

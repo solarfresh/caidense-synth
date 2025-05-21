@@ -1,9 +1,9 @@
 import { ReasoningThinkingDocument, ReasoningThinkingSchema } from '@caidense/reasoning/thinking/thinking.schemas';
 import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
-import { GraphService } from '@caidense/reasoning/graph/graph.service';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ExecutionConsumer } from './execution.consumer';
+import { ExecutionGraphService } from './execution.graph.service';
 import { ExecutionProducer } from './execution.producer';
 
 
@@ -15,7 +15,7 @@ import { ExecutionProducer } from './execution.producer';
     {
       provide: ExecutionConsumer,
       useFactory: (
-        graphService: GraphService,
+        executionGraphService: ExecutionGraphService,
         reasoningThinkingService: ReasoningThinkingService
       ) => {
         return new ExecutionConsumer({
@@ -23,16 +23,16 @@ import { ExecutionProducer } from './execution.producer';
           replyTimeoutMs: parseInt(process.env.RABBITMQ_RPC_TIMEOUT) || 5000, // Default to 5 seconds if not provided
           url: process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672',
         },
-        graphService,
+        executionGraphService,
         reasoningThinkingService);
       },
-      inject: [GraphService, ReasoningThinkingService],
+      inject: [ExecutionGraphService, ReasoningThinkingService],
     },
-    GraphService,
+    ExecutionGraphService,
     ExecutionProducer,
     ReasoningThinkingService
   ],
   controllers: [],
-  exports: [GraphService, ExecutionProducer, ReasoningThinkingService],
+  exports: [ExecutionGraphService, ExecutionProducer, ReasoningThinkingService],
 })
 export class ExecutionModule {}

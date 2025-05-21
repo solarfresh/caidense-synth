@@ -1,26 +1,26 @@
-import { GraphService } from '@caidense/reasoning/graph/graph.service';
 import { ExecutionConfig, ExecutionRequestHandler } from '@caidense/reasoning/message/message.interface';
 import { BaseRabbitMQService } from '@caidense/reasoning/message/message.service';
 import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
 import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib';
+import { ExecutionGraphService } from './execution.graph.service';
 
 
 @Injectable()
 export class ExecutionConsumer extends BaseRabbitMQService {
   private readonly requestQueue: string;
-  private readonly graphService: GraphService;
+  private readonly executionGraphService: ExecutionGraphService;
   private readonly reasoningThinkingService: ReasoningThinkingService;
 
   constructor(
     config: ExecutionConfig,
-    graphService: GraphService,
+    executionGraphService: ExecutionGraphService,
     reasoningThinkingService: ReasoningThinkingService
   ) {
     super(config);
     this.requestQueue = config.requestQueue;
-    this.graphService = graphService;
+    this.executionGraphService = executionGraphService;
     this.reasoningThinkingService = reasoningThinkingService;
   }
 
@@ -38,7 +38,8 @@ export class ExecutionConsumer extends BaseRabbitMQService {
      */
     const graphInstance = await this.reasoningThinkingService.findById(thinkingId);
     const graph = new ReasoningThinkingDto(graphInstance);
-    return await this.graphService.runGraph(graph);
+    const { correlationId, replyTo } = msg.properties;
+    return await this.executionGraphService.runExecutionGraph(correlationId, graph);
   };
 
   protected async setupChannel(channel: amqp.Channel): Promise<void> {
