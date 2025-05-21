@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ExecutionModule } from './execution/execution.module';
 import { WorkerController } from './worker.controller'; // Controller to handle HTTP requests if needed
 import { WorkerService } from './worker.service'; // Service to handle incoming messages and orchestrate execution
+import { DatabaseModule } from '@caidense/reasoning/database/database.module';
 
 
 @Module({
@@ -12,6 +13,8 @@ import { WorkerService } from './worker.service'; // Service to handle incoming 
       isGlobal: true, // Make configuration available globally within this worker
       // envFilePath: ['./.env', './docker-var.env'], // Specify env files if needed
     }),
+
+    DatabaseModule,
     ExecutionModule
     // ... import other modules required by executors (e.g., HttpModule, MongooseModule if needed, but generally keep workers stateless)
   ],

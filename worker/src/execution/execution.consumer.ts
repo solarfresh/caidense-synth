@@ -1,5 +1,6 @@
 import { ExecutionConfig, ExecutionRequestHandler } from '@caidense/reasoning/message/message.interface';
 import { BaseRabbitMQService } from '@caidense/reasoning/message/message.service';
+import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib';
 
@@ -7,6 +8,16 @@ import * as amqp from 'amqplib';
 @Injectable()
 export class ExecutionConsumer extends BaseRabbitMQService {
   private readonly requestQueue: string;
+  private readonly reasoningThinkingService: ReasoningThinkingService;
+
+  constructor(
+    config: ExecutionConfig,
+    reasoningThinkingService: ReasoningThinkingService
+  ) {
+    super(config);
+    this.requestQueue = config.requestQueue;
+    this.reasoningThinkingService = reasoningThinkingService;
+  }
 
   private requestHandler: ExecutionRequestHandler<any, any> = async (thinkingId, msg, channel) => {
     /**
@@ -20,6 +31,8 @@ export class ExecutionConsumer extends BaseRabbitMQService {
     /**
      * Obtain the thinking graph from the database using the thinkingId.
      */
+    const graph = await this.reasoningThinkingService.findById(thinkingId);
+    console.log(`[WorkerService] Graph obtained: ${JSON.stringify(graph)}`);
 
     // Default request handler implementation
     console.log(`[WorkerService] Handling request: ${JSON.stringify(thinkingId)}`);
@@ -27,11 +40,6 @@ export class ExecutionConsumer extends BaseRabbitMQService {
     console.log(`[WorkerService] Message content: ${msg.content.toString()}`);
     return { result: thinkingId };
   };
-
-  constructor(config: ExecutionConfig) {
-    super(config);
-    this.requestQueue = config.requestQueue;
-  }
 
   protected async setupChannel(channel: amqp.Channel): Promise<void> {
     await channel.assertQueue(this.requestQueue, { durable: false });
