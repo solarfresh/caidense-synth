@@ -35,6 +35,18 @@ export class UpdateExecutionNodeDto {
   config?: object;
 
   @ApiProperty({
+    description: 'Optional array of IDs representing the incoming sequence edges to this node.',
+    type: [String],
+    isArray: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @Type(() => String)
+  incoming?: string[];
+
+  @ApiProperty({
     description: 'Optional array defining the inputs specific to this node\'s logic.',
     type: [UpdateVariableDto],
     isArray: true,
@@ -54,6 +66,18 @@ export class UpdateExecutionNodeDto {
   @IsOptional()
   @IsString()
   script?: string;
+
+  @ApiProperty({
+    description: 'Optional array of IDs representing the outgoing sequence edges from this node.',
+    type: [String],
+    isArray: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @Type(() => String)
+  outgoing?: string[];
 
   @ApiProperty({
     description: 'Optional array defining the outputs specific to this node\'s logic.',
