@@ -37,7 +37,7 @@ export class GraphTraversalEngine {
         for (const edgeId of completedNode.outgoing) {
             const edge = this.graph.edges.get(edgeId);
             if (!edge) {
-                console.warn(`Sequence edge with ID ${edgeId} not found.`);
+                console.warn(`Sequence edge with ID (${edgeId}) from the node (${completedNode.label}) with ID (${completedNode._id}) not found.`);
                 continue;
             }
 
