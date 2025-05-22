@@ -1,5 +1,4 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
-import { Variable } from '@caidense/reasoning/common/common.interface';
+import { DocumentStatus, Variable } from '@caidense/reasoning/common/common.interface';
 import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
 import { ExecutionEdge } from '@caidense/reasoning/edge/edge.interface';
 import { ExecutionEdgeSchema } from '@caidense/reasoning/edge/edge.schemas';
@@ -23,11 +22,11 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   @Prop({ type: String })
   description?: string;
 
-  @Prop({ type: Map, of: ExecutionNodeSchema })
-  nodes: Map<string, ExecutionNode>;
+  @Prop({ type: [ExecutionNodeSchema]})
+  nodes: ExecutionNode[];
 
-  @Prop({ type: Map, of: ExecutionEdgeSchema })
-  edges: Map<string, ExecutionEdge>;
+  @Prop({ type: [ExecutionEdgeSchema] })
+  edges: ExecutionEdge[];
 
   @Prop({ type: [VariableSchema] })
   inputs: Variable[];

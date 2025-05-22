@@ -1,17 +1,18 @@
+import { BaseService } from '@caidense/reasoning/common/common.service';
 import {
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
   Body,
-  UseInterceptors,
   ClassSerializerInterceptor,
+  Delete,
+  Get,
   HttpCode, // For custom status codes like 204 No Content on delete
   HttpStatus // For HttpStatus enums
+  ,
+  Param,
+  Post,
+  Put,
+  UseInterceptors
 } from '@nestjs/common';
 import { Document } from 'mongoose'; // Assuming Mongoose is used
-import { BaseService } from './base.interface'; // Import the base service interface
 
 /**
  * Generic Base Controller providing common RESTful API routes for CRUD operations.

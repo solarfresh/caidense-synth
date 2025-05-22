@@ -31,3 +31,8 @@ export interface Variable {
   // validation?: object;
   // example?: any;
 }
+
+export enum DocumentStatus {
+  DRAFT = 'draft',
+  FINALIZED = 'finalized',
+}

@@ -1,6 +1,8 @@
-import { DocumentStatus } from '@/modules/base/base.interface'; // Importing the DocumentStatus enum from the base interfaces
-import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
-import { UpdateReasoningNodeDto } from '@/modules/reasoning/node/dto/update-node.dto';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { UpdateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
+import { UpdateExecutionEdgeDto } from '@caidense/reasoning/edge/dto/update-edge.dto';
+import { UpdateExecutionNodeDto } from '@caidense/reasoning/node/dto/update-node.dto';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -9,62 +11,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
-
-export class UpdateReasoningThinkingEdgeDto {
-  @ApiProperty({
-    description: 'The ID of the source node',
-    example: 'source-node-id',
-  })
-  @IsOptional()
-  @IsString()
-  source?: string;
-
-  @ApiProperty({
-    description: 'The specific handle/port ID on the source node where the edge starts.',
-    example: 'true',
-  })
-  @IsOptional()
-  @IsString()
-  sourceHandle?: string;
-
-  @ApiProperty({
-    description: 'The ID of the target node',
-    example: 'target-node-id',
-  })
-  @IsOptional()
-  @IsString()
-  target?: string;
-
-  @ApiProperty({
-    description: 'The specific handle/port ID on the target node where the edge ends.',
-    example: 'false',
-  })
-  @IsOptional()
-  @IsString()
-  targetHandle?: string;
-
-  @ApiProperty({
-    description: 'The type of the edge, which is optional.',
-    example: 'default',
-  })
-  @IsOptional()
-  @IsString()
-  type?: string;
-
-  @ApiProperty({
-    description: 'The label of the edge, which is optional.',
-    example: 'Edge Label',
-  })
-  @IsOptional()
-  @IsString()
-  label?: string;
-
-  // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
-  // are typically managed by the backend service and the database,
-  // and thus are not included in the DTO used for *creating* the resource.
-}
 
 export class UpdateReasoningThinkingDto {
   @ApiProperty({
@@ -85,23 +32,23 @@ export class UpdateReasoningThinkingDto {
 
   @ApiProperty({
     description: 'The nodes of the reasoning thinking, which is required.',
-    type: [UpdateReasoningNodeDto],
+    type: [UpdateExecutionNodeDto],
   })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => UpdateReasoningNodeDto)
-  nodes?: UpdateReasoningNodeDto[];
+  @Type(() => UpdateExecutionNodeDto)
+  nodes?: UpdateExecutionNodeDto[];
 
   @ApiProperty({
     description: 'The edges of the reasoning thinking, which is required.',
-    type: [UpdateReasoningThinkingEdgeDto],
+    type: [UpdateExecutionEdgeDto],
   })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => UpdateReasoningThinkingEdgeDto)
-  edges?: UpdateReasoningThinkingEdgeDto[];
+  @Type(() => UpdateExecutionEdgeDto)
+  edges?: UpdateExecutionEdgeDto[];
 
   @ApiProperty({
     description: 'An array of input variables defined for the thinking flow.',
@@ -134,7 +81,7 @@ export class UpdateReasoningThinkingDto {
   @ApiProperty({
     description: 'The publishing status of the reasoning thinking flow document.',
     enum: DocumentStatus,
-    example: DocumentStatus.Draft,
+    example: DocumentStatus.DRAFT,
   })
   @IsOptional()
   @IsEnum(DocumentStatus)

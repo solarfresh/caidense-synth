@@ -94,10 +94,10 @@ export class ExecutionNodeDto {
     this.type = plainObject.type;
     this.label = plainObject.label;
     this.config = plainObject.config;
-    this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming.toHexString()) : [];
+    this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming.toHexString ? incoming.toHexString() : incoming) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
     this.script = plainObject.script;
-    this.outgoing = plainObject.outgoing ? plainObject.outgoing.map(outgoing => outgoing.toHexString()) : [];
+    this.outgoing = plainObject.outgoing ? plainObject.outgoing.map(outgoing => outgoing.toHexString ? outgoing.toHexString() : outgoing) : [];
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

@@ -1,10 +1,10 @@
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
+import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
+import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
+import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking.schemas';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { DocumentStatus } from '@/modules/base/base.interface';
-import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
-import { ReasoningThinkingDocument } from '../thinking.schemas';
-import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
-import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
 
 
 /**
@@ -29,14 +29,14 @@ export class ReasoningThinkingDto {
   @ApiProperty({
     description: "Map of node IDs to their corresponding ExecutionNode objects.",
   })
-  @Type(() => Map<string, ExecutionNodeDto>)
-  nodes: Map<string, ExecutionNodeDto>;
+  @Type(() => ExecutionNodeDto)
+  nodes: ExecutionNodeDto[];
 
   @ApiProperty({
     description: "Map of edge IDs to their corresponding ExecutionEdge objects.",
   })
-  @Type(() => Map<string, ExecutionEdgeDto>)
-  edges: Map<string, ExecutionEdgeDto>;
+  @Type(() => ExecutionEdgeDto)
+  edges: ExecutionEdgeDto[];
 
   @ApiProperty({
     description: 'An array of input variables defined for the thinking flow.',
@@ -63,7 +63,7 @@ export class ReasoningThinkingDto {
   @ApiProperty({
     description: 'The publishing status of the reasoning thinking flow document.',
     enum: DocumentStatus,
-    example: DocumentStatus.Finalized,
+    example: DocumentStatus.DRAFT,
   })
   status: DocumentStatus;
 
@@ -75,24 +75,23 @@ export class ReasoningThinkingDto {
   @Type(() => Date)
   updatedAt: Date;
 
-
   constructor(document: ReasoningThinkingDocument) {
     // Use document.toJSON() to get a plain object that includes virtuals
     // and excludes internal Mongoose properties like __v by default.
-    const plainObject = document.toJSON();
+    const plainObject = document.toJSON ? document.toJSON() : document;
 
     // Map properties from the plain object to the DTO instance.
     // Convert ObjectId to string representation using toHexString() for consistency.
-    this._id = plainObject._id.toHexString();
+    this._id = plainObject._id.toHexString ? plainObject._id.toHexString() : plainObject._id;
     this.name = plainObject.name;
     this.description = plainObject.description;
 
-    this.nodes = plainObject.nodes ? plainObject.nodes : new Map<string, ExecutionNodeDto[]>();
-    this.edges = plainObject.edges ? plainObject.edges : new Map<string, ExecutionEdgeDto[]>();
+    this.nodes = plainObject.nodes.length > 0 ? plainObject.nodes.map(node => new ExecutionNodeDto(node)) : [];
+    this.edges = plainObject.edges.length > 0 ? plainObject.edges.map(edge => new ExecutionEdgeDto(edge)) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
 
-    this.reasoningTemplateId = plainObject.reasoningTemplateId ? plainObject.reasoningTemplateId.toHexString() : undefined;
+    this.reasoningTemplateId = plainObject.reasoningTemplateId.toHexString ? plainObject.reasoningTemplateId.toHexString() : plainObject.reasoningTemplateId;
     this.status = plainObject.status;
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

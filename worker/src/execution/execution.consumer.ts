@@ -1,25 +1,46 @@
 import { ExecutionConfig, ExecutionRequestHandler } from '@caidense/reasoning/message/message.interface';
 import { BaseRabbitMQService } from '@caidense/reasoning/message/message.service';
+import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
+import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib';
+import { ExecutionGraphService } from './execution.graph.service';
 
 
 @Injectable()
 export class ExecutionConsumer extends BaseRabbitMQService {
   private readonly requestQueue: string;
+  private readonly executionGraphService: ExecutionGraphService;
+  private readonly reasoningThinkingService: ReasoningThinkingService;
 
-  private requestHandler: ExecutionRequestHandler<any, any> = async (data, msg, channel) => {
-    // Default request handler implementation
-    console.log(`[WorkerService] Handling request: ${JSON.stringify(data)}`);
-    console.log(`[WorkerService] Message properties: ${JSON.stringify(msg.properties)}`);
-    console.log(`[WorkerService] Message content: ${msg.content.toString()}`);
-    return { result: data };
-  };
-
-  constructor(config: ExecutionConfig) {
+  constructor(
+    config: ExecutionConfig,
+    executionGraphService: ExecutionGraphService,
+    reasoningThinkingService: ReasoningThinkingService
+  ) {
     super(config);
     this.requestQueue = config.requestQueue;
+    this.executionGraphService = executionGraphService;
+    this.reasoningThinkingService = reasoningThinkingService;
   }
+
+  private requestHandler: ExecutionRequestHandler<any, any> = async (thinkingId, msg, channel) => {
+    /**
+     * Handles the execution of the thinking process.
+     * @param thinkingId - The ID of the thinking process to be executed.
+     * @param msg - The message containing the request details.
+     * @param channel - The RabbitMQ channel for communication.
+     * @returns The result of the thinking process execution.
+     */
+
+    /**
+     * Obtain the thinking graph from the database using the thinkingId.
+     */
+    const graphInstance = await this.reasoningThinkingService.findById(thinkingId);
+    const graph = new ReasoningThinkingDto(graphInstance);
+    const { correlationId, replyTo } = msg.properties;
+    return await this.executionGraphService.runExecutionGraph(correlationId, graph);
+  };
 
   protected async setupChannel(channel: amqp.Channel): Promise<void> {
     await channel.assertQueue(this.requestQueue, { durable: false });

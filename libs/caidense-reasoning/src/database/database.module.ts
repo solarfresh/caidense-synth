@@ -3,16 +3,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-imports: [
+  imports: [
     MongooseModule.forRootAsync({
-    imports: [ConfigModule],
-    useFactory: async (configService: ConfigService) => ({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
-        // 其他 Mongoose 連線選項
+      } as any),
+      inject: [ConfigService],
     }),
-    inject: [ConfigService],
-    }),
-],
-exports: [MongooseModule], // 將 MongooseModule 導出，供其他模組使用
+  ],
+  exports: [MongooseModule],
 })
 export class DatabaseModule {}

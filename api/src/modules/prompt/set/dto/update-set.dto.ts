@@ -1,5 +1,6 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 // Removed unused Optional from @nestjs/common
+import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -8,7 +9,6 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { UpdatePromptSetEntryDto } from './update-set-entry.dto';
 
 
@@ -58,7 +58,7 @@ export class UpdatePromptSetDto {
     description: 'Optional new publishing status for the prompt set.',
     required: false, // Explicitly mark as optional
     enum: DocumentStatus, // Reference the enum
-    example: DocumentStatus.Finalized, // Add an example
+    example: DocumentStatus.DRAFT, // Add an example
   })
   @IsOptional()
   @IsEnum(DocumentStatus)

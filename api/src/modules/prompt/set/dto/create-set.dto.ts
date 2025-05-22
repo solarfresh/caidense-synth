@@ -1,4 +1,4 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -55,7 +55,7 @@ export class CreatePromptSetDto {
     description: 'The publishing status of the prompt set (Optional).',
     required: false,
     enum: DocumentStatus, // Reference the enum
-    example: DocumentStatus.Draft, // Add an example
+    example: DocumentStatus.DRAFT, // Add an example
   })
   @IsOptional()
   @IsEnum(DocumentStatus)

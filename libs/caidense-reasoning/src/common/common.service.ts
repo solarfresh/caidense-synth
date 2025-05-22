@@ -1,11 +1,9 @@
-// src/common/base/base.service.ts
-
 import {
   Injectable,
-  NotFoundException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
-import { Model, Document, FilterQuery, UpdateQuery } from 'mongoose';
+import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
 // Import Document and Model from mongoose
 
 /**
@@ -201,9 +199,16 @@ export class BaseService<T extends Document> {
   }
 
   async updateNestedDocumentById(id: string, fieldName: string, nestedId: string, updateDto: any): Promise<any> {
+    const setObject = {}
+    for (const key in updateDto) {
+      if (updateDto[key] !== undefined) {
+        setObject[`${fieldName}.$.${key}`] = updateDto[key];
+      }
+    }
+
     const updatedDocument = await this.model.findOneAndUpdate(
       { _id: id, [`${fieldName}._id`]: nestedId },
-      { $set: { [`${fieldName}.$`]: updateDto } } as UpdateQuery<T>,
+      { $set: setObject } as UpdateQuery<T>,
       { new: true, runValidators: true }
     ).exec();
 

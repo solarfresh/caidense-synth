@@ -1,4 +1,4 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Document, Types } from 'mongoose';
 
 

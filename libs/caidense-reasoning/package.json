@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@nestjs/config": "^3.3.0",
     "@nestjs/mongoose": "^10.1.0",
     "amqplib": "^0.10.8",
     "class-transformer": "^0.5.1",

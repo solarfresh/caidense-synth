@@ -1,4 +1,4 @@
-import { DocumentStatus } from '@/modules/base/base.interface';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { PromptSet, PromptSetEntry } from './set.interface';

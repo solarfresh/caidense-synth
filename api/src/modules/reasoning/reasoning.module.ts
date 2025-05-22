@@ -1,14 +1,14 @@
+import { ReasoningThinkingDocument, ReasoningThinkingSchema } from '@caidense/reasoning/thinking/thinking.schemas';
+import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ReasoningTemplateController } from './template/template.controller';
-import { ReasoningTemplateService } from './template/template.service';
-import { ReasoningTemplateSchema, ReasoningTemplateDocument } from './template/template.schemas';
-import { ReasoningThinkingController } from './thinking/thinking.controller';
-import { ReasoningThinkingService } from './thinking/thinking.service';
-import { ReasoningThinkingSchema, ReasoningThinkingDocument } from './thinking/thinking.schemas';
 import { ReasoningNodeController } from './node/node.controller';
+import { ReasoningNodeDocument, ReasoningNodeSchema } from './node/node.schemas';
 import { ReasoningNodeService } from './node/node.service';
-import { ReasoningNodeSchema, ReasoningNodeDocument } from './node/node.schemas';
+import { ReasoningTemplateController } from './template/template.controller';
+import { ReasoningTemplateDocument, ReasoningTemplateSchema } from './template/template.schemas';
+import { ReasoningTemplateService } from './template/template.service';
+import { ReasoningThinkingController } from './thinking/thinking.controller';
 
 
 @Module({

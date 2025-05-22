@@ -58,9 +58,9 @@ export class ExecutionEdgeDto {
   constructor(document: any) {
     const plainObject = document.toJSON ? document.toJSON() : document;
 
-    this._id = plainObject._id.toHexString();
-    this.source = plainObject.source.toHexString();
-    this.target = plainObject.target.toHexString();
+    this._id = plainObject._id.toHexString ? plainObject._id.toHexString() : plainObject._id;
+    this.source = plainObject.source.toHexString ? plainObject.source.toHexString() : plainObject.source;
+    this.target = plainObject.target.toHexString ? plainObject.target.toHexString() : plainObject.target;
     this.sourceHandle = plainObject.sourceHandle;
     this.targetHandle = plainObject.targetHandle;
     this.type = plainObject.type;

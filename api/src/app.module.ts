@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 // Core Modules
-import { DatabaseModule } from './database/database.module';
+import { DatabaseModule } from '@caidense/reasoning/database/database.module';
 
 // Feature Modules
 import { PromptModule } from '@/modules/prompt/prompt.module'

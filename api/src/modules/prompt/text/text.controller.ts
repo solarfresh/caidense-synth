@@ -6,9 +6,8 @@ import { UpdatePromptTextDto } from './dto/update-text.dto'; // Assuming update-
 import { PromptTextDocument } from './text.schemas'; // Assuming text.schemas.ts exists
 import { PromptTextService } from './text.service'; // Assuming text.service.ts exists
 // Import Swagger decorators
-import { UpdateVariableDto } from '@/modules/base/dto/update-variable.dto';
+import { CreateVariableDto, UpdateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateVariableDto } from '@/modules/base/dto/create-variable.dto';
 
 
 @ApiTags('Prompt Texts') // Tag the controller for Swagger UI
@@ -93,7 +92,7 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     @Post('text/:id/variables')
     @ApiOperation({ summary: 'Add a new variable to a prompt text document' })
     @ApiParam({ name: 'id', description: 'ID of the prompt text document to add the variable to', type: String })
-    @ApiBody({ type: UpdateVariableDto, description: 'Data for the new variable to add' })
+    @ApiBody({ type: CreateVariableDto, description: 'Data for the new variable to add' })
     @ApiResponse({ status: 200, description: 'The variable has been successfully added. Returns the updated prompt text document.', type: VariableDto })
     @ApiResponse({ status: 404, description: 'Not Found - Prompt text document with the given ID not found.' })
     @ApiResponse({ status: 400, description: 'Bad Request - Invalid variable data provided.' })
