@@ -2,35 +2,35 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 
+
 @Injectable()
 export class GoogleGenaiService {
   private readonly genAi: GoogleGenAI;
-  private readonly model: string;
 
   constructor(private readonly configService: ConfigService) {
-    const apiKey = process.env.GENAI_API_KEY;
+    const apiKey = this.configService.get('GENAI_API_KEY');
     if (!apiKey) {
       throw new InternalServerErrorException('Gemini API key is not configured.');
     }
 
     this.genAi = new GoogleGenAI({vertexai: false, apiKey: apiKey});
-    this.model = process.env.GENAI_MODEL
   }
 
-  async generateContentFromAiStudio(contents: string): Promise<GenerateContentResponse> {
+  async generateContentFromAiStudio(contents: string, modelName: string): Promise<GenerateContentResponse> {
     try {
       return await this.genAi.models.generateContent({
-        model: this.model,
+        model: modelName,
         contents: contents
       });
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException('Failed to generate text from Gemini.');
     }
   }
 
-  async generateContentFromMLDevStream(contents: string): Promise<AsyncIterable<GenerateContentResponse>> {
+  async generateContentFromAiStudioStream(contents: string, modelName: string): Promise<AsyncIterable<GenerateContentResponse>> {
     return await this.genAi.models.generateContentStream({
-        model: this.model,
+        model: modelName,
         contents: contents
     })
   } catch (error) {

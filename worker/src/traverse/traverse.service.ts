@@ -1,17 +1,17 @@
-import { ExecutionInstanceState } from '@/state/state.interface';
-import { ExecutionInstanceStateTracker } from '@/state/state.service';
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
+import { ExecutionContext } from '@caidense/reasoning/state/state.interface';
+import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 
 
 export class GraphTraversalEngine {
     private graph: ExecutionGraph;
-    private stateTracker: ExecutionInstanceStateTracker;
+    private stateTracker: ExecutionContextTracker;
 
-    constructor(graph: ExecutionGraph, stateTracker : ExecutionInstanceStateTracker) {
+    constructor(graph: ExecutionGraph, stateTracker: ExecutionContextTracker) {
         this.graph = graph;
-        this.stateTracker  = stateTracker ;
+        this.stateTracker = stateTracker;
     }
 
     /**
@@ -49,7 +49,7 @@ export class GraphTraversalEngine {
 
             // Handle different types of target nodes
             switch (targetNode.type) {
-                case ExecutionNodeType.TASK:
+                case ExecutionNodeType.LLM_CALL:
                 case ExecutionNodeType.START_EVENT: // Usually only one starting point
                 case ExecutionNodeType.END_EVENT:
                     // For simple nodes, activate them directly
@@ -81,9 +81,9 @@ export class GraphTraversalEngine {
 
     /**
      * Returns the current state of the process instance.
-     * @returns The ExecutionInstanceState object.
+     * @returns The ExecutionContext object.
      */
-    public getCurrentState(): ExecutionInstanceState {
+    public getCurrentState(): ExecutionContext {
         return this.stateTracker.getCurrentState();
     }
 
@@ -94,6 +94,11 @@ export class GraphTraversalEngine {
      */
     private activateNode(nodeId: string, nodesToActivate: string[]): void {
         this.stateTracker.activateNode(nodeId);
+
+        /**
+         * TODO: Update input variables to next nodes
+         */
+
         nodesToActivate.push(nodeId);
         console.log(`Node activated: ${nodeId}`);
     }

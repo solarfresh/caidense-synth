@@ -1,18 +1,30 @@
-import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
+import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
+import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
+import { ExecutionContextTracker, InMemoryExecutionContextStore } from '@caidense/reasoning/state/state.service';
 import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
 import { Injectable } from '@nestjs/common';
-import { ExecutionInstanceStateTracker, InMemoryExecutionInstanceStateStore } from '../state/state.service';
+import { ModuleRef } from '@nestjs/core';
 import { GraphTraversalEngine } from '../traverse/traverse.service';
-import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 
+
+const ExcutorMap: Record<ExecutionNodeType, any> = {
+  [ExecutionNodeType.LLM_CALL]: LLMCallExecutor,
+  [ExecutionNodeType.START_EVENT]: null,
+  [ExecutionNodeType.END_EVENT]: null,
+  [ExecutionNodeType.SCRIPT]: null
+};
 
 @Injectable()
 export class ExecutionGraphService {
-  private tracker: ExecutionInstanceStateTracker
-  private stateStore: InMemoryExecutionInstanceStateStore
+  private tracker: ExecutionContextTracker
+  private stateStore: InMemoryExecutionContextStore
+
+  constructor(
+    private readonly moduleRef: ModuleRef
+  ) {}
   /**
    * Transforms a ReasoningThinkingDto object into an ExecutionGraph interface.
    * It converts the arrays of nodes and edges into Maps for easier lookup by ID.
@@ -38,8 +50,8 @@ export class ExecutionGraphService {
         throw new Error("Process graph must contain a StartEvent node.");
     }
 
-    this.stateStore = new InMemoryExecutionInstanceStateStore();
-    this.tracker = await ExecutionInstanceStateTracker.createNewInstance(
+    this.stateStore = new InMemoryExecutionContextStore();
+    this.tracker = await ExecutionContextTracker.createNewInstance(
       correlationId,
       startNode._id,
       new Map([["orderAmount", 1200]]),
@@ -110,30 +122,30 @@ export class ExecutionGraphService {
         // For tasks, this is where actual work would be done, and then its completion reported.
         // For gateways and events, they are often "completed" internally by the traversal engine
         // as soon as their conditions/triggers are met.
-        if (node.type === ExecutionNodeType.TASK || node.type === ExecutionNodeType.START_EVENT || node.type === ExecutionNodeType.END_EVENT) {
+        if (node.type === ExecutionNodeType.LLM_CALL || node.type === ExecutionNodeType.START_EVENT || node.type === ExecutionNodeType.END_EVENT) {
             console.log(`Simulating completion of ${node.type}: ${node.label}`);
             await this.taskNodeHandler(node, engine);
 
             nodesProcessedInThisIteration++;
-        } else if (node.type === ExecutionNodeType.EXCLUSIVE_GATEWAY || node.type === ExecutionNodeType.PARALLEL_GATEWAY || node.type === ExecutionNodeType.INCLUSIVE_GATEWAY || node.type === ExecutionNodeType.EVENT_BASED_GATEWAY) {
-            // Gateways and Event-Based Gateways are typically "completed" by the traversal logic itself
-            // as soon as their routing conditions are met or an event is caught.
-            // We don't need a separate 'completion' call here like for tasks.
-            // The `advanceProcess` method (which internally handles gateway logic) implicitly moves past them.
-            // For Event-Based Gateways, this loop needs an external event source.
-            // For simplicity, we assume if it's active, its conditions might be met immediately in this loop.
-            // If a gateway is active and not resolved, it will stay in activeNodeIds.
-            console.log(`Attempting to resolve gateway/event: ${node.label} (${node.type})`);
-            // Call advanceProcess with the gateway node itself to re-evaluate its outputs.
-            // This is crucial for joins, as they might have received an incoming flow from a parallel branch.
-            const nextNodes = await engine.advanceExecute(node._id); // Gateway becomes 'completed' internally by the engine
-            if (nextNodes.length > 0) {
-                console.log(`Gateway ${node._id} activated new nodes: ${nextNodes.join(', ')}`);
-            }
-            nodesProcessedInThisIteration++;
+        // } else if (node.type === ExecutionNodeType.EXCLUSIVE_GATEWAY || node.type === ExecutionNodeType.PARALLEL_GATEWAY || node.type === ExecutionNodeType.INCLUSIVE_GATEWAY || node.type === ExecutionNodeType.EVENT_BASED_GATEWAY) {
+        //     // Gateways and Event-Based Gateways are typically "completed" by the traversal logic itself
+        //     // as soon as their routing conditions are met or an event is caught.
+        //     // We don't need a separate 'completion' call here like for tasks.
+        //     // The `advanceProcess` method (which internally handles gateway logic) implicitly moves past them.
+        //     // For Event-Based Gateways, this loop needs an external event source.
+        //     // For simplicity, we assume if it's active, its conditions might be met immediately in this loop.
+        //     // If a gateway is active and not resolved, it will stay in activeNodeIds.
+        //     console.log(`Attempting to resolve gateway/event: ${node.label} (${node.type})`);
+        //     // Call advanceProcess with the gateway node itself to re-evaluate its outputs.
+        //     // This is crucial for joins, as they might have received an incoming flow from a parallel branch.
+        //     const nextNodes = await engine.advanceExecute(node._id); // Gateway becomes 'completed' internally by the engine
+        //     if (nextNodes.length > 0) {
+        //         console.log(`Gateway ${node._id} activated new nodes: ${nextNodes.join(', ')}`);
+        //     }
+        //     nodesProcessedInThisIteration++;
 
-            // If a gateway is still active after being "advanced" (e.g., a join waiting for more flows),
-            // it means it could not resolve in this iteration and will remain in activeNodeIds for next loop.
+        //     // If a gateway is still active after being "advanced" (e.g., a join waiting for more flows),
+        //     // it means it could not resolve in this iteration and will remain in activeNodeIds for next loop.
         }
     }
 
@@ -141,11 +153,15 @@ export class ExecutionGraphService {
   }
 
   async taskNodeHandler(node: ExecutionNodeDto, engine: GraphTraversalEngine): Promise<void> {
-    // Simulate task execution logic here
-    // For example, you might call an external service or perform some computation
     console.log(`Executing task node: ${node.label}`);
-    // After task execution, mark the node as completed
-    // tracker.setNodeCompleted(node._id);
+
+    if (ExcutorMap[node.type]) {
+      const executor = await this.moduleRef.resolve(ExcutorMap[node.type]);
+      await executor.execute(node, this.tracker)
+    } else {
+      console.warn(`The type ${node.type} of an executor is not defined.`)
+    }
+
     const nextNodes = await engine.advanceExecute(node._id);
     if (nextNodes.length > 0) {
         console.log(`Activated new nodes: ${nextNodes.join(', ')}`);

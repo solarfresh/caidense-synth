@@ -2,20 +2,10 @@ import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
 export enum ExecutionNodeType {
-  DUMMY = 'dummy',
-  SEQUENCE = 'sequence',
-  PARALLEL = 'parallel',
-  EXCLUSIVE = 'exclusive',
-  INCLUSIVE = 'inclusive',
+  LLM_CALL = 'llmCall',
   START_EVENT = 'startEvent',
   END_EVENT = 'endEvent',
-  TASK = 'task',
-  GATEWAY = 'gateway',
   SCRIPT = 'script',
-  EXCLUSIVE_GATEWAY = 'exclusiveGateway',
-  INCLUSIVE_GATEWAY = 'inclusiveGateway',
-  PARALLEL_GATEWAY = 'parallelGateway',
-  EVENT_BASED_GATEWAY = 'eventBasedGateway',
 }
 
 export interface ExecutionNodeConfig {

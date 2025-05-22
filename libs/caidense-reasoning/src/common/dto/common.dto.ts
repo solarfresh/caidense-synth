@@ -50,7 +50,7 @@ export class VariableDto {
     // Note: 'any' type is hard to represent precisely in Swagger,
     // you might want to specify specific types or provide examples for common cases.
   })
-  defaultValue?: any; // Assuming default value is optional and can be any type
+  value?: any; // Assuming default value is optional and can be any type
 
   @ApiProperty({ description: 'The timestamp when this variable was created.' })
   createdAt: Date; // Assuming timestamps are tracked for variables
@@ -67,7 +67,7 @@ export class VariableDto {
     this.type = plainObject.type;
     this.description = plainObject.description;
     this.required = plainObject.required;
-    this.defaultValue = plainObject.defaultValue;
+    this.value = plainObject.value;
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;
   }
@@ -90,7 +90,7 @@ export class CreateVariableDto {
   required?: boolean;
 
   @IsOptional()
-  defaultValue?: any;
+  value?: any;
 
   // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,
@@ -154,7 +154,7 @@ export class UpdateVariableDto {
     // you might want to specify specific types or provide examples.
   })
   @IsOptional() // Allows this field to be missing in the incoming payload
-  defaultValue?: any; // TypeScript optional property
+  value?: any; // TypeScript optional property
 
   // Note: Fields like 'createdAt', 'updatedAt', are managed by the backend.
   // The entry's _id is often *needed* for updating it in an array (see comment above).

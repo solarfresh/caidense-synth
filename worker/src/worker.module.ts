@@ -1,9 +1,9 @@
+import { DatabaseModule } from '@caidense/reasoning/database/database.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ExecutionModule } from './execution/execution.module';
 import { WorkerController } from './worker.controller'; // Controller to handle HTTP requests if needed
 import { WorkerService } from './worker.service'; // Service to handle incoming messages and orchestrate execution
-import { DatabaseModule } from '@caidense/reasoning/database/database.module';
 
 
 @Module({
@@ -15,7 +15,7 @@ import { DatabaseModule } from '@caidense/reasoning/database/database.module';
     }),
 
     DatabaseModule,
-    ExecutionModule
+    ExecutionModule,
     // ... import other modules required by executors (e.g., HttpModule, MongooseModule if needed, but generally keep workers stateless)
   ],
   controllers: [WorkerController],
