@@ -1,3 +1,4 @@
+import { GoogleGenaiService } from '@caidense/reasoning/executor/genai/google/google.service';
 import { GenerateContentResponse } from '@google/genai';
 import {
   Body,
@@ -5,7 +6,6 @@ import {
   Post
 } from '@nestjs/common';
 import { PromptDto } from './dto/prompt.dto';
-import { GoogleGenaiService } from './google.service';
 
 
 @Controller('genai')
@@ -14,6 +14,6 @@ export class GoogleGenaiController {
 
   @Post('google/aistudio/generate')
   async generateContentFromAiStudio(@Body() promptDto: PromptDto): Promise<GenerateContentResponse> {
-    return await this.GoogleGenaiService.generateContentFromAiStudio(promptDto.prompt);
+    return await this.GoogleGenaiService.generateContentFromAiStudio(promptDto.prompt, promptDto.modelName);
   }
 }
