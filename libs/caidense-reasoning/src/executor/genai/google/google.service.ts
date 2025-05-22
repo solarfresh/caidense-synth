@@ -23,6 +23,7 @@ export class GoogleGenaiService {
         contents: contents
       });
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException('Failed to generate text from Gemini.');
     }
   }
