@@ -1,17 +1,17 @@
-import { ExecutionInstanceState, ExecutionInstanceStateStore } from '@/state/state.interface';
+import { ExecutionContext, ExecutionContextStore } from '@caidense/reasoning/state/state.interface';
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 
 
 /**
- * A mock in-memory implementation of ExecutionInstanceStateStore for demonstration.
+ * A mock in-memory implementation of ExecutionContextStore for demonstration.
  * In a real application, this would interact with a database.
  */
-export class InMemoryExecutionInstanceStateStore implements ExecutionInstanceStateStore {
-    private store: Map<string, ExecutionInstanceState> = new Map();
+export class InMemoryExecutionContextStore implements ExecutionContextStore {
+    private store: Map<string, ExecutionContext> = new Map();
 
-    async saveState(state: ExecutionInstanceState): Promise<void> {
+    async saveState(state: ExecutionContext): Promise<void> {
         // Deep clone the state to prevent external modifications affecting the stored state
-        const stateToStore: ExecutionInstanceState = {
+        const stateToStore: ExecutionContext = {
             ...state,
             currentNodeIds: new Set(state.currentNodeIds),
             completedIncomingEdgeIds: new Map(
@@ -25,7 +25,7 @@ export class InMemoryExecutionInstanceStateStore implements ExecutionInstanceSta
         console.log(`[Store] State saved for instance: ${state.instanceId}`);
     }
 
-    async getState(instanceId: string): Promise<ExecutionInstanceState | null> {
+    async getState(instanceId: string): Promise<ExecutionContext | null> {
         const state = this.store.get(instanceId);
         if (state) {
             // Return a deep clone to ensure the caller works with a mutable copy
@@ -48,7 +48,7 @@ export class InMemoryExecutionInstanceStateStore implements ExecutionInstanceSta
         console.log(`[Store] State deleted for instance: ${instanceId}`);
     }
 
-    async getInstancesByStatus(status: ExecutionInstanceState['status']): Promise<ExecutionInstanceState[]> {
+    async getInstancesByStatus(status: ExecutionContext['status']): Promise<ExecutionContext[]> {
         const filtered = Array.from(this.store.values()).filter(s => s.status === status);
         return filtered.map(s => ({
             ...s,
@@ -61,11 +61,11 @@ export class InMemoryExecutionInstanceStateStore implements ExecutionInstanceSta
     }
 }
 
-export class ExecutionInstanceStateTracker {
-    private state: ExecutionInstanceState;
-    private stateStore: ExecutionInstanceStateStore;
+export class ExecutionContextTracker {
+    private state: ExecutionContext;
+    private stateStore: ExecutionContextStore;
 
-    constructor(initialState: ExecutionInstanceState, stateStore: ExecutionInstanceStateStore) {
+    constructor(initialState: ExecutionContext, stateStore: ExecutionContextStore) {
         this.state = initialState;
         this.stateStore = stateStore;
         // Ensure sets and maps are correctly initialized even if loaded from plain object
@@ -83,10 +83,10 @@ export class ExecutionInstanceStateTracker {
         instanceId: string,
         initialNodeId: string,
         initialVariables: Map<string, any>,
-        stateStore: ExecutionInstanceStateStore
-    ): Promise<ExecutionInstanceStateTracker> {
+        stateStore: ExecutionContextStore
+    ): Promise<ExecutionContextTracker> {
         const now = new Date();
-        const newState: ExecutionInstanceState = {
+        const newState: ExecutionContext = {
             instanceId,
             currentNodeIds: new Set([initialNodeId]),
             completedIncomingEdgeIds: new Map(),
@@ -96,20 +96,20 @@ export class ExecutionInstanceStateTracker {
             endTime: undefined,
             error: undefined,
           };
-        const tracker = new ExecutionInstanceStateTracker(newState, stateStore);
+        const tracker = new ExecutionContextTracker(newState, stateStore);
         await tracker.persistState();
         return tracker;
     }
 
-    public static async loadInstance(instanceId: string, stateStore: ExecutionInstanceStateStore): Promise<ExecutionInstanceStateTracker | null> {
+    public static async loadInstance(instanceId: string, stateStore: ExecutionContextStore): Promise<ExecutionContextTracker | null> {
         const state = await stateStore.getState(instanceId);
         if (state) {
-            return new ExecutionInstanceStateTracker(state, stateStore);
+            return new ExecutionContextTracker(state, stateStore);
         }
         return null;
     }
 
-    public getCurrentState(): Readonly<ExecutionInstanceState> {
+    public getCurrentState(): Readonly<ExecutionContext> {
         return {
             ...this.state,
             currentNodeIds: new Set(this.state.currentNodeIds),
@@ -171,7 +171,7 @@ export class ExecutionInstanceStateTracker {
             completedIncomingEdgeIds: Array.from(this.state.completedIncomingEdgeIds.entries()).map(([key, value]) => [key, Array.from(value)]),
             variables: Array.from(this.state.variables.entries()),
         };
-        await this.stateStore.saveState(stateForStorage as unknown as ExecutionInstanceState);
+        await this.stateStore.saveState(stateForStorage as unknown as ExecutionContext);
     }
 
     public getInstanceId(): string {

@@ -4,15 +4,15 @@ import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
 import { Injectable } from '@nestjs/common';
-import { ExecutionInstanceStateTracker, InMemoryExecutionInstanceStateStore } from '../state/state.service';
+import { ExecutionContextTracker, InMemoryExecutionContextStore } from '../state/state.service';
 import { GraphTraversalEngine } from '../traverse/traverse.service';
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 
 
 @Injectable()
 export class ExecutionGraphService {
-  private tracker: ExecutionInstanceStateTracker
-  private stateStore: InMemoryExecutionInstanceStateStore
+  private tracker: ExecutionContextTracker
+  private stateStore: InMemoryExecutionContextStore
   /**
    * Transforms a ReasoningThinkingDto object into an ExecutionGraph interface.
    * It converts the arrays of nodes and edges into Maps for easier lookup by ID.
@@ -38,8 +38,8 @@ export class ExecutionGraphService {
         throw new Error("Process graph must contain a StartEvent node.");
     }
 
-    this.stateStore = new InMemoryExecutionInstanceStateStore();
-    this.tracker = await ExecutionInstanceStateTracker.createNewInstance(
+    this.stateStore = new InMemoryExecutionContextStore();
+    this.tracker = await ExecutionContextTracker.createNewInstance(
       correlationId,
       startNode._id,
       new Map([["orderAmount", 1200]]),

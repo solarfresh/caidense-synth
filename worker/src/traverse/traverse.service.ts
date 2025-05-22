@@ -1,15 +1,15 @@
-import { ExecutionInstanceState } from '@/state/state.interface';
-import { ExecutionInstanceStateTracker } from '@/state/state.service';
+import { ExecutionContextTracker } from '@/state/state.service';
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
+import { ExecutionContext } from '@caidense/reasoning/state/state.interface';
 
 
 export class GraphTraversalEngine {
     private graph: ExecutionGraph;
-    private stateTracker: ExecutionInstanceStateTracker;
+    private stateTracker: ExecutionContextTracker;
 
-    constructor(graph: ExecutionGraph, stateTracker : ExecutionInstanceStateTracker) {
+    constructor(graph: ExecutionGraph, stateTracker : ExecutionContextTracker) {
         this.graph = graph;
         this.stateTracker  = stateTracker ;
     }
@@ -81,9 +81,9 @@ export class GraphTraversalEngine {
 
     /**
      * Returns the current state of the process instance.
-     * @returns The ExecutionInstanceState object.
+     * @returns The ExecutionContext object.
      */
-    public getCurrentState(): ExecutionInstanceState {
+    public getCurrentState(): ExecutionContext {
         return this.stateTracker.getCurrentState();
     }
 
