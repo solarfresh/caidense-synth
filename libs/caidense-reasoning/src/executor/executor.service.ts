@@ -1,6 +1,6 @@
-import { ExecutorResult } from '@caidense/reasoning/executor.interface';
+import { ExecutorResult } from '@caidense/reasoning/executor/executor.interface';
 import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
-import { ExecutionContext } from '@caidense/reasoning/state/state.interface';
+import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
 
 
@@ -15,8 +15,8 @@ export abstract class ExecutorBase<T> {
    * 5. Return an INodeExecutionOutcome object.
    *
    * @param node The definition of the node instance to execute.
-   * @param context The current state of the flow execution.
+   * @param context The current state of the graph execution.
    * @returns A Promise resolving to the outcome of the execution.
    */
-  protected abstract execute(node: ExecutionNode, context: ExecutionContext): Promise<ExecutorResult>;
+  protected abstract execute(node: ExecutionNode, tracker: ExecutionContextTracker): Promise<ExecutorResult>;
 }

@@ -1,12 +1,11 @@
-import { ExecutionEdgeDto } from '@caidense/reasoning/edge/dto/edge.dto';
+import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
+import { ExecutionContextTracker, InMemoryExecutionContextStore } from '@caidense/reasoning/state/state.service';
 import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
 import { Injectable } from '@nestjs/common';
-import { ExecutionContextTracker, InMemoryExecutionContextStore } from '../state/state.service';
 import { GraphTraversalEngine } from '../traverse/traverse.service';
-import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 
 
 @Injectable()
