@@ -1,6 +1,6 @@
-import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
+import { ExecutionNodeDto } from '../node/dto/node.dto';
 
 
 @Injectable()
@@ -17,5 +17,5 @@ export abstract class ExecutorBase {
    * @param context The current state of the graph execution.
    * @returns A Promise resolving to the outcome of the execution.
    */
-  protected abstract execute(node: ExecutionNode, tracker: ExecutionContextTracker): Promise<void>;
+  protected abstract execute(node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<void>;
 }

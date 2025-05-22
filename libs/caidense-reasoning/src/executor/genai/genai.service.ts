@@ -2,7 +2,8 @@ import { Variable } from '@caidense/reasoning/common/common.interface';
 import { ExecutorBase } from '@caidense/reasoning/executor/executor.service';
 import { LLMCallNodeConfig } from '@caidense/reasoning/executor/genai/genai.interface';
 import { GoogleGenaiService } from '@caidense/reasoning/executor/genai/google/google.service';
-import { ExecutionNode, ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
+import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
+import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { PromptTemplate } from "@langchain/core/prompts";
 import { Injectable } from '@nestjs/common';
@@ -10,7 +11,7 @@ import { ModuleRef } from '@nestjs/core';
 
 
 const GenaiServiceMap: Record<string, any> = {
-  'google': GoogleGenaiService,
+  google: GoogleGenaiService,
 };
 
 @Injectable()
@@ -21,7 +22,7 @@ export class LLMCallExecutor extends ExecutorBase {
     super()
   }
 
-  async execute(node: ExecutionNode, tracker: ExecutionContextTracker): Promise<void> {
+  async execute(node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<void> {
     if (node.type !== ExecutionNodeType.LLM_CALL) {
       console.error(`LLMCallExecutor received unexpected node type: ${node.type}`);
     }
@@ -31,7 +32,9 @@ export class LLMCallExecutor extends ExecutorBase {
     const promptTemplate = PromptTemplate.fromTemplate(config.promptTemplate)
     const promptVariables = await this.convertToPromptVariables(node.inputs)
     const promptText = await promptTemplate.invoke(promptVariables);
-    const result = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
+    // const result = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
+    const result = {response: 'genAI executes sucessfully.'}
+    console.log('[TEST] genAI executes sucessfully.')
     tracker.setVariable('outputs', [result])
   }
 

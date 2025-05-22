@@ -1,17 +1,32 @@
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
+import { ExecutorBase } from '@caidense/reasoning/executor/executor.service';
+import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker, InMemoryExecutionContextStore } from '@caidense/reasoning/state/state.service';
 import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.dto';
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { GraphTraversalEngine } from '../traverse/traverse.service';
+import { LLMCallNodeConfig } from '@caidense/reasoning/executor/genai/genai.interface'
 
+
+const ExcutorMap: Record<ExecutionNodeType, any> = {
+  [ExecutionNodeType.LLM_CALL]: LLMCallExecutor,
+  [ExecutionNodeType.START_EVENT]: null,
+  [ExecutionNodeType.END_EVENT]: null,
+  [ExecutionNodeType.SCRIPT]: null
+};
 
 @Injectable()
 export class ExecutionGraphService {
   private tracker: ExecutionContextTracker
   private stateStore: InMemoryExecutionContextStore
+
+  constructor(
+    private readonly moduleRef: ModuleRef
+  ) {}
   /**
    * Transforms a ReasoningThinkingDto object into an ExecutionGraph interface.
    * It converts the arrays of nodes and edges into Maps for easier lookup by ID.
@@ -142,9 +157,12 @@ export class ExecutionGraphService {
   async taskNodeHandler(node: ExecutionNodeDto, engine: GraphTraversalEngine): Promise<void> {
     console.log(`Executing task node: ${node.label}`);
 
-    /**
-     * TODO: An executor will run here!!!
-     */
+    if (ExcutorMap[node.type]) {
+      const executor = await this.moduleRef.resolve(ExcutorMap[node.type]);
+      await executor.execute(node, this.tracker)
+    } else {
+      console.warn(`The type ${node.type} of an executor is not defined.`)
+    }
 
     const nextNodes = await engine.advanceExecute(node._id);
     if (nextNodes.length > 0) {
