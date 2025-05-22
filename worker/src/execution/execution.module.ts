@@ -1,3 +1,5 @@
+import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
+import { GoogleGenaiService } from '@caidense/reasoning/executor/genai/google/google.service';
 import { ReasoningThinkingDocument, ReasoningThinkingSchema } from '@caidense/reasoning/thinking/thinking.schemas';
 import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Module } from '@nestjs/common';
@@ -5,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ExecutionConsumer } from './execution.consumer';
 import { ExecutionGraphService } from './execution.graph.service';
 import { ExecutionProducer } from './execution.producer';
+
 
 
 @Module({
@@ -30,9 +33,17 @@ import { ExecutionProducer } from './execution.producer';
     },
     ExecutionGraphService,
     ExecutionProducer,
-    ReasoningThinkingService
+    GoogleGenaiService,
+    LLMCallExecutor,
+    ReasoningThinkingService,
   ],
   controllers: [],
-  exports: [ExecutionGraphService, ExecutionProducer, ReasoningThinkingService],
+  exports: [
+    ExecutionGraphService,
+    ExecutionProducer,
+    GoogleGenaiService,
+    LLMCallExecutor,
+    ReasoningThinkingService,
+  ],
 })
 export class ExecutionModule {}

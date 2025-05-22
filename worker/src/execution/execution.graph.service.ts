@@ -1,5 +1,4 @@
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
-import { ExecutorBase } from '@caidense/reasoning/executor/executor.service';
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
 import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
@@ -9,7 +8,6 @@ import { ReasoningThinkingDto } from '@caidense/reasoning/thinking/dto/thinking.
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { GraphTraversalEngine } from '../traverse/traverse.service';
-import { LLMCallNodeConfig } from '@caidense/reasoning/executor/genai/genai.interface'
 
 
 const ExcutorMap: Record<ExecutionNodeType, any> = {
