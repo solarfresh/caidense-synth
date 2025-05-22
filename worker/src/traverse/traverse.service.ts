@@ -9,9 +9,9 @@ export class GraphTraversalEngine {
     private graph: ExecutionGraph;
     private stateTracker: ExecutionContextTracker;
 
-    constructor(graph: ExecutionGraph, stateTracker : ExecutionContextTracker) {
+    constructor(graph: ExecutionGraph, stateTracker: ExecutionContextTracker) {
         this.graph = graph;
-        this.stateTracker  = stateTracker ;
+        this.stateTracker = stateTracker;
     }
 
     /**
@@ -49,7 +49,7 @@ export class GraphTraversalEngine {
 
             // Handle different types of target nodes
             switch (targetNode.type) {
-                case ExecutionNodeType.TASK:
+                case ExecutionNodeType.LLM_CALL:
                 case ExecutionNodeType.START_EVENT: // Usually only one starting point
                 case ExecutionNodeType.END_EVENT:
                     // For simple nodes, activate them directly
@@ -94,6 +94,11 @@ export class GraphTraversalEngine {
      */
     private activateNode(nodeId: string, nodesToActivate: string[]): void {
         this.stateTracker.activateNode(nodeId);
+
+        /**
+         * TODO: Update input variables to next nodes
+         */
+
         nodesToActivate.push(nodeId);
         console.log(`Node activated: ${nodeId}`);
     }

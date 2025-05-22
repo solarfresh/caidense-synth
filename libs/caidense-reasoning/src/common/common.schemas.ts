@@ -23,7 +23,7 @@ export class VariableSchemaClass implements Variable {
   required?: boolean;
 
   @Prop({ type: MongooseSchema.Types.Mixed })
-  defaultValue?: any;
+  value?: any;
 }
 
 export const VariableSchema = SchemaFactory.createForClass(VariableSchemaClass);

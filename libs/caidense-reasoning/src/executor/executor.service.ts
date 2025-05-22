@@ -1,11 +1,10 @@
-import { ExecutorResult } from '@caidense/reasoning/executor/executor.interface';
 import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
 
 
 @Injectable()
-export abstract class ExecutorBase<T> {
+export abstract class ExecutorBase {
   /**
    * Implementations should:
    * 1. Read data from the input 'context' and 'node.config'.
@@ -18,5 +17,5 @@ export abstract class ExecutorBase<T> {
    * @param context The current state of the graph execution.
    * @returns A Promise resolving to the outcome of the execution.
    */
-  protected abstract execute(node: ExecutionNode, tracker: ExecutionContextTracker): Promise<ExecutorResult>;
+  protected abstract execute(node: ExecutionNode, tracker: ExecutionContextTracker): Promise<void>;
 }

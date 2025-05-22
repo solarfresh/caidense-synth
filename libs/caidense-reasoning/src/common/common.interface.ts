@@ -25,7 +25,7 @@ export interface Variable {
   /**
    * Optional: Default value for the variable if not provided.
    */
-  defaultValue?: any;
+  value?: any;
 
   // Add validation rules, example values, etc., if needed
   // validation?: object;
