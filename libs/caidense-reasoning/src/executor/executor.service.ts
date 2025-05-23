@@ -1,7 +1,6 @@
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
 import { ExecutionNodeDto } from '../node/dto/node.dto';
-import { VariableDto } from '../common/dto/common.dto';
 
 
 @Injectable()

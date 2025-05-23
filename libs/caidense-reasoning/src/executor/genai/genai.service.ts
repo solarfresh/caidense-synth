@@ -67,7 +67,7 @@ export class LLMCallExecutor extends ExecutorBase {
     const results: Record<string, any> = {
       llmOutput: response
     }
-    this.setOutputs(results, node, tracker)
+    await this.setOutputs(results, node, tracker)
   }
 
   async composePrompt(promptTemplate: string, node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<string> {

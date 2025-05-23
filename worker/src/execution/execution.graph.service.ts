@@ -1,5 +1,6 @@
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
+import { ScriptExecutor } from '@caidense/reasoning/executor/generic/script.service';
 import { ExecutionGraph, ExecutionGraphConfig } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
@@ -12,10 +13,10 @@ import { GraphTraversalEngine } from '../traverse/traverse.service';
 
 
 const ExcutorMap: Record<ExecutionNodeType, any> = {
-  [ExecutionNodeType.LLM_CALL]: LLMCallExecutor,
-  [ExecutionNodeType.START_EVENT]: null,
   [ExecutionNodeType.END_EVENT]: null,
-  [ExecutionNodeType.SCRIPT]: null
+  [ExecutionNodeType.LLM_CALL]: LLMCallExecutor,
+  [ExecutionNodeType.SCRIPT]: ScriptExecutor,
+  [ExecutionNodeType.START_EVENT]: null,
 };
 
 @Injectable()
