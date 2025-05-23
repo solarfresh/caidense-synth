@@ -24,6 +24,10 @@ export class VariableSchemaClass implements Variable {
 
   @Prop({ type: MongooseSchema.Types.Mixed })
   defaultValue?: any;
+
+  @Prop({ type: String })
+  systemRef?: string
+
 }
 
 export const VariableSchema = SchemaFactory.createForClass(VariableSchemaClass);

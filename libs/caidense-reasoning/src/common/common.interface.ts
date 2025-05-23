@@ -27,6 +27,12 @@ export interface Variable {
    */
   defaultValue?: any;
 
+
+  /**
+   * Optional: Reference link to system variable
+   */
+  systemRef?: string
+
   // Add validation rules, example values, etc., if needed
   // validation?: object;
   // example?: any;

@@ -50,6 +50,7 @@ export class GraphTraversalEngine {
             // Handle different types of target nodes
             switch (targetNode.type) {
                 case ExecutionNodeType.LLM_CALL:
+                case ExecutionNodeType.SCRIPT:
                 case ExecutionNodeType.START_EVENT: // Usually only one starting point
                 case ExecutionNodeType.END_EVENT:
                     // For simple nodes, activate them directly
