@@ -43,7 +43,7 @@ export class ExecutionProducer extends BaseRabbitMQService {
     console.log(`[RequesterService] Connected and listening on reply queue: ${this.replyQueue}`);
   }
 
-  async sendMessage(message: string) {
+  async sendMessage(message: object) {
     if (!this.channel) {
       console.error('RabbitMQ channel is not initialized for producer.');
       return;

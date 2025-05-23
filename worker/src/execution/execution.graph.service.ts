@@ -1,6 +1,6 @@
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
-import { ExecutionGraph } from '@caidense/reasoning/graph/graph.interface';
+import { ExecutionGraph, ExecutionGraphConfig } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker, InMemoryExecutionContextStore } from '@caidense/reasoning/state/state.service';
@@ -39,25 +39,15 @@ export class ExecutionGraphService {
     return {
       id: dto._id, // Use the _id from ReasoningThinkingDto as the graph id
       nodes: nodesMap,
-      edges: edgesMap
+      edges: edgesMap,
+      inputs: dto.inputs,
+      outputs: dto.outputs
     };
   }
 
-  async runExecutionGraph(correlationId: string, graph: ReasoningThinkingDto): Promise<any> {
+  async runExecutionGraph(correlationId: string, graph: ReasoningThinkingDto, config: ExecutionGraphConfig): Promise<any> {
     const convertedGraph = await this.convertToExecutionGraph(graph);
-    const startNode = Array.from(convertedGraph.nodes.values()).find(node => node.type === ExecutionNodeType.START_EVENT);
-    if (!startNode) {
-        throw new Error("Process graph must contain a StartEvent node.");
-    }
-
-    this.stateStore = new InMemoryExecutionContextStore();
-    this.tracker = await ExecutionContextTracker.createNewInstance(
-      correlationId,
-      startNode._id,
-      new Map([["orderAmount", 1200]]),
-      this.stateStore
-    );
-    const engine = new GraphTraversalEngine(convertedGraph, this.tracker);
+    const engine = await this.initializeExecutionGraph(correlationId, convertedGraph, config);
 
     let loopCount = 0;
     const MAX_LOOP_ITERATIONS = 100; // Safeguard against infinite loops in complex graphs
@@ -88,6 +78,25 @@ export class ExecutionGraphService {
 
     console.log(`\n--- Process instance ${correlationId} execution finished. Final Status: ${this.tracker.getCurrentState().status} ---`);
     return this.tracker;
+  }
+
+  async initializeExecutionGraph(correlationId: string, graph: ExecutionGraph, config: ExecutionGraphConfig): Promise<GraphTraversalEngine> {
+    const startNode = Array.from(graph.nodes.values()).find(node => node.type === ExecutionNodeType.START_EVENT);
+    if (!startNode) {
+        throw new Error("Process graph must contain a StartEvent node.");
+    }
+
+    const initialVariables = new Map(graph.inputs.map(input => [input.name, config.inputs.get(input.name)]));
+    console.log(`initialVariables: ${initialVariables}`)
+
+    this.stateStore = new InMemoryExecutionContextStore();
+    this.tracker = await ExecutionContextTracker.createNewInstance(
+      correlationId,
+      startNode._id,
+      initialVariables,
+      this.stateStore
+    );
+    return new GraphTraversalEngine(graph, this.tracker);
   }
 
   async executeActivatedNodes(
