@@ -4,7 +4,7 @@ import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import vm from 'vm';
+import * as vm from 'vm';
 
 
 @Injectable()

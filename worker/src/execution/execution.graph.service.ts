@@ -112,52 +112,35 @@ export class ExecutionGraphService {
 
     let nodesProcessedInThisIteration = 0;
     for (const nodeId of currentActiveNodes) {
-        // Check if this node is still active in the tracker's state.
-        // It might have been completed by another branch in this same iteration (e.g., join gateway).
-        if (!engine.stateTracker.getCurrentState().currentNodeIds.has(nodeId)) {
-            continue; // Node was already processed or removed
-        }
+      // Check if this node is still active in the tracker's state.
+      // It might have been completed by another branch in this same iteration (e.g., join gateway).
+      if (!engine.stateTracker.getCurrentState().currentNodeIds.has(nodeId)) {
+          continue; // Node was already processed or removed
+      }
 
-        const node = graph.nodes.get(nodeId);
-        if (!node) {
-            console.error(`Error: Active node ${nodeId} not found in graph.`);
-            engine.stateTracker.setStatus(ExecutionStatus.FAILED, `Active node ${nodeId} not found in graph.`);
-            await engine.stateTracker.persistState();
+      const node = graph.nodes.get(nodeId);
+      if (!node) {
+          console.error(`Error: Active node ${nodeId} not found in graph.`);
+          engine.stateTracker.setStatus(ExecutionStatus.FAILED, `Active node ${nodeId} not found in graph.`);
+          await engine.stateTracker.persistState();
 
-            return nodesProcessedInThisIteration;
-        }
+          return nodesProcessedInThisIteration;
+      }
 
-        console.log(`Processing node: ${node.label} (${node.type})`);
-
-        // Simulate the completion of the current active node.
-        // For tasks, this is where actual work would be done, and then its completion reported.
-        // For gateways and events, they are often "completed" internally by the traversal engine
-        // as soon as their conditions/triggers are met.
-        if (node.type === ExecutionNodeType.LLM_CALL || node.type === ExecutionNodeType.START_EVENT || node.type === ExecutionNodeType.END_EVENT) {
-            console.log(`Completion of ${node.type}: ${node.label}`);
-            await this.taskNodeHandler(node, engine);
-
-            nodesProcessedInThisIteration++;
-        // } else if (node.type === ExecutionNodeType.EXCLUSIVE_GATEWAY || node.type === ExecutionNodeType.PARALLEL_GATEWAY || node.type === ExecutionNodeType.INCLUSIVE_GATEWAY || node.type === ExecutionNodeType.EVENT_BASED_GATEWAY) {
-        //     // Gateways and Event-Based Gateways are typically "completed" by the traversal logic itself
-        //     // as soon as their routing conditions are met or an event is caught.
-        //     // We don't need a separate 'completion' call here like for tasks.
-        //     // The `advanceProcess` method (which internally handles gateway logic) implicitly moves past them.
-        //     // For Event-Based Gateways, this loop needs an external event source.
-        //     // For simplicity, we assume if it's active, its conditions might be met immediately in this loop.
-        //     // If a gateway is active and not resolved, it will stay in activeNodeIds.
-        //     console.log(`Attempting to resolve gateway/event: ${node.label} (${node.type})`);
-        //     // Call advanceProcess with the gateway node itself to re-evaluate its outputs.
-        //     // This is crucial for joins, as they might have received an incoming flow from a parallel branch.
-        //     const nextNodes = await engine.advanceExecute(node._id); // Gateway becomes 'completed' internally by the engine
-        //     if (nextNodes.length > 0) {
-        //         console.log(`Gateway ${node._id} activated new nodes: ${nextNodes.join(', ')}`);
-        //     }
-        //     nodesProcessedInThisIteration++;
-
-        //     // If a gateway is still active after being "advanced" (e.g., a join waiting for more flows),
-        //     // it means it could not resolve in this iteration and will remain in activeNodeIds for next loop.
-        }
+      console.log(`Processing node: ${node.label} (${node.type})`);
+      switch (node.type) {
+        case ExecutionNodeType.LLM_CALL:
+        case ExecutionNodeType.SCRIPT:
+        case ExecutionNodeType.START_EVENT:
+        case ExecutionNodeType.END_EVENT:
+          console.log(`Completion of ${node.type}: ${node.label}`);
+          await this.taskNodeHandler(node, engine);
+          nodesProcessedInThisIteration++
+          break;
+        default:
+          console.warn(`Unsupported node type encountered: ${node.type}`);
+          break;
+      }
     }
 
     return nodesProcessedInThisIteration
@@ -180,7 +163,7 @@ export class ExecutionGraphService {
 
     const nextNodes = await engine.advanceExecute(node._id);
     if (nextNodes.length > 0) {
-        console.log(`Activated new nodes: ${nextNodes.join(', ')}`);
+      console.log(`Activated new nodes: ${nextNodes.join(', ')}`);
     }
   }
 }
