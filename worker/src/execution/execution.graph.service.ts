@@ -159,7 +159,7 @@ export class ExecutionGraphService {
       const executor = await this.moduleRef.resolve(ExcutorMap[node.type]);
       await executor.execute(node, this.tracker)
     } else {
-      console.warn(`The type ${node.type} of an executor is not defined.`)
+      console.warn(`The type ${node.type} of an executor is not defined in ExcutorMap.`)
     }
 
     const nextNodes = await engine.advanceExecute(node._id);
