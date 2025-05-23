@@ -19,16 +19,11 @@ export class ExecutionController {
   })
   @HttpCode(HttpStatus.OK)
   async sendMessage(@Body() createExecutionDto: CreateExecutionDto) {
-    const thinkingId = createExecutionDto.thinkingId;
-    if (!thinkingId) {
-      return { status: 500, message: 'thinkingId content is required.' };
-    }
     try {
-      const result = await this.executionProducer.sendMessage(thinkingId);
-      console.log('Message sent to RabbitMQ:', result);
-      return { status: 200, message: 'Message sent to RabbitMQ.', data: result };
+      const result = await this.executionProducer.sendMessage(createExecutionDto);
+      return { status: 200, message: 'Message response from Worker Service.', data: result };
     } catch (error) {
-      return { status: 500, message: 'Failed to send thinkingId to RabbitMQ.', error: error.message };
+      return { status: 500, message: 'Failed to send a message to RabbitMQ.', error: error.message };
     }
   }
 }

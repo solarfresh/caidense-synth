@@ -28,7 +28,7 @@ export class LLMCallExecutor extends ExecutorBase {
 
     const config = node.config as LLMCallNodeConfig;
     const genaiService = await this.moduleRef.resolve(GenaiServiceMap[config.service]);
-    const promptText = await this.composePrompt(config.promptTemplate, node.inputs);
+    const promptText = await this.composePrompt(config.promptTemplate, node.inputs, tracker);
     // const result = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
     const result = {
       candidates: [
@@ -64,13 +64,14 @@ export class LLMCallExecutor extends ExecutorBase {
         ]
       }
     }
-    tracker.setVariable('outputs', [result])
+
+    node.outputs.map(variable => tracker.setVariable(variable.name, result))
   }
 
-  async composePrompt(promptTemplate: string, variables: Variable[]): Promise<string> {
+  async composePrompt(promptTemplate: string, variables: Variable[], tracker: ExecutionContextTracker): Promise<string> {
     return variables.reduce((acc, variable) => {
       if (variable.type === 'string') {
-        let value = variable.value ? variable.value : "";
+        let value: string = tracker.getVariable(variable.name) as string | "";
         return acc.replace(`{{${variable.name}}}`, value)
       }
     }, promptTemplate)

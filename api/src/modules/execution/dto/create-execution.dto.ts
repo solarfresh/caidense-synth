@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import {
   IsNotEmpty, // Decorator to mark a property as optional in the payload
-  IsString
+  IsString,
+  IsOptional
 } from 'class-validator';
+
 
 /**
  * Defines the data structure for creating a new Prompt Text document.
@@ -17,6 +19,9 @@ export class CreateExecutionDto {
   @IsString()
   @IsNotEmpty({ message: 'thinkingId statement is required' }) // Ensures the string is not empty
   thinkingId: string;
+
+  @IsOptional()
+  config?: object;
 
   // Note: Fields like 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,

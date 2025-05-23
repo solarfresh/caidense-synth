@@ -43,7 +43,7 @@ export class ExecutionProducer extends BaseRabbitMQService {
     console.log(`[RequesterService] Connected and listening on reply queue: ${this.replyQueue}`);
   }
 
-  async sendMessage(message: string) {
+  async sendMessage(message: object) {
     if (!this.channel) {
       console.error('RabbitMQ channel is not initialized for producer.');
       return;
@@ -68,15 +68,16 @@ export class ExecutionProducer extends BaseRabbitMQService {
       };
       this.correlationIdEmitter.once(correlationId, onResponse);
 
+      const stringifiedMessage = JSON.stringify(message)
       this.channel.sendToQueue(
         this.requestQueue,
-        Buffer.from(JSON.stringify(message)),
+        Buffer.from(stringifiedMessage),
         {
           correlationId,
           replyTo: this.replyQueue,
         }
       );
-      console.log(`[RequesterService] Sent request for ${message} with correlationId: ${correlationId}`);
+      console.log(`[RequesterService] Sent request for ${stringifiedMessage} with correlationId: ${correlationId}`);
     });
   }
 }
