@@ -52,6 +52,14 @@ export class VariableDto {
   })
   defaultValue?: any; // Assuming default value is optional and can be any type
 
+  @ApiProperty({
+    description: 'Optional: Reference link to system variable.',
+    required: false,
+    example: 'response',
+  })
+  @IsOptional()
+  systemRef?: any;
+
   @ApiProperty({ description: 'The timestamp when this variable was created.' })
   createdAt: Date; // Assuming timestamps are tracked for variables
 
@@ -68,6 +76,7 @@ export class VariableDto {
     this.description = plainObject.description;
     this.required = plainObject.required;
     this.defaultValue = plainObject.defaultValue;
+    this.systemRef = plainObject.systemRef;
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;
   }
@@ -75,22 +84,55 @@ export class VariableDto {
 
 export class CreateVariableDto {
 
+  @ApiProperty({
+    description: 'The name of the variable as used within the prompt text (e.g., "{{userName}}").',
+    example: 'userName', // Example of a variable name
+  })
   @IsString()
   name: string;
 
+  @ApiProperty({
+    description: 'The data type of the variable (e.g., string, number, boolean, object, array).',
+    example: 'string', // Example data type
+  })
   @IsString()
   type: string;
 
+  @ApiProperty({
+    description: 'An optional description explaining the variable\'s purpose.',
+    required: false, // Assuming description is optional
+    example: 'The name of the user to personalize the response.',
+  })
   @IsString()
   @IsOptional()
   description?: string;
 
+  @ApiProperty({
+    description: 'Indicates if this variable is required when the prompt is used (Optional).',
+    required: false, // Assuming required status is optional to define
+    example: true,
+  })
   @IsBoolean()
   @IsOptional()
   required?: boolean;
 
+  @ApiProperty({
+    description: 'An optional default value for the variable if not provided.',
+    required: false, // Assuming default value is optional
+    example: 'Guest', // Example default value
+    // Note: 'any' type is hard to represent precisely in Swagger,
+    // you might want to specify specific types or provide examples for common cases.
+  })
   @IsOptional()
   defaultValue?: any;
+
+  @ApiProperty({
+    description: 'Optional: Reference link to system variable.',
+    required: false,
+    example: 'response',
+  })
+  @IsOptional()
+  systemRef?: any;
 
   // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,
@@ -155,6 +197,14 @@ export class UpdateVariableDto {
   })
   @IsOptional() // Allows this field to be missing in the incoming payload
   defaultValue?: any; // TypeScript optional property
+
+  @ApiProperty({
+    description: 'Optional: Reference link to system variable.',
+    required: false,
+    example: 'response',
+  })
+  @IsOptional()
+  systemRef?: any;
 
   // Note: Fields like 'createdAt', 'updatedAt', are managed by the backend.
   // The entry's _id is often *needed* for updating it in an array (see comment above).

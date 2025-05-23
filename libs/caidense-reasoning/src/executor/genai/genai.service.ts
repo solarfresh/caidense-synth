@@ -28,9 +28,9 @@ export class LLMCallExecutor extends ExecutorBase {
 
     const config = node.config as LLMCallNodeConfig;
     const genaiService = await this.moduleRef.resolve(GenaiServiceMap[config.service]);
-    const promptText = await this.composePrompt(config.promptTemplate, node.inputs, tracker);
-    // const result = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
-    const result = {
+    const promptText = await this.composePrompt(config.promptTemplate, node, tracker);
+    // const response = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
+    const response = {
       candidates: [
         {
           content: {
@@ -64,16 +64,17 @@ export class LLMCallExecutor extends ExecutorBase {
         ]
       }
     }
-
-    node.outputs.map(variable => tracker.setVariable(variable.name, result))
+    const results: Record<string, any> = {
+      llmOutput: response
+    }
+    this.setOutputs(results, node, tracker)
   }
 
-  async composePrompt(promptTemplate: string, variables: Variable[], tracker: ExecutionContextTracker): Promise<string> {
-    return variables.reduce((acc, variable) => {
-      if (variable.type === 'string') {
-        let value: string = tracker.getVariable(variable.name) as string | "";
-        return acc.replace(`{{${variable.name}}}`, value)
-      }
+  async composePrompt(promptTemplate: string, node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<string> {
+    const inputs = this.getInputs(node, tracker)
+    return Object.entries(inputs).reduce((acc, input) => {
+      let [key, value] = input
+      return acc.replace(`{{${key}}}`, value)
     }, promptTemplate)
   }
 }

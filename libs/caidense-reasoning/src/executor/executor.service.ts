@@ -1,6 +1,7 @@
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
 import { ExecutionNodeDto } from '../node/dto/node.dto';
+import { VariableDto } from '../common/dto/common.dto';
 
 
 @Injectable()
@@ -18,4 +19,22 @@ export abstract class ExecutorBase {
    * @returns A Promise resolving to the outcome of the execution.
    */
   protected abstract execute(node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<void>;
+
+  async getInputs(node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<Record<string, any>> {
+    const inputs: Record<string, string> = {};
+    return node.inputs.reduce((acc, variable) => {
+      let inputValue = tracker.getVariable(variable.name)
+      acc[variable.name] = inputValue
+      return acc
+    }, inputs)
+  }
+
+  async setOutputs(results: Record<string, any>, node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<void> {
+    node.outputs.map(variable => {
+      let value = results[variable.systemRef]
+      if (value) {
+        tracker.setVariable(variable.name, value)
+      }
+    })
+  }
 }
