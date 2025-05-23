@@ -90,7 +90,7 @@ export class ExecutionContextTracker {
             instanceId,
             currentNodeIds: new Set([initialNodeId]),
             completedIncomingEdgeIds: new Map(),
-            variables: new Map(initialVariables),
+            variables: initialVariables,
             status: ExecutionStatus.RUNNING,
             startTime: now,
             endTime: undefined,

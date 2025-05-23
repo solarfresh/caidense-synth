@@ -61,7 +61,6 @@ export class ExecutionConsumer extends BaseRabbitMQService {
         let responseData: any;
         try {
           const parsedRequest = JSON.parse(requestContent);
-          console.log(`[WorkerService] Processed request: ${parsedRequest}`);
           responseData = await this.requestHandler(parsedRequest, msg, channel);
         } catch (error) {
           console.error(`[WorkerService] Error processing request: ${error.message}`);

@@ -7,7 +7,7 @@ import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service
 
 export class GraphTraversalEngine {
     private graph: ExecutionGraph;
-    private stateTracker: ExecutionContextTracker;
+    public stateTracker: ExecutionContextTracker;
 
     constructor(graph: ExecutionGraph, stateTracker: ExecutionContextTracker) {
         this.graph = graph;
@@ -94,11 +94,6 @@ export class GraphTraversalEngine {
      */
     private activateNode(nodeId: string, nodesToActivate: string[]): void {
         this.stateTracker.activateNode(nodeId);
-
-        /**
-         * TODO: Update input variables to next nodes
-         */
-
         nodesToActivate.push(nodeId);
         console.log(`Node activated: ${nodeId}`);
     }
