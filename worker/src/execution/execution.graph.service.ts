@@ -58,7 +58,7 @@ export class ExecutionGraphService {
         await engine.stateTracker.persistState();
     }
 
-    await this.finalizeExecutionGraph(correlationId, engine)
+    await this.finalizeExecutionGraph(correlationId, engine, convertedGraph)
 
     return engine.stateTracker;
   }
@@ -89,7 +89,7 @@ export class ExecutionGraphService {
         throw new Error("Process graph must contain a StartEvent node.");
     }
 
-    const initialVariables = new Map(graph.inputs.map(input => [input.name, config.inputs.get(input.name)]));
+    const initialVariables = new Map(graph.inputs.map(input => [input.name, config.inputs[input.name]]));
     this.stateStore = new InMemoryExecutionContextStore();
     const tracker = await ExecutionContextTracker.createNewInstance(
       correlationId,
@@ -162,8 +162,9 @@ export class ExecutionGraphService {
     return nodesProcessedInThisIteration
   }
 
-  async finalizeExecutionGraph(correlationId: string, engine: GraphTraversalEngine): Promise<void> {
+  async finalizeExecutionGraph(correlationId: string, engine: GraphTraversalEngine, graph: ExecutionGraph): Promise<void> {
     console.log(`\n--- Process instance ${correlationId} execution finished. Final Status: ${engine.stateTracker.getCurrentState().status} ---`);
+    engine.stateTracker.filterVariables(graph.outputs.map(variable => variable.name))
   }
 
   async taskNodeHandler(node: ExecutionNodeDto, engine: GraphTraversalEngine): Promise<void> {

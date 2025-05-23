@@ -6,6 +6,7 @@ import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib';
 import { ExecutionGraphService } from './execution.graph.service';
+import { ExecutionContextTracker, InMemoryExecutionContextStore } from '@caidense/reasoning/state/state.service';
 
 
 @Injectable()
@@ -58,19 +59,25 @@ export class ExecutionConsumer extends BaseRabbitMQService {
         const { correlationId, replyTo } = msg.properties;
         console.log(`[WorkerService] Received request: ${requestContent} with correlationId: ${correlationId}`);
 
-        let responseData: any;
+        let responseData: ExecutionContextTracker;
+        let convertedResponseData: object
         try {
           const parsedRequest = JSON.parse(requestContent);
           responseData = await this.requestHandler(parsedRequest, msg, channel);
+          const currentState = responseData.getCurrentState()
+          convertedResponseData = {
+            status: currentState.status,
+            variables: Object.fromEntries(currentState.variables.entries())
+          }
         } catch (error) {
           console.error(`[WorkerService] Error processing request: ${error.message}`);
-          responseData = { error: 'Failed to process request' };
+          convertedResponseData = { error: 'Failed to process request' };
         }
 
         if (replyTo) {
           this.channel.sendToQueue(
             replyTo,
-            Buffer.from(JSON.stringify(responseData)),
+            Buffer.from(JSON.stringify(convertedResponseData)),
             { correlationId: correlationId }
           );
           console.log(`[WorkerService] Sent response to ${replyTo} with correlationId: ${correlationId}`);
