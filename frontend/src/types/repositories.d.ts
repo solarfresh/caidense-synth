@@ -8,7 +8,7 @@ export interface Repository {
   name: string;
   description: string;
   templateCount: number;
-  lastModified: Date; // Use Date object for easier manipulation and display
+  updatedAt: Date; // Use Date object for easier manipulation and display
   tags: string[];
-  recentTestSummary?: RecentTestSummary; // Optional, might not be available for all collections
+  recentTestSummary?: RecentTestSummary; // Optional, might not be available for all repositories
 }

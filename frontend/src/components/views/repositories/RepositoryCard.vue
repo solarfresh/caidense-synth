@@ -27,7 +27,7 @@ const emits = defineEmits<{
 
       <div class="text-sm text-gray-500 mb-2">
         <span class="mr-3">Templates: <span class="font-medium text-gray-700">{{ repository.templateCount }}</span></span>
-        <span v-if="repository.lastModified">Last Modified: <span class="font-medium text-gray-700">{{ formatDistanceToNow(repository.lastModified) }} ago</span></span>
+        <span v-if="repository.updatedAt">Last Modified: <span class="font-medium text-gray-700">{{ formatDistanceToNow(repository.updatedAt) }} ago</span></span>
       </div>
 
       <div class="flex flex-wrap gap-2 mb-4">
