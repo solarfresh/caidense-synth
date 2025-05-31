@@ -1,10 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router';
-// import { routes as strategyRoutes } from '@/components/views/strategy/routes';
+import RepositoryOverview from '@/components/views/repositories/RepositoryOverview.vue'
 
-// const routes = strategyRoutes
+
+const routes = [
+  {
+    path: '/',
+    name: 'RepositoryOverview',
+    component: RepositoryOverview,
+  }
+]
+
 const router = createRouter({
   history: createWebHistory(),
-  // routes,
+  routes,
 });
 
 export default router;

@@ -17,7 +17,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     hmr: {
-      clientPort: 5173 // If using volume mounting, you might need to set clientPort
+      clientPort: 5174 // If using volume mounting, you might need to set clientPort
     }
   },
   resolve: {
