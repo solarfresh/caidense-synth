@@ -7,6 +7,7 @@ export interface Repository {
   id: string;
   name: string;
   description: string;
+  prompts: string[];
   templateCount: number;
   updatedAt: Date; // Use Date object for easier manipulation and display
   tags: string[];

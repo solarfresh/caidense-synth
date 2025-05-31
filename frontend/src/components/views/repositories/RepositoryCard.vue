@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 import { formatDistanceToNow } from 'date-fns'; // Using date-fns for date formatting
 import type { Repository } from '@/types/repositories';
 

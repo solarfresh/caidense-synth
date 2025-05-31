@@ -17,56 +17,12 @@ const showSidebar = ref<boolean>(true); // Toggle sidebar visibility
 
 const fetchRepositories = async () => {
   const response = await apiService.repository.get()
+  const responseData: Repository[] = response.data
 
-  console.log('===== API TEST =====')
-  console.log(response)
-
-  repositories.value = [
-    {
-      id: 'coll-001',
-      name: 'General Purpose Prompts',
-      description: 'A repository of versatile prompts for various AI tasks like summarization, translation, and simple Q&A.',
-      templateCount: 15,
-      updatedAt: new Date('2025-05-28T10:30:00Z'),
-      tags: ['general', 'utility', 'foundation'],
-      recentTestSummary: { passRate: 0.92, totalTests: 50 }
-    },
-    {
-      id: 'coll-002',
-      name: 'Customer Service Bot Prompts',
-      description: 'Prompts specifically designed for AI-powered customer service agents, handling common queries and scenarios.',
-      templateCount: 8,
-      updatedAt: new Date('2025-05-29T14:15:00Z'),
-      tags: ['customer service', 'chatbot', 'support'],
-      recentTestSummary: { passRate: 0.85, totalTests: 30 }
-    },
-    {
-      id: 'coll-003',
-      name: 'Content Generation Prompts',
-      description: 'Prompts for generating creative content like blog posts, social media captions, and marketing copy.',
-      templateCount: 22,
-      updatedAt: new Date('2025-05-27T09:00:00Z'),
-      tags: ['content creation', 'marketing', 'creative'],
-      recentTestSummary: { passRate: 0.95, totalTests: 70 }
-    },
-    {
-      id: 'coll-004',
-      name: 'Technical Documentation Prompts',
-      description: 'Templates for generating technical explanations, code snippets, and API documentation.',
-      templateCount: 10,
-      updatedAt: new Date('2025-05-26T16:45:00Z'),
-      tags: ['technical', 'documentation', 'developer'],
-    },
-    {
-      id: 'coll-005',
-      name: 'Healthcare AI Prompts',
-      description: 'Specialized prompts for medical information retrieval and patient interaction simulations.',
-      templateCount: 7,
-      updatedAt: new Date('2025-05-25T11:00:00Z'),
-      tags: ['healthcare', 'medical', 'sensitive'],
-      recentTestSummary: { passRate: 0.78, totalTests: 40 }
-    },
-  ];
+  repositories.value = responseData.map((repository: Repository) => {
+    repository['templateCount'] = repository.prompts.length
+    return repository
+  })
 };
 
 onMounted(() => {
