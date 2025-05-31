@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import FormContainer from '@/components/base/form/FormContainer.vue';
 import { ArrowPathIcon } from '@heroicons/vue/20/solid'; // For loading spinner
-import FormContainer from '@/components/base/form/FormContainer.vue'
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import FormInput from '@/components/base/form/FormInput.vue'
 
 
 // Define a type for the form data
@@ -96,20 +97,7 @@ const handleCancel = () => {
   <FormContainer :title="'Create New Repository'">
     <template #form>
       <form @submit.prevent="handleSubmit">
-        <div class="mb-5">
-          <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-            Collection Name <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            v-model="collectionForm.name"
-            required
-            class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="e.g., General Purpose Prompts"
-          />
-          <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
-        </div>
+        <FormInput :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" />
 
         <div class="mb-5">
           <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
@@ -124,66 +112,7 @@ const handleCancel = () => {
           ></textarea>
         </div>
 
-        <div class="mb-5">
-          <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
-            Categories/Tags (comma-separated)
-          </label>
-          <input
-            type="text"
-            id="tags"
-            v-model="collectionForm.tagsInput"
-            class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="e.g., general, utility, marketing"
-          />
-          <p class="mt-1 text-sm text-gray-500">Separate tags with commas.</p>
-        </div>
-
-        <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Access Permissions
-          </label>
-          <div class="mt-2 space-y-3">
-            <div class="flex items-center">
-              <input
-                id="permission-private"
-                name="permission-type"
-                type="radio"
-                v-model="collectionForm.permission"
-                value="private"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-              />
-              <label for="permission-private" class="ml-3 block text-sm text-gray-900">
-                Private (Only you can view and edit)
-              </label>
-            </div>
-            <div class="flex items-center">
-              <input
-                id="permission-team"
-                name="permission-type"
-                type="radio"
-                v-model="collectionForm.permission"
-                value="team"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-              />
-              <label for="permission-team" class="ml-3 block text-sm text-gray-900">
-                Team (All team members can view and edit)
-              </label>
-            </div>
-            <div class="flex items-center">
-              <input
-                id="permission-public"
-                name="permission-type"
-                type="radio"
-                v-model="collectionForm.permission"
-                value="public"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-              />
-              <label for="permission-public" class="ml-3 block text-sm text-gray-900">
-                Public (Anyone with the link can view)
-              </label>
-            </div>
-          </div>
-        </div>
+        <FormInput :description="'Separate tags with commas.'" :isRequired="false" :labelId="'tags'" :labelName="'Categories/Tags (comma-separated)'" :placeholder="'e.g., general, utility, marketing'" :type="'text'" />
 
         <div class="flex justify-end space-x-4 mt-8">
           <button
