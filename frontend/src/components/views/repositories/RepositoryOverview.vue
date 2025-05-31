@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { apiService } from '@/api/apiService';
 import RepositoryCard from '@/components/views/repositories/RepositoryCard.vue';
 import type { Repository } from '@/types/repositories';
-import { apiService } from '@/api/apiService';
 import { PlusIcon } from '@heroicons/vue/24/outline';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
