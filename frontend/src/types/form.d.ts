@@ -2,6 +2,11 @@ export interface FormErrors {
   name?: string;
 }
 
+export interface FormInstance {
+  editableContent: string;
+  $el: HTMLElement;
+}
+
 export interface FormProps {
   content?: any;
   description?: string;

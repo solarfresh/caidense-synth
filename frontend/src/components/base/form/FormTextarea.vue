@@ -5,6 +5,10 @@ import { ref } from 'vue';
 
 const props = defineProps<FormProps>();
 const editableContent = ref(props.content)
+
+defineExpose({
+  editableContent
+});
 </script>
 
 <template>
