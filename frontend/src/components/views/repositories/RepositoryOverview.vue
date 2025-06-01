@@ -16,13 +16,8 @@ const sortBy = ref<string>('updatedAtDesc'); // Default sort
 const showSidebar = ref<boolean>(true); // Toggle sidebar visibility
 
 const fetchRepositories = async () => {
-  const response = await apiService.repository.get()
-  const responseData: Repository[] = response.data
-
-  repositories.value = responseData.map((repository: Repository) => {
-    repository['templateCount'] = repository.prompts.length
-    return repository
-  })
+  const response = await apiService.repository.getAll()
+  repositories.value = response.data
 };
 
 onMounted(() => {
@@ -66,7 +61,7 @@ const filteredRepositories = computed(() => {
       case 'updatedAtDesc':
         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
       case 'templateCountDesc':
-        return b.templateCount - a.templateCount;
+        return b.prompts.length - a.prompts.length;
       default:
         return 0;
     }

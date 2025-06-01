@@ -74,7 +74,7 @@ const registerRef = async (key:string, instance: any) => {
 
         <div class="flex justify-end space-x-4 mt-8">
           <FormCancelButton />
-          <FormSubmitButton :isSubmitting="isSubmitting" :buttonName="'Create Repository'" />
+          <FormSubmitButton :isSubmitting="isSubmitting" :buttonName="'Create Repository'" :dynamic-button-name="'Creating...'" />
         </div>
       </form>
     </template>

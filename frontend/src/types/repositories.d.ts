@@ -15,8 +15,16 @@ export interface Repository {
   name: string;
   description: string;
   prompts: string[];
-  templateCount?: number;
-  updatedAt: Date; // Use Date object for easier manipulation and display
+  updatedAt: Date;
   tags: string[];
-  recentTestSummary?: RecentTestSummary; // Optional, might not be available for all repositories
+  recentTestSummary?: RecentTestSummary;
+}
+
+export interface UpdateRepository {
+  name?: string;
+  description?: string;
+  prompts?: string[];
+  updatedAt?: Date;
+  tags?: string[];
+  recentTestSummary?: RecentTestSummary;
 }
