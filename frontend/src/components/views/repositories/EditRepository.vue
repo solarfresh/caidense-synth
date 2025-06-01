@@ -1,0 +1,109 @@
+<script setup lang="ts">
+import { apiService } from '@/api/apiService';
+import FormCancelButton from '@/components/base/form/FormCancelButton.vue';
+import FormContainer from '@/components/base/form/FormContainer.vue';
+import FormInput from '@/components/base/form/FormInput.vue';
+import FormSubmitButton from '@/components/base/form/FormSubmitButton.vue';
+import FormTextarea from '@/components/base/form/FormTextarea.vue';
+import { FormErrors, FormInstance } from '@/types/form';
+import { Repository } from '@/types/repositories';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+
+const route = useRoute();
+const router = useRouter();
+
+// Loading and error states
+const errors = ref<FormErrors>({name: undefined});
+const isLoading = ref(true);
+const isSubmitting = ref(false);
+const repositoryData = ref<Repository>({id: '', name: '', description: '', prompts: [], tags: [], updatedAt: new Date()});
+const repositoryFound = ref(true); // To indicate if the collection exists
+const repositoryForm = ref<Map<string, FormInstance>>(new Map())
+
+// Fetch collection data on component mount
+onMounted(async () => {
+  const repositoryId = route.params.id as string;
+  if (!repositoryId) {
+    repositoryFound.value = false;
+    isLoading.value = false;
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    const response = await apiService.repository.get(repositoryId)
+    if (response.data) {
+      repositoryData.value = response.data
+      repositoryFound.value = true
+    }
+  } catch (error) {
+    console.error('Error fetching repository:', error);
+    repositoryFound.value = false; // Assume not found on error
+    alert('Failed to load repository data.');
+  } finally {
+    isLoading.value = false;
+  }
+});
+// Form submission handler
+const handleSubmit = async () => {
+  const repositoryId = route.params.id as string;
+  // Reset errors
+  errors.value.name = undefined;
+
+  // Basic validation
+  const repositoryName = repositoryForm.value.get('name')?.editableContent.trim();
+  if (!repositoryName) {
+    errors.value.name = 'Repository name is required.';
+    return;
+  }
+
+  isSubmitting.value = true;
+  try {
+    // Parse tags from string to array
+    const tagsArray = repositoryForm.value.get('tags')?.editableContent
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag !== '');
+
+    const newRepositoryData = {
+      name: repositoryName,
+      description: repositoryForm.value.get('description')?.editableContent || '',
+      tags: tagsArray || []
+    }
+
+    const response = await apiService.repository.update(repositoryId, newRepositoryData);
+    router.push({ name: 'RepositoryOverview' });
+
+  } catch (error) {
+    console.error('Error creating repository:', error);
+    // Display error message to user
+    alert('Failed to create repository. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+const registerRef = async (key:string, instance: any) => {
+  if (instance) {
+    repositoryForm.value.set(key, instance)
+  }
+}
+</script>
+
+<template>
+  <FormContainer :title="'Edit Repository'" :enhanced-title="repositoryData.name" :is-loading="isLoading" :loading-description="'Loading repository details...'" :item-found="repositoryFound" :item-found-description="'Repository not found!'">
+    <template #form>
+      <form @submit.prevent="handleSubmit">
+        <FormInput :content="repositoryData.name" :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
+        <FormTextarea :content="repositoryData.description" :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />
+        <FormInput :content="repositoryData.tags.join(', ')" :description="'Separate tags with commas.'" :isRequired="false" :labelId="'tags'" :labelName="'Categories/Tags (comma-separated)'" :placeholder="'e.g., general, utility, marketing'" :type="'text'" :ref="el => registerRef('tags', el)" />
+
+        <div class="flex justify-end space-x-4 mt-8">
+          <FormCancelButton />
+          <FormSubmitButton :isSubmitting="isSubmitting" :buttonName="'Save Changes'" :dynamic-button-name="'Saving...'" />
+        </div>
+      </form>
+    </template>
+  </FormContainer>
+</template>

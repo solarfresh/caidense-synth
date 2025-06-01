@@ -4,6 +4,17 @@ version: '3.8'
 
 # Define the services that make up your application
 services:
+  caidense-synth-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5173"
+    # env_file:
+    #   - ./docker-var.env
+    networks:
+      - caidense_network
+
   # Service for the Caidense Strategy API backend
   caidense-synth-api:
     # Build the Docker image for the API service
