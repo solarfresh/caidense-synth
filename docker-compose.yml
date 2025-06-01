@@ -12,9 +12,6 @@ services:
       - "5174:5173"
     # env_file:
     #   - ./docker-var.env
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     networks:
       - caidense_network
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatDistanceToNow } from 'date-fns'; // Using date-fns for date formatting
 import type { Repository } from '@/types/repositories';
+import { computed } from 'vue'
 
 
 const props = defineProps<{
@@ -12,6 +13,10 @@ const emits = defineEmits<{
   (e: 'delete', id: string): void;
   (e: 'view', id: string): void;
 }>();
+
+const templateCount = computed(() => {
+  return props.repository.prompts.length;
+})
 </script>
 
 <template>
@@ -25,7 +30,7 @@ const emits = defineEmits<{
       <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ repository.description || 'No description provided.' }}</p>
 
       <div class="text-sm text-gray-500 mb-2">
-        <span class="mr-3">Templates: <span class="font-medium text-gray-700">{{ repository.templateCount }}</span></span>
+        <span class="mr-3">Templates: <span class="font-medium text-gray-700">{{ templateCount }}</span></span>
         <span v-if="repository.updatedAt">Last Modified: <span class="font-medium text-gray-700">{{ formatDistanceToNow(repository.updatedAt) }} ago</span></span>
       </div>
 

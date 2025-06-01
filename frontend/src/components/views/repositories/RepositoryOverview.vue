@@ -76,13 +76,13 @@ const filteredRepositories = computed(() => {
 });
 
 // --- Event Handlers / Actions ---
-const goToCreateCollection = () => {
-  router.push({ name: 'CreateCollection' }); // Assuming a router path named 'CreateCollection'
+const goToCreateRepository = () => {
+  router.push({ name: 'CreateRepository' }); // Assuming a router path named 'CreateCollection'
 };
 
-const handleEditCollection = (id: string) => {
+const handleEditRepository = (id: string) => {
   console.log('Editing repository:', id);
-  router.push({ name: 'EditCollection', params: { id } }); // Assuming a router path 'EditCollection/:id'
+  router.push({ name: 'EditRepository', params: { id } }); // Assuming a router path 'EditCollection/:id'
 };
 
 const handleDeleteCollection = (id: string) => {
@@ -105,7 +105,7 @@ const handleViewCollection = (id: string) => {
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-gray-900">Repositories</h1>
         <button
-          @click="goToCreateCollection"
+          @click="goToCreateRepository"
           class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
         >
           <PlusIcon class="-ml-1 mr-2 h-5 w-5" />
@@ -164,7 +164,7 @@ const handleViewCollection = (id: string) => {
               v-for="repository in filteredRepositories"
               :key="repository.id"
               :repository="repository"
-              @edit="handleEditCollection"
+              @edit="handleEditRepository"
               @delete="handleDeleteCollection"
               @view="handleViewCollection"
             />
