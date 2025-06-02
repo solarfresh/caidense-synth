@@ -14,7 +14,7 @@ const emits = defineEmits<{
   (e: 'view', id: string): void;
 }>();
 
-const templateCount = computed(() => {
+const promptCount = computed(() => {
   return props.repository.prompts.length;
 })
 </script>
@@ -30,7 +30,7 @@ const templateCount = computed(() => {
       <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ repository.description || 'No description provided.' }}</p>
 
       <div class="text-sm text-gray-500 mb-2">
-        <span class="mr-3">Templates: <span class="font-medium text-gray-700">{{ templateCount }}</span></span>
+        <span class="mr-3">Prompts: <span class="font-medium text-gray-700">{{ promptCount }}</span></span>
         <span v-if="repository.updatedAt">Last Modified: <span class="font-medium text-gray-700">{{ formatDistanceToNow(repository.updatedAt) }} ago</span></span>
       </div>
 
@@ -69,7 +69,7 @@ const templateCount = computed(() => {
         @click="$emit('view', repository.id)"
         class="text-sm font-medium text-gray-700 hover:text-gray-900 px-3 py-1 rounded-md border border-gray-300 hover:bg-gray-100 transition duration-150 ease-in-out"
       >
-        View Templates
+        View Prompts
       </button>
     </div>
   </div>

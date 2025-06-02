@@ -1,48 +1,28 @@
 <script setup lang="ts">
+import { apiService } from '@/api/apiService';
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
+import { useRepositoryStore } from '@/stores/repository';
+import { ListDetailsItems } from '@/types/list';
+import { Prompt, Repository } from '@/types/repositories';
 import {
   ArrowPathIcon,
   ClockIcon,
-  DocumentDuplicateIcon,
-  PencilSquareIcon,
-  PlusIcon,
-  TagIcon,
-  TrashIcon,
-  UserGroupIcon
+  DocumentDuplicateIcon
 } from '@heroicons/vue/24/outline'; // Or /20/outline for smaller icons
 import { format, formatDistanceToNow } from 'date-fns'; // For date formatting
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 
-// --- Interfaces for Data ---
-interface Template {
-  id: string;
-  name: string;
-  description: string;
-  updatedAt: Date;
-  // Add other template specific fields (e.g., content, parameters, type)
-}
-
-interface RepositoryDetails {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  permission: 'private' | 'team' | 'public';
-  tags: string[];
-  templateCount: number;
-  templates: Template[]; // List of templates within this collection
-  // Add other collection specific fields if needed
-}
-
 // --- State Management ---
 const route = useRoute();
 const router = useRouter();
+const store = useRepositoryStore();
 
-const repository = ref<RepositoryDetails | null>(null);
+const repository = ref<Repository | null>(null);
 const isLoading = ref(true);
+const promptCount = ref(0);
+const prompts = ref<Prompt[]>([])
 
 // --- Data Fetching ---
 onMounted(async () => {
@@ -54,23 +34,16 @@ onMounted(async () => {
 
   try {
     isLoading.value = true;
-    // Simulate API call to fetch repository details and its templates
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-
-    // Mock Data based on ID (replace with actual API fetch)
-    const fetchedCollection: RepositoryDetails | undefined = mockCollectionsData.find(
-      (c) => c.id === repositoryId
-    );
-
-    if (fetchedCollection) {
-      // Ensure Date objects if fetching from JSON/string dates
-      fetchedCollection.createdAt = new Date(fetchedCollection.createdAt);
-      fetchedCollection.updatedAt = new Date(fetchedCollection.updatedAt);
-      fetchedCollection.templates.forEach(t => t.updatedAt = new Date(t.updatedAt));
-
-      repository.value = fetchedCollection;
-    } else {
-      repository.value = null; // Mark as not found
+    await store.updateState({currentRepositoryId: repositoryId});
+    repository.value = store.repositories.get(repositoryId) || null;
+    promptCount.value = repository.value?.prompts.length || 0;
+    prompts.value = store.getPrompts;
+    console.log(`prompts.value: ${prompts.value}`)
+    if (prompts.value.length === 0) {
+      const response = await apiService.prompt.getAll({id: {$in: repository.value?.prompts}});
+      console.log(`response.data: ${response.data}`)
+      prompts.value = response.data || [];
+      store.updatePrompts(prompts.value);
     }
   } catch (error) {
     console.error('Error fetching repository details:', error);
@@ -81,20 +54,10 @@ onMounted(async () => {
   }
 });
 
-// --- Computed Properties / Helpers ---
-const permissionBadgeClass = (permission: 'private' | 'team' | 'public') => {
-  switch (permission) {
-    case 'private': return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2';
-    case 'team': return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 ml-2';
-    case 'public': return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2';
-    default: return '';
-  }
-};
-
 // --- Event Handlers / Actions ---
-const handleEditCollection = () => {
+const handleEditRepository = () => {
   if (repository.value) {
-    router.push({ name: 'EditCollection', params: { id: repository.value.id } });
+    router.push({ name: 'EditRepository', params: { id: repository.value.id } });
   }
 };
 
@@ -108,94 +71,50 @@ const handleDeleteCollection = async () => {
 
     // After successful deletion, redirect to overview
     router.push({ name: 'RepositoryOverview' });
-    alert(`Collection "${repository.value.name}" deleted successfully.`);
+    alert(`Repository "${repository.value.name}" deleted successfully.`);
   }
 };
 
 const handleAddNewTemplate = () => {
   if (repository.value) {
-    router.push({ name: 'CreateTemplate', query: { repositoryId: repository.value.id } });
+    // router.push({ name: 'CreateTemplate', query: { repositoryId: repository.value.id } });
   }
 };
 
-const handleViewTemplate = (templateId: string) => {
+const handleViewTemplate = (promptId: string) => {
   if (repository.value) {
-    router.push({ name: 'TemplateDetails', params: { repositoryId: repository.value.id, templateId: templateId } });
+    // router.push({ name: 'TemplateDetails', params: { repositoryId: repository.value.id, templateId: templateId } });
   }
 };
 
-const handleEditTemplate = (templateId: string) => {
+const handleEditTemplate = (promptId: string) => {
   if (repository.value) {
-    router.push({ name: 'EditTemplate', params: { repositoryId: repository.value.id, templateId: templateId } });
+    // router.push({ name: 'EditTemplate', params: { repositoryId: repository.value.id, templateId: templateId } });
   }
 };
 
-const handleRunTest = (templateId: string) => {
-  console.log(`Running test for template ${templateId} in repository ${repository.value?.id}`);
+const handleRunTest = (promptId: string) => {
+  console.log(`Running test for prompt ${promptId} in repository ${repository.value?.id}`);
   // Navigate to a testing page or trigger a modal
   // router.push({ name: 'TemplateTestRunner', params: { repositoryId: repository.value?.id, templateId } });
-  alert(`Simulating test run for Template ID: ${templateId}`);
+  alert(`Simulating test run for Prompt ID: ${promptId}`);
 };
 
-const handleDeleteTemplate = async (templateId: string) => {
+const handleDeleteTemplate = async (promptId: string) => {
   if (!repository.value) return;
-  const templateName = repository.value.templates.find(t => t.id === templateId)?.name || 'this template';
+  // const templateName = repository.value.prompts.find(t => t.id === promptId)?.name || 'this template';
 
-  if (confirm(`Are you sure you want to delete ${templateName}? This action cannot be undone.`)) {
-    console.log(`Deleting template ${templateId} from repository ${repository.value.id}`);
-    // In a real app: make API call to delete template
-    // await api.deleteTemplate(repository.value.id, templateId);
+  // if (confirm(`Are you sure you want to delete ${templateName}? This action cannot be undone.`)) {
+  //   console.log(`Deleting template ${promptId} from repository ${repository.value.id}`);
+  //   // In a real app: make API call to delete template
+  //   // await api.deleteTemplate(repository.value.id, templateId);
 
-    // Update local state (optional, or re-fetch data)
-    repository.value.templates = repository.value.templates.filter(t => t.id !== templateId);
-    repository.value.templateCount = repository.value.templates.length;
-    alert(`${templateName} deleted successfully.`);
-  }
+  //   // Update local state (optional, or re-fetch data)
+  //   repository.value.templates = repository.value.templates.filter(t => t.id !== promptId);
+  //   repository.value.templateCount = repository.value.templates.length;
+  //   alert(`${templateName} deleted successfully.`);
+  // }
 };
-
-// --- Mock Data (for demonstration) ---
-const mockCollectionsData: RepositoryDetails[] = [
-  {
-    id: 'coll-001',
-    name: 'General Purpose Prompts',
-    description: 'A repository of versatile prompts for various AI tasks like summarization, translation, and simple Q&A. This repository is designed to be a starting point for common use cases, providing a wide range of adaptable templates.',
-    createdAt: new Date('2024-01-15T09:00:00Z'),
-    updatedAt: new Date('2025-05-30T14:30:00Z'),
-    permission: 'team',
-    tags: ['general', 'utility', 'foundation'],
-    templateCount: 3,
-    templates: [
-      { id: 'temp-101', name: 'Summarize Text', description: 'Summarizes given text into a concise overview.', updatedAt: new Date('2025-05-29T10:00:00Z') },
-      { id: 'temp-102', name: 'Translate English to Spanish', description: 'Translates English text to Spanish.', updatedAt: new Date('2025-05-28T11:30:00Z') },
-      { id: 'temp-103', name: 'Generate Idea List', description: 'Generates a list of ideas based on a keyword.', updatedAt: new Date('2025-05-27T16:00:00Z') },
-    ],
-  },
-  {
-    id: 'coll-002',
-    name: 'Customer Service Bot Prompts',
-    description: 'Prompts specifically designed for AI-powered customer service agents, handling common queries and scenarios. Focuses on empathetic and clear communication.',
-    createdAt: new Date('2024-03-01T10:00:00Z'),
-    updatedAt: new Date('2025-05-29T18:00:00Z'),
-    permission: 'private',
-    tags: ['customer service', 'chatbot', 'support'],
-    templateCount: 2,
-    templates: [
-      { id: 'temp-201', name: 'Handle Refund Request', description: 'Template for processing customer refund requests.', updatedAt: new Date('2025-05-29T17:00:00Z') },
-      { id: 'temp-202', name: 'Address Product Query', description: 'Provides information to common product questions.', updatedAt: new Date('2025-05-28T09:00:00Z') },
-    ],
-  },
-  {
-    id: 'coll-003',
-    name: 'Empty Collection Example',
-    description: 'This is an example of a repository with no templates yet.',
-    createdAt: new Date('2025-01-01T00:00:00Z'),
-    updatedAt: new Date('2025-01-01T00:00:00Z'),
-    permission: 'public',
-    tags: ['test', 'empty'],
-    templateCount: 0,
-    templates: [],
-  },
-];
 </script>
 
 <template>
@@ -217,13 +136,14 @@ const mockCollectionsData: RepositoryDetails[] = [
       },
       {
         icon: DocumentDuplicateIcon,
-        text: `Prompts: ${repository?.templates.length}`
+        text: `Prompts: ${promptCount}`
       }
     ]"
     :listDetailsTags="repository?.tags || []"
-    :items="repository?.templates"
+    :items="prompts || []"
     :itemsName="'repositories'"
-    :itemsTitle="`Prompts in this Repository (${repository?.templates.length})`"
-    :itemFoundDescription="'Repository Not Found'
-  " />
+    :itemsTitle="`Prompts in this Repository (${promptCount})`"
+    :itemFoundDescription="'Repository Not Found'"
+    @editDetails="handleEditRepository"
+  />
 </template>

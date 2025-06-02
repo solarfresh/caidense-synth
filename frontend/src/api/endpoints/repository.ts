@@ -14,3 +14,16 @@ export const RepositoryEndpoints = {
   delete: (repositoryId: string) =>
     `${CAIDENSE_SYNTH_API_URL}/prompt/set/${repositoryId}`,
 }
+
+export const PromptEndpoints = {
+  getAll: () =>
+    `${CAIDENSE_SYNTH_API_URL}/prompt/text`,
+  create: () =>
+    `${CAIDENSE_SYNTH_API_URL}/prompt/text`,
+  get: (promptId: string) =>
+    `${CAIDENSE_SYNTH_API_URL}/prompt/text/${promptId}`,
+  update: (promptId: string) =>
+    `${CAIDENSE_SYNTH_API_URL}/prompt/text/${promptId}`,
+  delete: (promptId: string) =>
+    `${CAIDENSE_SYNTH_API_URL}/prompt/text/${promptId}`,
+}

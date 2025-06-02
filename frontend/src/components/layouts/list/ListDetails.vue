@@ -62,23 +62,23 @@ const props = defineProps({
 })
 const emits = defineEmits<{
   (e: 'createDetails'): void;
-  (e: 'editDetails', id: string): void;
-  (e: 'deleteDetails', id: string): void;
+  (e: 'editDetails'): void;
+  (e: 'deleteDetails'): void;
   (e: 'editItem', id: string): void;
   (e: 'deleteItem', id: string): void;
   (e: 'testItem', id: string): void;
   (e: 'viewItem', id: string): void;
 }>();
 
-const itemFound = computed(() => {
-  return props.items.length > 0;
+const detailsFound = computed(() => {
+  return props.listDetailsId !== '';
 })
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50 py-10">
     <div class="container mx-auto px-4">
-      <Loading :isLoading="isLoading" :loadingDescription="loadingDescription" :itemFound="itemFound" :itemFoundDescription="itemFoundDescription">
+      <Loading :isLoading="isLoading" :loadingDescription="loadingDescription" :itemFound="detailsFound" :itemFoundDescription="itemFoundDescription">
         <template #page>
           <ListDetailsOverview
             :is-show-tags="isShowTags"
@@ -87,8 +87,8 @@ const itemFound = computed(() => {
             :list-details-description="listDetailsDescription"
             :list-details-overview-info="listDetailsInfo"
             :list-details-overview-tags="listDetailsTags"
-            @edit="itemId => $emit('editDetails', itemId)"
-            @delete="itemId => $emit('deleteDetails', itemId)"
+            @edit="$emit('editDetails')"
+            @delete="$emit('deleteDetails')"
           />
           <ListDetailsItems
             :items="items"

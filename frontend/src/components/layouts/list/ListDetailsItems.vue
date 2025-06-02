@@ -2,7 +2,7 @@
 import { ListDetailsItems } from '@/types/list';
 import { ExclamationCircleIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { formatDistanceToNow } from 'date-fns';
-import CreateButton from '@/components/base/buttons.vue/CreateButton.vue';
+import CreateButton from '@/components/base/buttons/CreateButton.vue';
 
 
 const props = defineProps({

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
 import RepositoryCard from '@/components/views/repositories/RepositoryCard.vue';
+import { useRepositoryStore } from '@/stores/repository';
 import type { Repository } from '@/types/repositories';
 import { PlusIcon } from '@heroicons/vue/24/outline';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+
 const router = useRouter();
+const store = useRepositoryStore();
 
 // --- State Management ---
 const repositories = ref<Repository[]>([]);
@@ -18,6 +21,11 @@ const showSidebar = ref<boolean>(true); // Toggle sidebar visibility
 const fetchRepositories = async () => {
   const response = await apiService.repository.getAll()
   repositories.value = response.data
+  store.updateState({
+    repositories: new Map(repositories.value.map(repository => {
+      return [repository.id, repository]
+    }))
+  })
 };
 
 onMounted(() => {

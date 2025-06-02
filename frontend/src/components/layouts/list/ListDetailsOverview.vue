@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import DeleteButton from '@/components/base/buttons.vue/DeleteButton.vue';
-import EditButton from '@/components/base/buttons.vue/EditButton.vue';
+import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
+import EditButton from '@/components/base/buttons/EditButton.vue';
 import { ListDetailsOverviewItems as ListDetailsOverviewItemsType } from '@/types/list';
 import { TagIcon } from '@heroicons/vue/24/outline';
 import ListDetailsOverviewItems from './ListDetailsOverviewItems.vue';
@@ -41,8 +41,8 @@ const props = defineProps({
   }
 })
 const emits = defineEmits<{
-  (e: 'edit', id: string): void;
-  (e: 'delete', id: string): void;
+  (e: 'edit'): void;
+  (e: 'delete'): void;
 }>();
 </script>
 
@@ -52,8 +52,8 @@ const emits = defineEmits<{
       {{ listDetailsName }}
     </h1>
     <div class="flex space-x-3">
-      <EditButton v-if="editButtonName" :button-name="editButtonName" @click="$emit('edit', listDetailsId)" />
-      <DeleteButton v-if="deleteButtonName" :button-name="deleteButtonName" @click="$emit('delete', listDetailsId)" />
+      <EditButton v-if="editButtonName" :button-name="editButtonName" @click="$emit('edit')" />
+      <DeleteButton v-if="deleteButtonName" :button-name="deleteButtonName" @click="$emit('delete')" />
     </div>
   </div>
 
