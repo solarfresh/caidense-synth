@@ -4,3 +4,8 @@ export interface ListDetailsItems {
   description: string;
   updatedAt: Date;
 }
+
+export interface ListDetailsOverviewItems {
+  icon: VNodeProps;
+  text: string;
+}

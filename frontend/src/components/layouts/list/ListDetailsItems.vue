@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ListDetailsItems } from '@/types/list';
-import { ExclamationCircleIcon } from '@heroicons/vue/24/outline';
+import { ExclamationCircleIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { formatDistanceToNow } from 'date-fns';
 
 
