@@ -18,12 +18,13 @@ import {
 import { format, formatDistanceToNow } from 'date-fns'; // For date formatting
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
 
+
 // --- Interfaces for Data ---
 interface Template {
   id: string;
   name: string;
   description: string;
-  lastModified: Date;
+  updatedAt: Date;
   // Add other template specific fields (e.g., content, parameters, type)
 }
 
@@ -32,7 +33,7 @@ interface RepositoryDetails {
   name: string;
   description: string;
   createdAt: Date;
-  lastModified: Date;
+  updatedAt: Date;
   permission: 'private' | 'team' | 'public';
   tags: string[];
   templateCount: number;
@@ -45,7 +46,6 @@ const route = useRoute();
 const router = useRouter();
 
 const repository = ref<RepositoryDetails | null>(null);
-const repositoryFound = ref(false)
 const isLoading = ref(true);
 
 // --- Data Fetching ---
@@ -67,11 +67,10 @@ onMounted(async () => {
     );
 
     if (fetchedCollection) {
-      repositoryFound.value = true
       // Ensure Date objects if fetching from JSON/string dates
       fetchedCollection.createdAt = new Date(fetchedCollection.createdAt);
-      fetchedCollection.lastModified = new Date(fetchedCollection.lastModified);
-      fetchedCollection.templates.forEach(t => t.lastModified = new Date(t.lastModified));
+      fetchedCollection.updatedAt = new Date(fetchedCollection.updatedAt);
+      fetchedCollection.templates.forEach(t => t.updatedAt = new Date(t.updatedAt));
 
       repository.value = fetchedCollection;
     } else {
@@ -165,14 +164,14 @@ const mockCollectionsData: RepositoryDetails[] = [
     name: 'General Purpose Prompts',
     description: 'A repository of versatile prompts for various AI tasks like summarization, translation, and simple Q&A. This repository is designed to be a starting point for common use cases, providing a wide range of adaptable templates.',
     createdAt: new Date('2024-01-15T09:00:00Z'),
-    lastModified: new Date('2025-05-30T14:30:00Z'),
+    updatedAt: new Date('2025-05-30T14:30:00Z'),
     permission: 'team',
     tags: ['general', 'utility', 'foundation'],
     templateCount: 3,
     templates: [
-      { id: 'temp-101', name: 'Summarize Text', description: 'Summarizes given text into a concise overview.', lastModified: new Date('2025-05-29T10:00:00Z') },
-      { id: 'temp-102', name: 'Translate English to Spanish', description: 'Translates English text to Spanish.', lastModified: new Date('2025-05-28T11:30:00Z') },
-      { id: 'temp-103', name: 'Generate Idea List', description: 'Generates a list of ideas based on a keyword.', lastModified: new Date('2025-05-27T16:00:00Z') },
+      { id: 'temp-101', name: 'Summarize Text', description: 'Summarizes given text into a concise overview.', updatedAt: new Date('2025-05-29T10:00:00Z') },
+      { id: 'temp-102', name: 'Translate English to Spanish', description: 'Translates English text to Spanish.', updatedAt: new Date('2025-05-28T11:30:00Z') },
+      { id: 'temp-103', name: 'Generate Idea List', description: 'Generates a list of ideas based on a keyword.', updatedAt: new Date('2025-05-27T16:00:00Z') },
     ],
   },
   {
@@ -180,13 +179,13 @@ const mockCollectionsData: RepositoryDetails[] = [
     name: 'Customer Service Bot Prompts',
     description: 'Prompts specifically designed for AI-powered customer service agents, handling common queries and scenarios. Focuses on empathetic and clear communication.',
     createdAt: new Date('2024-03-01T10:00:00Z'),
-    lastModified: new Date('2025-05-29T18:00:00Z'),
+    updatedAt: new Date('2025-05-29T18:00:00Z'),
     permission: 'private',
     tags: ['customer service', 'chatbot', 'support'],
     templateCount: 2,
     templates: [
-      { id: 'temp-201', name: 'Handle Refund Request', description: 'Template for processing customer refund requests.', lastModified: new Date('2025-05-29T17:00:00Z') },
-      { id: 'temp-202', name: 'Address Product Query', description: 'Provides information to common product questions.', lastModified: new Date('2025-05-28T09:00:00Z') },
+      { id: 'temp-201', name: 'Handle Refund Request', description: 'Template for processing customer refund requests.', updatedAt: new Date('2025-05-29T17:00:00Z') },
+      { id: 'temp-202', name: 'Address Product Query', description: 'Provides information to common product questions.', updatedAt: new Date('2025-05-28T09:00:00Z') },
     ],
   },
   {
@@ -194,7 +193,7 @@ const mockCollectionsData: RepositoryDetails[] = [
     name: 'Empty Collection Example',
     description: 'This is an example of a repository with no templates yet.',
     createdAt: new Date('2025-01-01T00:00:00Z'),
-    lastModified: new Date('2025-01-01T00:00:00Z'),
+    updatedAt: new Date('2025-01-01T00:00:00Z'),
     permission: 'public',
     tags: ['test', 'empty'],
     templateCount: 0,
@@ -204,7 +203,7 @@ const mockCollectionsData: RepositoryDetails[] = [
 </script>
 
 <template>
-  <ListDetails :isLoading="isLoading" :loadingDescription="'Loading repository details...'" :itemFound="repositoryFound" :itemFoundDescription="'Repository Not Found'">
+  <ListDetails :isLoading="isLoading" :loadingDescription="'Loading repository details...'" :items="repository?.templates" :itemName="'repositories'" :itemFoundDescription="'Repository Not Found'">
     <template #page>
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <h1 class="text-4xl font-extrabold text-gray-900 mb-4 md:mb-0">
@@ -235,7 +234,7 @@ const mockCollectionsData: RepositoryDetails[] = [
           </div>
           <div class="flex items-center">
             <ArrowPathIcon class="h-4 w-4 mr-2 text-gray-500" />
-            Last Modified: {{ formatDistanceToNow(repository.lastModified) }} ago
+            Last Modified: {{ formatDistanceToNow(repository.updatedAt) }} ago
           </div>
           <div class="flex items-center">
             <UserGroupIcon class="h-4 w-4 mr-2 text-gray-500" />
@@ -272,31 +271,6 @@ const mockCollectionsData: RepositoryDetails[] = [
         </button>
       </div>
 
-      <div v-if="repository.templates.length === 0" class="bg-white rounded-lg shadow-sm p-8 text-center text-gray-600">
-        <ExclamationCircleIcon class="h-10 w-10 text-gray-400 mx-auto mb-4" />
-        <p class="text-lg mb-2">No templates found in this repository.</p>
-        <p class="text-sm">Start by adding a new template above!</p>
-      </div>
-      <div v-else class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <ul role="list" class="divide-y divide-gray-200">
-          <li v-for="template in repository.templates" :key="template.id" class="px-6 py-4 hover:bg-gray-50 transition duration-150 ease-in-out flex justify-between items-center">
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900">
-                <a href="#" @click.prevent="handleViewTemplate(template.id)" class="hover:text-indigo-600">{{ template.name }}</a>
-              </h3>
-              <p class="text-sm text-gray-600 line-clamp-1">{{ template.description || 'No description provided.' }}</p>
-              <div class="text-xs text-gray-500 mt-1">
-                Last Modified: {{ formatDistanceToNow(template.lastModified) }} ago
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button @click="handleEditTemplate(template.id)" class="text-indigo-600 hover:text-indigo-900 p-1 rounded-md hover:bg-gray-100 transition"><PencilIcon class="h-5 w-5" /></button>
-              <button @click="handleRunTest(template.id)" class="text-green-600 hover:text-green-900 p-1 rounded-md hover:bg-gray-100 transition"><PlayIcon class="h-5 w-5" /></button>
-              <button @click="handleDeleteTemplate(template.id)" class="text-red-600 hover:text-red-900 p-1 rounded-md hover:bg-red-50 transition"><TrashIcon class="h-5 w-5" /></button>
-            </div>
-          </li>
-        </ul>
-      </div>
     </template>
   </ListDetails>
 </template>
