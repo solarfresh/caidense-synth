@@ -7,6 +7,10 @@ import ListDetailsOverview from './ListDetailsOverview.vue';
 
 
 const props = defineProps({
+  createButtonName: {
+    type: String,
+    required: true
+  },
   isLoading: {
     type: Boolean,
     default: false
@@ -47,12 +51,17 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  itemName: {
+  itemsName: {
     type: String,
     required: true
+  },
+  itemsTitle: {
+    type: String,
+    default: ''
   }
 })
 const emits = defineEmits<{
+  (e: 'createDetails'): void;
   (e: 'editDetails', id: string): void;
   (e: 'deleteDetails', id: string): void;
   (e: 'editItem', id: string): void;
@@ -81,10 +90,12 @@ const itemFound = computed(() => {
             @edit="itemId => $emit('editDetails', itemId)"
             @delete="itemId => $emit('deleteDetails', itemId)"
           />
-          <slot name='page' />
           <ListDetailsItems
             :items="items"
-            :itemName="itemName"
+            :items-name="itemsName"
+            :items-title="itemsTitle"
+            :create-button-name="createButtonName"
+            @create="$emit('createDetails')"
             @view="itemId => $emit('viewItem', itemId)"
             @edit="itemId => $emit('editItem', itemId)"
             @test="itemId => $emit('testItem', itemId)"

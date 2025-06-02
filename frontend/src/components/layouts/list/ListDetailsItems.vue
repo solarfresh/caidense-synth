@@ -2,6 +2,7 @@
 import { ListDetailsItems } from '@/types/list';
 import { ExclamationCircleIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { formatDistanceToNow } from 'date-fns';
+import CreateButton from '@/components/base/buttons.vue/CreateButton.vue';
 
 
 const props = defineProps({
@@ -9,12 +10,21 @@ const props = defineProps({
     type: Array<ListDetailsItems>,
     default: []
   },
-  itemName: {
+  itemsName: {
+    type: String,
+    required: true
+  },
+  itemsTitle: {
+    type: String,
+    default: ''
+  },
+  createButtonName: {
     type: String,
     required: true
   }
 })
 const emits = defineEmits<{
+  (e: 'create'): void;
   (e: 'edit', id: string): void;
   (e: 'delete', id: string): void;
   (e: 'test', id: string): void;
@@ -23,9 +33,14 @@ const emits = defineEmits<{
 </script>
 
 <template>
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">{{ itemsTitle }}</h2>
+    <CreateButton @click="$emit('create')" :button-name="createButtonName" />
+  </div>
+
   <div v-if="items.length === 0" class="bg-white rounded-lg shadow-sm p-8 text-center text-gray-600">
     <ExclamationCircleIcon class="h-10 w-10 text-gray-400 mx-auto mb-4" />
-    <p class="text-lg mb-2">No {{ itemName }} found in this repository.</p>
+    <p class="text-lg mb-2">No {{ itemsName }} found in this repository.</p>
     <p class="text-sm">Start by adding a new one above!</p>
   </div>
   <div v-else class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
