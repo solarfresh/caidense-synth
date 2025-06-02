@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
-import FormCancelButton from '@/components/base/form/FormCancelButton.vue';
-import FormContainer from '@/components/base/form/FormContainer.vue';
-import FormInput from '@/components/base/form/FormInput.vue';
-import FormSubmitButton from '@/components/base/form/FormSubmitButton.vue';
-import FormTextarea from '@/components/base/form/FormTextarea.vue';
+import FormCancelButton from '@/components/layouts/form/FormCancelButton.vue';
+import FormContainer from '@/components/layouts/form/FormContainer.vue';
+import FormInput from '@/components/layouts/form/FormInput.vue';
+import FormSubmitButton from '@/components/layouts/form/FormSubmitButton.vue';
+import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { FormErrors, FormInstance } from '@/types/form';
 import { Repository } from '@/types/repositories';
 import { onMounted, ref } from 'vue';
@@ -93,7 +93,7 @@ const registerRef = async (key:string, instance: any) => {
 
 <template>
   <FormContainer :title="'Edit Repository'" :enhanced-title="repositoryData.name" :is-loading="isLoading" :loading-description="'Loading repository details...'" :item-found="repositoryFound" :item-found-description="'Repository not found!'">
-    <template #form>
+    <template #page>
       <form @submit.prevent="handleSubmit">
         <FormInput :content="repositoryData.name" :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
         <FormTextarea :content="repositoryData.description" :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
-import FormCancelButton from '@/components/base/form/FormCancelButton.vue';
-import FormContainer from '@/components/base/form/FormContainer.vue';
-import FormInput from '@/components/base/form/FormInput.vue';
-import FormSubmitButton from '@/components/base/form/FormSubmitButton.vue';
-import FormTextarea from '@/components/base/form/FormTextarea.vue';
+import FormCancelButton from '@/components/layouts/form/FormCancelButton.vue';
+import FormContainer from '@/components/layouts/form/FormContainer.vue';
+import FormInput from '@/components/layouts/form/FormInput.vue';
+import FormSubmitButton from '@/components/layouts/form/FormSubmitButton.vue';
+import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { FormErrors, FormInstance } from '@/types/form';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';

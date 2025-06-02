@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/vue/20/solid';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import Loading from '@/components/base/Loading.vue';
 
-
-const router = useRouter();
 
 const props = defineProps({
   title: {
@@ -42,18 +38,11 @@ const props = defineProps({
         <!-- <span v-if="enhancedTitle" class="text-indigo-600">{{ enhancedTitle }}</span> -->
       </h1>
 
-      <div v-if="isLoading" class="text-center py-10 text-gray-600">
-        <ArrowPathIcon class="h-8 w-8 text-indigo-500 animate-spin mx-auto mb-2" />
-        <p>{{ loadingDescription }}</p>
-      </div>
-
-      <div v-else-if="!itemFound" class="text-center py-10 text-red-600">
-        <ExclamationTriangleIcon class="h-8 w-8 text-red-500 mx-auto mb-2" />
-        <p>{{ itemFoundDescription }}</p>
-        <button @click="router.back()" class="mt-4 text-indigo-600 hover:underline">Go Back</button>
-      </div>
-
-      <slot v-else name="form" />
+      <Loading :isLoading="isLoading" :loadingDescription="loadingDescription" :itemFound="itemFound" :itemFoundDescription="itemFoundDescription">
+        <template #page>
+          <slot name="page" />
+        </template>
+      </Loading>
     </div>
   </div>
 </template>
