@@ -12,7 +12,7 @@ const apiClient = axios.create({
 export const apiService = {
   repository: {
     getAll: (filter?: any): Promise<AxiosResponse<Repository[]>> => {
-      return apiClient.get(RepositoryEndpoints.getAll(), filter);
+      return apiClient.get(RepositoryEndpoints.getAll(), {params: filter});
     },
     create: (data: CreateRepository): Promise<AxiosResponse<Repository>> => {
       return apiClient.post(RepositoryEndpoints.create(), data);
@@ -29,7 +29,7 @@ export const apiService = {
   },
   prompt: {
     getAll: (filter?: any): Promise<AxiosResponse<Prompt[]>> => {
-      return apiClient.get(PromptEndpoints.getAll(), filter);
+      return apiClient.get(PromptEndpoints.getAll(), {params: filter});
     },
     create: (data: CreatePrompt): Promise<AxiosResponse<Prompt>> => {
       return apiClient.post(PromptEndpoints.create(), data);

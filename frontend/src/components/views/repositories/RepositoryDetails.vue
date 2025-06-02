@@ -2,7 +2,6 @@
 import { apiService } from '@/api/apiService';
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
 import { useRepositoryStore } from '@/stores/repository';
-import { ListDetailsItems } from '@/types/list';
 import { Prompt, Repository } from '@/types/repositories';
 import {
   ArrowPathIcon,
@@ -34,14 +33,18 @@ onMounted(async () => {
 
   try {
     isLoading.value = true;
+    let response = undefined
+
     await store.updateState({currentRepositoryId: repositoryId});
     repository.value = store.repositories.get(repositoryId) || null;
+    if (repository.value === null) {
+      response = await apiService.repository.get(repositoryId);
+      repository.value = response.data;
+    }
     promptCount.value = repository.value?.prompts.length || 0;
     prompts.value = store.getPrompts;
-    console.log(`prompts.value: ${prompts.value}`)
     if (prompts.value.length === 0) {
-      const response = await apiService.prompt.getAll({id: {$in: repository.value?.prompts}});
-      console.log(`response.data: ${response.data}`)
+      response = await apiService.prompt.getAll({_id: {$in: repository.value?.prompts}});
       prompts.value = response.data || [];
       store.updatePrompts(prompts.value);
     }
@@ -120,6 +123,8 @@ const handleDeleteTemplate = async (promptId: string) => {
 <template>
   <ListDetails
     :createButtonName="'Add New Prompt'"
+    :deleteButtonName="'Delete Repository'"
+    :editButtonName="'Edit Repository'"
     :isLoading="isLoading"
     :loadingDescription="'Loading repository details...'"
     :listDetailsId="repository?.id || ''"

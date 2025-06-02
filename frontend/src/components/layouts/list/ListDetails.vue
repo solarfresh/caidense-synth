@@ -11,6 +11,14 @@ const props = defineProps({
     type: String,
     required: true
   },
+  deleteButtonName: {
+    type: String,
+    default: ''
+  },
+  editButtonName: {
+    type: String,
+    default: ''
+  },
   isLoading: {
     type: Boolean,
     default: false
@@ -81,6 +89,8 @@ const detailsFound = computed(() => {
       <Loading :isLoading="isLoading" :loadingDescription="loadingDescription" :itemFound="detailsFound" :itemFoundDescription="itemFoundDescription">
         <template #page>
           <ListDetailsOverview
+            :delete-button-name="deleteButtonName"
+            :edit-button-name="editButtonName"
             :is-show-tags="isShowTags"
             :list-details-id="listDetailsId"
             :list-details-name="listDetailsName"

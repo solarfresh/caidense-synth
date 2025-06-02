@@ -43,7 +43,8 @@ const emits = defineEmits<{
     <p class="text-lg mb-2">No {{ itemsName }} found in this repository.</p>
     <p class="text-sm">Start by adding a new one above!</p>
   </div>
-  <div v-else class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+
+  <div v-else class="bg-white rounded-lg shadow-sm border border-gray-200 h-80 overflow-y-auto">
     <ul role="list" class="divide-y divide-gray-200">
       <li v-for="item in items" :key="item.id" class="px-6 py-4 hover:bg-gray-50 transition duration-150 ease-in-out flex justify-between items-center">
         <div>

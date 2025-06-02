@@ -10,6 +10,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseInterceptors
 } from '@nestjs/common';
 import { Document } from 'mongoose'; // Assuming Mongoose is used
@@ -62,7 +63,7 @@ export class BaseController<T extends Document, S extends BaseService<T>> {
    * @returns A Promise resolving to an array of resources.
    */
   @Get()
-  async findAll(@Param() filter?: any): Promise<T[]> { // Using @Param here is a placeholder, typically you use @Query() for filters
+  async findAll(@Query() filter?: any): Promise<T[]> {
      // Delegate the find all logic to the service
      // Pass the filter, the service will decide how to apply it
     return this.service.findAll(filter);
