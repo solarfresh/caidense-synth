@@ -4,7 +4,7 @@ import { ref } from 'vue';
 
 
 const props = defineProps<FormProps>();
-const editableContent = ref(props.content);
+const editableContent = ref(props.content || '');
 const hasMargin = ref(props.hasMargin || true);
 
 defineExpose({
@@ -18,7 +18,7 @@ defineExpose({
       {{ labelName }} <span v-if="isRequired" class="text-red-500">*</span>
     </label>
     <select
-      id="collection"
+      :id="labelId"
       v-model="editableContent"
       required
       class="block w-full pl-3 pr-10 px-4 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"

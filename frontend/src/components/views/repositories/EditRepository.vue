@@ -7,7 +7,7 @@ import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { FormErrors, FormInstance } from '@/types/form';
 import { Repository } from '@/types/repositories';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 
@@ -15,12 +15,12 @@ const route = useRoute();
 const router = useRouter();
 
 // Loading and error states
-const errors = ref<FormErrors>({name: undefined});
+const errors = reactive<FormErrors>({});
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const repositoryData = ref<Repository | null>(null);
 const repositoryFound = ref(true); // To indicate if the collection exists
-const repositoryForm = ref<Map<string, FormInstance>>(new Map())
+const repositoryForm = reactive<Map<string, FormInstance>>(new Map())
 
 // Fetch collection data on component mount
 onMounted(async () => {
@@ -50,26 +50,26 @@ onMounted(async () => {
 const handleSubmit = async () => {
   const repositoryId = route.params.id as string;
   // Reset errors
-  errors.value.name = undefined;
+  errors.name = undefined;
 
   // Basic validation
-  const repositoryName = repositoryForm.value.get('name')?.editableContent.trim();
+  const repositoryName = repositoryForm.get('name')?.editableContent.trim();
   if (!repositoryName) {
-    errors.value.name = 'Repository name is required.';
+    errors.name = 'Repository name is required.';
     return;
   }
 
   isSubmitting.value = true;
   try {
     // Parse tags from string to array
-    const tagsArray = repositoryForm.value.get('tags')?.editableContent
+    const tagsArray = repositoryForm.get('tags')?.editableContent
       .split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== '');
 
     const newRepositoryData = {
       name: repositoryName,
-      description: repositoryForm.value.get('description')?.editableContent || '',
+      description: repositoryForm.get('description')?.editableContent || '',
       tags: tagsArray || []
     }
 
@@ -86,7 +86,7 @@ const handleSubmit = async () => {
 };
 const registerRef = async (key:string, instance: any) => {
   if (instance) {
-    repositoryForm.value.set(key, instance)
+    repositoryForm.set(key, instance)
   }
 }
 </script>

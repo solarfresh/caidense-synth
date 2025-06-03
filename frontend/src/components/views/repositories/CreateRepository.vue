@@ -6,38 +6,38 @@ import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { FormErrors, FormInstance } from '@/types/form';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 
 const router = useRouter();
 // Loading state for submission
-const errors = ref<FormErrors>({name: undefined});
+const errors = reactive<FormErrors>({});
 const isSubmitting = ref(false);
-const repositoryForm = ref<Map<string, FormInstance>>(new Map())
+const repositoryForm = reactive<Map<string, FormInstance>>(new Map())
 // Form submission handler
 const handleSubmit = async () => {
   // Reset errors
-  errors.value.name = undefined;
+  errors.name = undefined;
 
   // Basic validation
-  const repositoryName = repositoryForm.value.get('name')?.editableContent.trim();
+  const repositoryName = repositoryForm.get('name')?.editableContent.trim();
   if (!repositoryName) {
-    errors.value.name = 'Repository name is required.';
+    errors.name = 'Repository name is required.';
     return;
   }
 
   isSubmitting.value = true;
   try {
     // Parse tags from string to array
-    const tagsArray = repositoryForm.value.get('tags')?.editableContent
+    const tagsArray = repositoryForm.get('tags')?.editableContent
       .split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== '');
 
     const newRepositoryData = {
       name: repositoryName,
-      description: repositoryForm.value.get('description')?.editableContent || '',
+      description: repositoryForm.get('description')?.editableContent || '',
       prompts: [],
       tags: tagsArray || []
     }
@@ -59,7 +59,7 @@ const handleSubmit = async () => {
 };
 const registerRef = async (key:string, instance: any) => {
   if (instance) {
-    repositoryForm.value.set(key, instance)
+    repositoryForm.set(key, instance)
   }
 }
 </script>

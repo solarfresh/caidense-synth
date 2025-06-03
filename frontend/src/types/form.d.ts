@@ -5,6 +5,7 @@ export interface FormErrors {
 
 export interface FormInstance {
   editableContent: string;
+  formInstance: Map<string, FormInstance>;
   $el: HTMLElement;
 }
 

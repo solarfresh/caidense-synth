@@ -9,6 +9,9 @@ import type { Variable } from '@/types/common';
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CreatePromptVariableSection from './CreatePromptVariableSection.vue';
+import { FormErrors, FormInstance, FormSelectOption } from '@/types/form';
+import { apiService } from '@/api/apiService';
+import RepositoryCard from '../repositories/RepositoryCard.vue';
 
 
 interface TemplateForm {
@@ -19,13 +22,6 @@ interface TemplateForm {
   parameters: Variable[];
 }
 
-interface FormErrors {
-  name?: string;
-  collectionId?: string;
-  content?: string;
-  [key: string]: string | undefined; // For dynamic parameter errors
-}
-
 interface CollectionOption { // For the dropdown list of collections
   id: string;
   name: string;
@@ -33,47 +29,28 @@ interface CollectionOption { // For the dropdown list of collections
 
 // --- State Management ---
 const router = useRouter();
-const route = useRoute(); // To get collectionId from query params
 
-const templateForm = reactive<TemplateForm>({
-  name: '',
-  collectionId: '', // Default to empty, require user selection
-  description: '',
-  content: '',
-  parameters: [],
-});
-
+const templateForm = reactive<Map<string, FormInstance>>(new Map())
 const errors = reactive<FormErrors>({});
 const isSubmitting = ref(false);
-const availableCollections = ref<CollectionOption[]>([]); // For the dropdown
+const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
 
 // --- Lifecycle Hooks ---
 onMounted(async () => {
-  // Pre-select collection if passed via query parameter (e.g., from Collection Details page)
-  const collectionIdFromRoute = route.query.collectionId as string;
-  if (collectionIdFromRoute) {
-    templateForm.collectionId = collectionIdFromRoute;
-  }
-
-  // Fetch available collections for the dropdown
   await fetchAvailableCollections();
 });
 
-// --- Data Fetching (Mock) ---
 async function fetchAvailableCollections() {
-  // Simulate API call to get user's collections
-  await new Promise(resolve => setTimeout(resolve, 500));
-  availableCollections.value = [
-    { id: 'coll-001', name: 'General Purpose Prompts' },
-    { id: 'coll-002', name: 'Customer Service Bot Prompts' },
-    { id: 'coll-003', name: 'Content Generation Prompts' },
-  ];
+  const response = await apiService.repository.getAll();
+  availableRepositories.value = response.data.map(repository => {
+    return {id: repository.id, name: repository.name}
+  });
 }
 
 // --- Parameter Management Logic ---
 const extractParameters = () => {
   const content = templateForm.content;
-  const regex = /\[([A-Z0-9_]+)\]/g; // Matches [PARAM_NAME]
+  const regex = /\{([A-Z0-9_]+)\}/g; // Matches [PARAM_NAME]
   let match;
   const extractedNames = new Set<string>();
 
@@ -122,7 +99,14 @@ const validateForm = () => {
     }
   }
 
-  if (!templateForm.name.trim()) {
+  console.log('=============== templateForm ===============')
+  console.log(JSON.stringify(Object.fromEntries(templateForm.entries()), null, 2))
+  console.log('=============== availableRepositories ===============')
+  console.log(JSON.stringify(availableRepositories.value, null, 2))
+  console.log('=============== multiFields ===============')
+  console.log(JSON.stringify(Object.fromEntries(templateForm.get('multiFields').formInstance.entries()), null, 2))
+
+  if (!templateForm.get('name')?.editableContent.trim()) {
     errors.name = 'Template name is required.';
     isValid = false;
   }
@@ -130,7 +114,7 @@ const validateForm = () => {
     errors.collectionId = 'A collection must be selected.';
     isValid = false;
   }
-  if (!templateForm.content.trim()) {
+  if (!templateForm.get('content')?.editableContent.trim()) {
     errors.content = 'Prompt text is required.';
     isValid = false;
   }
@@ -207,6 +191,11 @@ const handleSubmit = async () => {
     isSubmitting.value = false;
   }
 };
+const registerRef = async (key:string, instance: any) => {
+  if (instance) {
+    templateForm.set(key, instance)
+  }
+}
 </script>
 
 <template>
@@ -215,7 +204,9 @@ const handleSubmit = async () => {
       <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormSection :title="'Basic Information'">
           <template #fields>
-            <FormMultiFields :componentInfo="[
+            <FormMultiFields
+              :ref="el => registerRef('multiFields', el)"
+              :componentInfo="[
               {
                 name: 'input',
                 props: {
@@ -235,20 +226,20 @@ const handleSubmit = async () => {
                   labelName: 'Belongs to Repository',
                   isRequired: true,
                   optionName: 'Select a repository',
-                  options: [{id: '1', name: 'test1'}, {id: '2', name: 'test2'}]
+                  options: availableRepositories
                 }
               }
             ]" />
-            <FormTextarea :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this template\'s purpose.'" />
+            <FormTextarea :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this template\'s purpose.'" :ref="el => registerRef('description', el)" />
           </template>
         </FormSection>
         <FormSection :title="'Template Content'">
           <template #fields>
-            <FormTextarea :isRequired="true" :labelId="'templateContent'" :labelName="'Prompt Text'" :description="'Use `{VARIABLE_NAME}` to define variables that will be replaced with dynamic data.'" :placeholder="'e.g., Summarize the following text in {TONE} tone: {TEXT}'" />
+            <FormTextarea :isRequired="true" :labelId="'templateContent'" :labelName="'Prompt Text'" :description="'Use `{VARIABLE_NAME}` to define variables that will be replaced with dynamic data.'" :placeholder="'e.g., Summarize the following text in {TONE} tone: {TEXT}'" :ref="el => registerRef('templateContent', el)" />
           </template>
         </FormSection>
 
-        <CreatePromptVariableSection :variables="templateForm.parameters" />
+        <CreatePromptVariableSection :variables="[]" :ref="el => registerRef('variables', el)" />
 
         <div class="flex justify-end space-x-4 mt-8">
           <CancelButton :buttonName="'Cancel'" />
