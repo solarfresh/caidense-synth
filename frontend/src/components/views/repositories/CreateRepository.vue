@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
-import FormCancelButton from '@/components/layouts/form/FormCancelButton.vue';
+import CancelButton from '@/components/base/buttons/CancelButton.vue';
+import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
 import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
-import FormSubmitButton from '@/components/layouts/form/FormSubmitButton.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { FormErrors, FormInstance } from '@/types/form';
 import { ref } from 'vue';
@@ -73,8 +73,8 @@ const registerRef = async (key:string, instance: any) => {
         <FormInput :description="'Separate tags with commas.'" :isRequired="false" :labelId="'tags'" :labelName="'Categories/Tags (comma-separated)'" :placeholder="'e.g., general, utility, marketing'" :type="'text'" :ref="el => registerRef('tags', el)" />
 
         <div class="flex justify-end space-x-4 mt-8">
-          <FormCancelButton />
-          <FormSubmitButton :isSubmitting="isSubmitting" :buttonName="'Create Repository'" :dynamic-button-name="'Creating...'" />
+          <CancelButton :buttonName="'Cancel'" />
+          <SubmitButton :isSubmitting="isSubmitting" :buttonName="'Create Repository'" :dynamic-button-name="'Creating...'" />
         </div>
       </form>
     </template>

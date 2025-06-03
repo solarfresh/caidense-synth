@@ -4,7 +4,8 @@ import { ref } from 'vue';
 
 
 const props = defineProps<FormProps>();
-const editableContent = ref(props.content)
+const editableContent = ref(props.content);
+const hasMargin = ref(props.hasMargin || true);
 
 defineExpose({
   editableContent
@@ -12,7 +13,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="mb-5">
+  <div :class="{'mb-5': hasMargin}">
     <label :for="labelId" class="block text-sm font-medium text-gray-700 mb-2">
       {{ labelName }} <span v-if="isRequired" class="text-red-500">*</span>
     </label>
