@@ -1,15 +1,12 @@
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
-import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty, // Decorator to validate that a string, array, object, etc., is not empty
   IsOptional,
-  IsString,
-  ValidateNested,
-  IsEnum
+  IsString
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
-import { CreatePromptSetEntryDto } from './create-set-entry.dto';
 
 
 export class CreatePromptSetDto {
@@ -43,13 +40,11 @@ export class CreatePromptSetDto {
 
   @ApiProperty({
     description: 'An array of prompt entries included in this set.',
-    type: [CreatePromptSetEntryDto], // Reference the nested DTO
     isArray: true, // Explicitly mark as an array
   })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreatePromptSetEntryDto) // Make sure to use CreatePromptSetEntryDto here
-  prompts: CreatePromptSetEntryDto[];
+  @IsString({ each: true })
+  promptTextIds: string[];
 
   @ApiProperty({
     description: 'The publishing status of the prompt set (Optional).',

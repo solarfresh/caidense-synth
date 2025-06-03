@@ -1,4 +1,5 @@
-import type { CreatePrompt, CreateRepository, Prompt, Repository, UpdatePrompt, UpdateRepository } from '@/types/repositories';
+import type { CreatePrompt, Prompt, UpdatePrompt } from '@/types/prompts';
+import type { CreateRepository, Repository, UpdateRepository } from '@/types/repositories';
 import axios, { AxiosResponse } from 'axios';
 import { PromptEndpoints, RepositoryEndpoints } from './endpoints';
 

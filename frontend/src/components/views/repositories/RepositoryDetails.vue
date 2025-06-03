@@ -2,7 +2,8 @@
 import { apiService } from '@/api/apiService';
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
 import { useRepositoryStore } from '@/stores/repository';
-import { Prompt, Repository } from '@/types/repositories';
+import type { Prompt } from '@/types/prompts';
+import type { Repository } from '@/types/repositories';
 import {
   ArrowPathIcon,
   ClockIcon,
@@ -41,10 +42,10 @@ onMounted(async () => {
       response = await apiService.repository.get(repositoryId);
       repository.value = response.data;
     }
-    promptCount.value = repository.value?.prompts.length || 0;
+    promptCount.value = repository.value?.promptTextIds.length || 0;
     prompts.value = store.getPrompts;
     if (prompts.value.length === 0) {
-      response = await apiService.prompt.getAll({_id: {$in: repository.value?.prompts}});
+      response = await apiService.prompt.getAll({filter: JSON.stringify({promptSetId: repositoryId})});
       prompts.value = response.data || [];
       store.updatePrompts(prompts.value);
     }
@@ -122,7 +123,7 @@ const handleDeleteTemplate = async (promptId: string) => {
 
 <template>
   <ListDetails
-    :createButtonName="'Add New Prompt'"
+    :createButtonName="'Add New Template'"
     :deleteButtonName="'Delete Repository'"
     :editButtonName="'Edit Repository'"
     :isLoading="isLoading"
@@ -141,14 +142,14 @@ const handleDeleteTemplate = async (promptId: string) => {
       },
       {
         icon: DocumentDuplicateIcon,
-        text: `Prompts: ${promptCount}`
+        text: `Templates: ${promptCount}`
       }
     ]"
     :listDetailsTags="repository?.tags || []"
     :items="prompts || []"
-    :itemsName="'repositories'"
-    :itemsTitle="`Prompts in this Repository (${promptCount})`"
-    :itemFoundDescription="'Repository Not Found'"
+    :itemsName="'prompt templates'"
+    :itemsTitle="`Templates in this Repository (${promptCount})`"
+    :itemFoundDescription="'Prompt Template Not Found'"
     @editDetails="handleEditRepository"
   />
 </template>

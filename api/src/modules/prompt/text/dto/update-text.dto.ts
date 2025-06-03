@@ -4,8 +4,7 @@ import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { Type } from 'class-transformer';
 import {
   IsArray, // Decorator to validate nested objects or array of objects
-  IsEnum // Decorator to validate that a value is one of the values in an enum
-  , // Decorator to validate that a string, array, object, etc., is not empty (less common in update DTOs)
+  IsEnum, // Decorator to validate that a string, array, object, etc., is not empty (less common in update DTOs)
   IsOptional, // Decorator to mark a property as optional in the payload
   IsString, // Decorator to validate that a property is a string
   ValidateNested
@@ -80,6 +79,13 @@ export class UpdatePromptTextDto {
   @IsEnum(DocumentStatus) // Validates that the value, if present, is one of the enum values
   status?: DocumentStatus; // TypeScript optional property
 
+  @ApiProperty({
+    description: '',
+    required: false, // Explicitly mark as not required
+  })
+  @IsOptional()
+  @IsString() // Validates that the property is a string
+  promptSetId: string;
   // Note: Fields like 'createdAt', 'updatedAt', or internal IDs (_id) of the *document*
   // are typically managed by the backend service and the database, and not included here.
 }

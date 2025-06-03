@@ -15,7 +15,7 @@ const emits = defineEmits<{
 }>();
 
 const promptCount = computed(() => {
-  return props.repository.prompts.length;
+  return props.repository.promptTextIds.length;
 })
 </script>
 

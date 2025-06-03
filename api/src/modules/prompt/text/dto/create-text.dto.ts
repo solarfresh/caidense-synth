@@ -77,6 +77,13 @@ export class CreatePromptTextDto {
   @IsEnum(DocumentStatus) // Validates that the value, if present, is one of the enum values
   status?: DocumentStatus; // TypeScript optional property
 
+  @ApiProperty({
+    description: '',
+    // 'required' is true by default
+  })
+  @IsNotEmpty({ message: 'promptSetId statement is required' }) // Ensures the string is not empty
+  @IsString() // Validates that the property is a string
+  promptSetId: string;
   // Note: Fields like 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,
   // and thus are not included in the DTO used for *creating* the resource via API payload.
