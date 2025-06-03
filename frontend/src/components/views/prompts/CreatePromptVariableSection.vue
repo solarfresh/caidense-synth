@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import CreateButton from '@/components/base/buttons/CreateButton.vue';
 import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
-import type { Variable } from '@/types/common';
+import type { CreateVariable } from '@/types/common';
 import { FormErrors } from '@/types/form';
 import { InformationCircleIcon } from '@heroicons/vue/20/solid';
-import { reactive } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
 
 const props = defineProps({
   variables: {
-    type: Array<Variable>,
+    type: Array<CreateVariable>,
     required: true
   }
 })
@@ -18,19 +18,34 @@ const emits = defineEmits<{
 }>();
 
 const errors = reactive<FormErrors>({name: undefined});
-const editableVariables = reactive<Variable[]>(props.variables)
+const editableVariables = ref<CreateVariable[]>(props.variables)
 
-const removeVariable = (index: number) => {
-  editableVariables.splice(index, 1);
+watch(() => props.variables, (newValue) => {
+  editableVariables.value = newValue;
+}, {immediate: true});
+
+const addVariable = () => {
+  editableVariables.value.push({
+    name: '',
+    type: 'text',
+    description: '',
+  });
 };
 
+const removeVariable = (index: number) => {
+  editableVariables.value.splice(index, 1);
+};
+
+defineExpose({
+  editableVariables
+});
 </script>
 
 <template>
   <section class="mb-8 border-b pb-6 border-gray-200">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center justify-between">
       Variables
-      <CreateButton @click="$emit('createVariables')" :buttonName="'Add Variable'" />
+      <CreateButton @click="addVariable" :buttonName="'Add Variable'" />
     </h2>
 
     <div v-if="variables.length === 0" class="bg-gray-50 p-6 rounded-md text-center text-gray-600">
@@ -41,7 +56,7 @@ const removeVariable = (index: number) => {
     <div v-else class="space-y-4">
       <div
         v-for="(variable, index) in editableVariables"
-        :key="variable.id || index"
+        :key="index"
         class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end bg-gray-50 p-4 rounded-md border border-gray-200"
       >
         <div>

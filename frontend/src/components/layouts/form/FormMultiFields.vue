@@ -30,6 +30,6 @@ const registerRef = async (key:string, instance: any) => {
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <component v-for="info in componentInfo" :is="components.get(info.name)" v-bind="info.props" :ref="el => registerRef(info.name, el)" />
+    <component v-for="info in componentInfo" :is="components.get(info.name)" v-bind="info.props" :ref="el => registerRef(info.props.labelId, el)" />
   </div>
 </template>

@@ -69,7 +69,7 @@ const filteredRepositories = computed(() => {
       case 'updatedAtDesc':
         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
       case 'templateCountDesc':
-        return b.prompts.length - a.prompts.length;
+        return b.promptTextIds.length - a.promptTextIds.length;
       default:
         return 0;
     }

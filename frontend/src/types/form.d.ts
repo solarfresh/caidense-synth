@@ -1,11 +1,15 @@
+import type { CreateVariable } from '@/types/common';
+
+
 export interface FormErrors {
   name?: string;
   [key: string]: string | undefined; // For dynamic errors
 }
 
 export interface FormInstance {
-  editableContent: string;
-  formInstance: Map<string, FormInstance>;
+  editableContent?: string;
+  editableVariables?: CreateVariable[];
+  formInstance?: Map<string, FormInstance>;
   $el: HTMLElement;
 }
 

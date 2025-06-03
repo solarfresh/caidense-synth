@@ -1,4 +1,4 @@
-import type { DocumentStatus, Variable } from '@/types/common';
+import type { CreateVariable, DocumentStatus, Variable } from '@/types/common';
 
 
 export interface CreatePrompt {
@@ -6,8 +6,9 @@ export interface CreatePrompt {
   description?: string;
   tags?: string[];
   promptText: string;
-  variables: Variable[];
+  variables: CreateVariable[];
   status: DocumentStatus;
+  promptSetId: string;
 }
 
 export interface Prompt {
@@ -18,6 +19,7 @@ export interface Prompt {
   promptText: string;
   variables: Variable[];
   status: DocumentStatus;
+  promptSetId: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,4 +31,5 @@ export interface UpdatePrompt {
   promptText?: string;
   variables?: Variable[];
   status?: DocumentStatus;
+  promptSetId?: string;
 }

@@ -14,7 +14,7 @@ export interface Repository {
   id: string;
   name: string;
   description: string;
-  prompts: string[];
+  promptTextIds: string[];
   createdAt: Date;
   updatedAt: Date;
   tags: string[];
