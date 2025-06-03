@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <div class="flex-col h-screen overflow-hidden">
+  <div class="flex-col h-screen overflow-y-auto no-scrollbar">
     <!-- <AppHeader /> -->
     <RouterView />
   </div>

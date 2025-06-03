@@ -8,6 +8,7 @@ import {
   TrashIcon,
   InformationCircleIcon,
 } from '@heroicons/vue/20/solid'; // Using /20/solid for smaller icons
+import FormContainer from '@/components/layouts/form/FormContainer.vue';
 
 // --- Interfaces ---
 type ParameterType = 'text' | 'number' | 'boolean' | 'enum';
@@ -228,10 +229,8 @@ const handleCancel = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-10">
-    <div class="container mx-auto px-4 max-w-4xl">
-      <h1 class="text-3xl font-bold text-gray-900 mb-8 text-center">Create New Prompt Template</h1>
-
+  <FormContainer :title="'Create New Prompt Template'">
+    <template #page>
       <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <section class="mb-8 border-b pb-6 border-gray-200">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Basic Information</h2>
@@ -412,6 +411,6 @@ const handleCancel = () => {
           </button>
         </div>
       </form>
-    </div>
-  </div>
+    </template>
+  </FormContainer>
 </template>
