@@ -45,7 +45,7 @@ onMounted(async () => {
     promptCount.value = repository.value?.promptTextIds.length || 0;
     prompts.value = store.getPrompts;
     if (prompts.value.length === 0) {
-      response = await apiService.prompt.getAll({filter: {promptSetId: repositoryId}});
+      response = await apiService.prompt.getAll({filter: JSON.stringify({promptSetId: repositoryId})});
       prompts.value = response.data || [];
       store.updatePrompts(prompts.value);
     }

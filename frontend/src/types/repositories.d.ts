@@ -1,7 +1,7 @@
 export interface CreateRepository {
   name: string;
   description: string;
-  prompts: string[];
+  promptTextIds?: string[];
   tags: string[];
 }
 
@@ -24,7 +24,7 @@ export interface Repository {
 export interface UpdateRepository {
   name?: string;
   description?: string;
-  prompts?: string[];
+  promptTextIds?: string[];
   updatedAt?: Date;
   tags?: string[];
   recentTestSummary?: RecentTestSummary;

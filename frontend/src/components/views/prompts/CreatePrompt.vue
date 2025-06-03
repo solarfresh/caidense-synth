@@ -148,7 +148,11 @@ const handleSubmit = async () => {
       // Add other relevant fields like createdBy
     };
 
-    const response = apiService.prompt.create(newTemplateData);
+    const promptResponse = await apiService.prompt.create(newTemplateData);
+    const repositoryResponse = await apiService.repository.get(promptResponse.data.promptSetId);
+    const promptTextIds = repositoryResponse.data.promptTextIds;
+    promptTextIds.push(promptResponse.data.id);
+    apiService.repository.update(repositoryResponse.data.id, {promptTextIds: promptTextIds})
     // In a real application, send newTemplateData to your backend API
     // const response = await api.createTemplate(newTemplateData);
     // router.push({ name: 'TemplateDetails', params: { collectionId: templateForm.collectionId, templateId: newTemplateData.id } });
