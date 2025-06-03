@@ -1,7 +1,6 @@
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import { PromptSetDocument } from '../set.schemas';
-import { PromptSetEntryDto } from './set-entry.dto'; // Assuming this DTO exists and is correctly defined
 
 
 export class PromptSetDto {
@@ -29,10 +28,10 @@ export class PromptSetDto {
 
   @ApiProperty({
     description: 'An array of prompt entries included in this set.',
-    type: [PromptSetEntryDto], // Reference the nested DTO
+    type: [String], // Reference the nested DTO
     isArray: true, // Explicitly mark as an array
   })
-  prompts: PromptSetEntryDto[];
+  promptTextIds: string[];
 
   @ApiProperty({
     description: 'The publishing status of the prompt set (draft or finalized).',
@@ -60,7 +59,7 @@ export class PromptSetDto {
     this.tags = plainObject.tags;
     // Ensure prompts are mapped, potentially converting nested documents to DTOs if PromptSetEntryDto constructor expects it
     // This line assumes plainObject.prompts is an array of objects that can be used directly or mapped
-    this.prompts = plainObject.prompts ? plainObject.prompts.map((entry) => new PromptSetEntryDto(entry)) : []; // Example mapping nested if needed
+    this.promptTextIds = plainObject.promptTextIds ? plainObject.promptTextIds.map((promptTextId) => promptTextId.toHexString ? promptTextId.toHexString() : promptTextId) : []; // Example mapping nested if needed
     this.status = plainObject.status; // status should be the enum value directly from Mongoose
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

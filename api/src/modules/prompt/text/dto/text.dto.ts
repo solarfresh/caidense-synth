@@ -47,6 +47,9 @@ export class PromptTextDto {
   })
   status: DocumentStatus; // Use the enum type (Assuming status is required or defaults in schema)
 
+  @ApiProperty({ description: '' })
+  promptSetId: string;
+
   @ApiProperty({ description: 'The timestamp when the prompt text document was created.' })
   createdAt: Date; // Assuming timestamps are enabled and required in response
 

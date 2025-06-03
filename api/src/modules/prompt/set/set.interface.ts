@@ -2,37 +2,6 @@ import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Document, Types } from 'mongoose';
 
 
-export interface PromptSetEntry {
-  /**
-   * The unique logical name or role of this prompt entry within the scope of its parent Prompt Set
-   * (e.g., "initial-greeting", "answer-faq", "summarization-step-1", "error-handler").
-   * This name is used to reference the prompt from within a Reasoning Flow or application logic.
-   */
-  role: string;
-
-  /**
-   * The ID of the specific Prompt Template that this entry refers to.
-   * This provides the link to the overall template metadata.
-   */
-  promptTemplateId: Types.ObjectId;
-
-  /**
-   * Optional description of the role this prompt plays in the set or workflow.
-   */
-  description?: string;
-
-  /**
-   * Timestamp when the template was first created.
-   */
-  createdAt: Date;
-
-  /**
-   * Timestamp when the template's metadata was last updated
-   * (e.g., name or description changed, but not the definition).
-   */
-  updatedAt: Date;
-}
-
 export interface PromptSet extends Document {
   /**
    * A human-readable name for the prompt set
@@ -51,9 +20,9 @@ export interface PromptSet extends Document {
   tags?: string[];
 
   /**
-   * An array of entries defining the specific prompt template versions included in this set, linked by their logical role.
+   * An array of IDs refering to PromptTextDocument
    */
-  prompts: PromptSetEntry[];
+  promptTextIds: Types.ObjectId[];
 
   /**
    * The status of this specific prompt set definition (e.g., draft, published, archived).

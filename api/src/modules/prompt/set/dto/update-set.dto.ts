@@ -1,15 +1,12 @@
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 // Removed unused Optional from @nestjs/common
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
-import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
   IsOptional, // Decorator to validate that a value is optional
-  IsString,
-  ValidateNested
+  IsString
 } from 'class-validator';
-import { UpdatePromptSetEntryDto } from './update-set-entry.dto';
 
 
 export class UpdatePromptSetDto {
@@ -45,14 +42,12 @@ export class UpdatePromptSetDto {
   @ApiProperty({
     description: 'Optional array of updated or new prompt entries for this set.',
     required: false, // Explicitly mark as optional
-    type: [UpdatePromptSetEntryDto], // Reference the nested DTO
     isArray: true, // Explicitly mark as an array
   })
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UpdatePromptSetEntryDto) // Make sure to use UpdatePromptSetEntryDto here
-  prompts?: UpdatePromptSetEntryDto[]; // This field is optional
+  @IsString({ each: true })
+  promptTextIds?: string[]; // This field is optional
 
   @ApiProperty({
     description: 'Optional new publishing status for the prompt set.',

@@ -1,7 +1,7 @@
 import { DocumentStatus, Variable } from '@caidense/reasoning/common/common.interface';
 import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { PromptText } from './text.interface';
 
 
@@ -29,6 +29,9 @@ export class PromptTextDocument extends Document implements PromptText {
 
   @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
   status: DocumentStatus;
+
+  @Prop({ type: Types.ObjectId })
+  promptSetId: Types.ObjectId
 
   @Prop(Date)
   createdAt: Date;

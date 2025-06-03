@@ -1,7 +1,7 @@
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { PromptSet, PromptSetEntry } from './set.interface';
+import { Document, Types } from 'mongoose';
+import { PromptSet } from './set.interface';
 
 
 @Schema({
@@ -20,8 +20,8 @@ export class PromptSetDocument extends Document implements PromptSet {
   @Prop({ type: [String]})
   tags?: string[];
 
-  @Prop({ type: [Object] }) // Assuming PromptSetEntry maps to a BSON Object or a subdocument schema if defined elsewhere
-  prompts: PromptSetEntry[];
+  @Prop({ type: [Types.ObjectId] }) // Assuming PromptSetEntry maps to a BSON Object or a subdocument schema if defined elsewhere
+  promptTextIds: Types.ObjectId[];
 
   @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
   status: DocumentStatus;
