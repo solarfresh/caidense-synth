@@ -1,4 +1,5 @@
-import type { Prompt, Repository } from '@/types/repositories';
+import type { Prompt } from '@/types/prompts';
+import type { Repository } from '@/types/repositories';
 import { defineStore } from 'pinia';
 
 

@@ -46,7 +46,7 @@ const handleSubmit = async () => {
 
   //   // After successful creation, redirect to the new collection's detail page
   //   // or back to the overview page.
-  //   router.push({ name: 'CollectionDetails', params: { id: newCollectionData.id } });
+    router.push({ name: 'RepositoryDetails', params: { id: response.data.id } });
   //   // Or to overview: router.push({ name: 'TemplateCollectionOverview' });
 
   } catch (error) {
@@ -66,7 +66,7 @@ const registerRef = async (key:string, instance: any) => {
 
 <template>
   <FormContainer :title="'Create New Repository'">
-    <template #form>
+    <template #page>
       <form @submit.prevent="handleSubmit">
         <FormInput :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
         <FormTextarea :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />

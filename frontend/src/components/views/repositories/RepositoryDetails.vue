@@ -2,7 +2,8 @@
 import { apiService } from '@/api/apiService';
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
 import { useRepositoryStore } from '@/stores/repository';
-import { Prompt, Repository } from '@/types/repositories';
+import type { Prompt } from '@/types/prompts';
+import type { Repository } from '@/types/repositories';
 import {
   ArrowPathIcon,
   ClockIcon,
