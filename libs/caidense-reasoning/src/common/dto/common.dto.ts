@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'; // Import ApiProperty
 import {
+  IsArray,
   IsBoolean,
   IsOptional,
   IsString
@@ -57,8 +58,13 @@ export class VariableDto {
     required: false,
     example: 'response',
   })
-  @IsOptional()
   systemRef?: any;
+
+  @ApiProperty({
+    description: 'Optional: For enum type, split from a comma-separated string.',
+    required: false,
+  })
+  enumOptions?: string[];
 
   @ApiProperty({ description: 'The timestamp when this variable was created.' })
   createdAt: Date; // Assuming timestamps are tracked for variables
@@ -77,6 +83,7 @@ export class VariableDto {
     this.required = plainObject.required;
     this.defaultValue = plainObject.defaultValue;
     this.systemRef = plainObject.systemRef;
+    this.enumOptions = plainObject.enumOptions;
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;
   }
@@ -133,6 +140,15 @@ export class CreateVariableDto {
   })
   @IsOptional()
   systemRef?: any;
+
+  @ApiProperty({
+    description: 'Optional: For enum type, split from a comma-separated string.',
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  enumOptions?: string[];
 
   // Note: Fields like 'status', 'createdAt', 'updatedAt', or internal IDs (_id)
   // are typically managed by the backend service and the database,
@@ -205,6 +221,15 @@ export class UpdateVariableDto {
   })
   @IsOptional()
   systemRef?: any;
+
+  @ApiProperty({
+    description: 'Optional: For enum type, split from a comma-separated string.',
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  enumOptions?: string[];
 
   // Note: Fields like 'createdAt', 'updatedAt', are managed by the backend.
   // The entry's _id is often *needed* for updating it in an array (see comment above).

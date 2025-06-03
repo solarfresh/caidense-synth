@@ -1,5 +1,6 @@
 export interface FormErrors {
   name?: string;
+  [key: string]: string | undefined; // For dynamic errors
 }
 
 export interface FormInstance {

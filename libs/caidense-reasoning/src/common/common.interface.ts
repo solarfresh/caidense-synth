@@ -33,6 +33,10 @@ export interface Variable {
    */
   systemRef?: string
 
+  /**
+   * Optional: For enum type, comma-separated string
+   */
+  enumOptions?: string[];
   // Add validation rules, example values, etc., if needed
   // validation?: object;
   // example?: any;
