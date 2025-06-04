@@ -190,7 +190,7 @@ const handleSubmit = async () => {
 
     // In a real application, send newTemplateData to your backend API
     // const response = await api.createTemplate(newTemplateData);
-    // router.push({ name: 'TemplateDetails', params: { collectionId: templateForm.collectionId, templateId: newTemplateData.id } });
+    router.push({ name: 'PromptDetail', params: { id: promptResponse.data.id } });
 
   } catch (error) {
     console.error('Error creating template:', error);
