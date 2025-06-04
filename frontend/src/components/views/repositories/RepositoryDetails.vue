@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
-import Details from '@/components/layouts/detail/Details.vue'
-import ListDetails from '@/components/layouts/list/ListDetails.vue';
+import Details from '@/components/layouts/detail/Details.vue';
 import ListDetailsItems from '@/components/layouts/list/ListDetailsItems.vue';
-import { useRepositoryStore } from '@/stores/repository';
 import { usePromptStore } from '@/stores/prompt';
+import { useRepositoryStore } from '@/stores/repository';
 import type { Prompt } from '@/types/prompts';
 import type { Repository } from '@/types/repositories';
 import {
@@ -40,13 +39,14 @@ onMounted(async () => {
 
   try {
     isLoading.value = true;
-    let response = undefined
+    let response = undefined;
 
     store.repository.updateState({currentRepositoryId: repositoryId});
     repository.value = store.repository.repositories.get(repositoryId) || null;
     if (repository.value === null) {
       response = await apiService.repository.get(repositoryId);
       repository.value = response.data;
+      store.repository.repositories.set(repositoryId, response.data);
     }
     promptCount.value = repository.value?.promptTextIds.length || 0;
     prompts.value = store.repository.getPrompts;
@@ -94,7 +94,7 @@ const handleAddNewTemplate = () => {
 
 const handleViewTemplate = (promptId: string) => {
   if (repository.value) {
-    // router.push({ name: 'CreatePrompt', params: { id: promptId } });
+    router.push({ name: 'PromptDetail', params: { id: promptId } });
   }
 };
 
@@ -166,6 +166,7 @@ const handleDeleteTemplate = async (promptId: string) => {
         :has-test-button="false"
         @create="handleAddNewTemplate"
         @edit="handleEditTemplate"
+        @view="handleViewTemplate"
       />
     </template>
   </Details>

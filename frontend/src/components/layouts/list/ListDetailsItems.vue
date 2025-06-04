@@ -53,7 +53,7 @@ const emits = defineEmits<{
       <li v-for="item in items" :key="item.id" class="px-6 py-4 hover:bg-gray-50 transition duration-150 ease-in-out flex justify-between items-center">
         <div>
           <h3 class="text-lg font-semibold text-gray-900">
-            <a href="#" @click.prevent="$emit('view', item.id)" class="hover:text-indigo-600">{{ item.name }}</a>
+            <div @click.prevent="$emit('view', item.id)" class="hover:text-indigo-600">{{ item.name }}</div>
           </h3>
           <p class="text-sm text-gray-600 line-clamp-1">{{ item.description || 'No description provided.' }}</p>
           <div class="text-xs text-gray-500 mt-1">

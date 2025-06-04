@@ -71,7 +71,7 @@ const emits = defineEmits<{
   <div class="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-200">
     <p class="text-gray-700 text-lg mb-4">{{ detailsDescription }}</p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 text-sm text-gray-600">
-      <DetailsOverviewItems v-for="info in detailsOverviewInfo" :icon="info.icon" :text="info.text" />
+      <DetailsOverviewItems v-for="info in detailsOverviewInfo" :icon="info.icon" :text="info.text" :link-name="info.linkName" :link-to="info.linkTo" />
       <div v-if="isShowTags" class="flex items-center col-span-1 md:col-span-2">
         <TagIcon class="h-4 w-4 mr-2 text-gray-500" />
         Tags:
