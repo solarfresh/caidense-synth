@@ -18,7 +18,9 @@ defineExpose({
 <template>
   <div :class="{'mb-5': hasMargin}">
     <label :for="labelId" class="block text-sm font-medium text-gray-700 mb-2">
-      {{ labelName }} <span v-if="isRequired" class="text-red-500">*</span>
+      {{ labelName }}
+      <span v-if="isRequired" class="text-red-500">*</span>
+      <span v-else-if="subLabelName" class="text-gray-500 text-xs">({{ subLabelName }})</span>
     </label>
     <textarea
       :id="labelId"

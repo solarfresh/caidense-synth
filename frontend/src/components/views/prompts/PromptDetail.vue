@@ -1,22 +1,23 @@
 <script setup lang="ts">
+import { apiService } from '@/api/apiService';
+import ExecuteButton from '@/components/base/buttons/ExecuteButton.vue';
 import Details from '@/components/layouts/detail/Details.vue';
-import {
-  ArrowPathIcon,
-  BoltIcon,
-  ClipboardDocumentListIcon, // For empty evaluation state
-  ClockIcon,
-  // DocumentDuplicateIcon,
-  FolderIcon,
-  InformationCircleIcon
-} from '@heroicons/vue/24/outline'; // Or /20/outline for smaller icons
-import { format, formatDistanceToNow } from 'date-fns';
-import { onMounted, reactive, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { usePromptStore } from '@/stores/prompt';
 import { useRepositoryStore } from '@/stores/repository';
 import type { Prompt } from '@/types/prompts';
 import type { Repository } from '@/types/repositories';
-import { apiService } from '@/api/apiService';
+import {
+  ArrowPathIcon,
+  ClipboardDocumentListIcon, // For empty evaluation state
+  ClockIcon,
+  // DocumentDuplicateIcon,
+  FolderIcon
+} from '@heroicons/vue/24/outline'; // Or /20/outline for smaller icons
+import { format, formatDistanceToNow } from 'date-fns';
+import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import PromptContentViewSection from './PromptContentViewSection.vue';
+import PromptVariableViewSection from './PromptVariableViewSection.vue';
 
 
 const store = {
@@ -45,8 +46,6 @@ const showRawEvaluatorOutput = ref(false);
 
 // For testing inputs
 const testInputs = reactive<{ [key: string]: any }>({});
-const selectedLLMModel = ref('model-gpt4o'); // Default LLM for generating response
-const selectedEvaluatorModel = ref('model-gpt4o'); // Default LLM for evaluation
 
 // --- Data Fetching ---
 onMounted(async () => {
@@ -75,19 +74,6 @@ onMounted(async () => {
       repository.value = response.data;
       store.repository.repositories.set(prompt.value.promptSetId, response.data);
     }
-
-      // Initialize testInputs based on template parameters
-    prompt.value.variables.forEach(variable => {
-      if (variable.type === 'boolean') {
-        testInputs[variable.name] = false; // Default for boolean
-      } else if (variable.type === 'number') {
-        testInputs[variable.name] = 0; // Default for number
-      } else if (variable.type === 'enum' && variable.enumOptions && variable.enumOptions.length > 0) {
-        testInputs[variable.name] = variable.enumOptions[0]; // Default to first option
-      } else {
-        testInputs[variable.name] = ''; // Default for text
-      }
-    });
   } catch (error) {
     console.error('Error fetching template details:', error);
     prompt.value = null; // Mark as not found on error
@@ -96,31 +82,6 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
-
-// --- Computed Properties / Helpers ---
-
-// Helper to parse prompt content for highlighting parameters
-const parsePromptContent = (content: string) => {
-  const parts = [];
-  const regex = /(\{[A-Z0-9_]+\})/g; // Matches [PARAM_NAME]
-  let lastIndex = 0;
-  let match;
-
-  while ((match = regex.exec(content)) !== null) {
-    // Add text before the parameter
-    if (match.index > lastIndex) {
-      parts.push({ type: 'text', value: content.substring(lastIndex, match.index) });
-    }
-    // Add the parameter itself
-    parts.push({ type: 'param', value: match[1].slice(1, -1) }); // Remove [] for display
-    lastIndex = regex.lastIndex;
-  }
-  // Add any remaining text after the last parameter
-  if (lastIndex < content.length) {
-    parts.push({ type: 'text', value: content.substring(lastIndex) });
-  }
-  return parts;
-};
 
 // Helper for evaluation score styling
 const scoreClass = (score: number) => {
@@ -180,12 +141,12 @@ const runEvaluation = async () => {
   if (!prompt.value) return;
 
   // Basic validation for test inputs
-  for (const variable of prompt.value.variables) {
-    if (variable.type === 'text' && !testInputs[variable.name]?.trim()) {
-      alert(`Please provide input for parameter: ${variable.name}`);
-      return;
-    }
-  }
+  // for (const variable of prompt.value.variables) {
+  //   if (variable.type === 'text' && !testInputs[variable.name]?.trim()) {
+  //     alert(`Please provide input for parameter: ${variable.name}`);
+  //     return;
+  //   }
+  // }
 
   isEvaluating.value = true;
   evaluationResult.value = null; // Clear previous results
@@ -282,42 +243,17 @@ const runEvaluation = async () => {
   >
     <template #content>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Prompt Content</h2>
-          <div class="bg-gray-50 font-mono p-4 rounded-md text-sm whitespace-pre-wrap break-words border border-gray-200">
-            <span v-for="(part, index) in parsePromptContent(prompt?.promptText || '')" :key="index">
-              <span v-if="part.type === 'text'">{{ part.value }}</span>
-              <span v-else class="text-indigo-600 font-semibold bg-indigo-100 px-1 py-0.5 rounded-sm">[{{ part.value }}]</span>
-            </span>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Parameters ({{ prompt?.variables.length }})</h2>
-          <div v-if="prompt?.variables.length === 0" class="text-gray-600 italic">
-            <InformationCircleIcon class="h-6 w-6 text-gray-400 inline-block align-middle mr-1" />
-            No parameters defined for this template.
-          </div>
-          <ul v-else class="space-y-4">
-            <li v-for="param in prompt?.variables" :key="param.name" class="p-3 bg-gray-50 rounded-md border border-gray-200">
-              <div class="flex items-center justify-between">
-                <h3 class="text-md font-medium text-gray-900">{{ param.name }}</h3>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                  {{ param.type }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-600 mt-1">{{ param.description || 'No description.' }}</p>
-              <p v-if="param.type === 'enum' && param.enumOptions && param.enumOptions.length" class="text-xs text-gray-500 mt-1">
-                Options: {{ param.enumOptions.join(', ') }}
-              </p>
-            </li>
-          </ul>
-        </div>
+        <PromptContentViewSection />
+        <PromptVariableViewSection />
       </div>
 
       <section class="bg-white rounded-lg shadow-xl p-8 border border-gray-200">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Evaluation & Optimization</h2>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-semibold text-gray-800 py-2">Evaluation & Optimization</h2>
+          <ExecuteButton @click="runEvaluation" :isEvaluating="isEvaluating" :buttonName="'Run Evaluation'" :dynamicButtonName="'Evaluating...'" />
+        </div>
 
+<!--
         <div class="mb-6 flex items-center space-x-4">
           <label for="llmModel" class="block text-sm font-medium text-gray-700">LLM Model:</label>
           <select
@@ -340,50 +276,7 @@ const runEvaluation = async () => {
             <option value="model-gemini1.5pro">Gemini 1.5 Pro</option>
           </select>
         </div>
-
-        <div class="mb-6 bg-gray-50 p-6 rounded-md border border-gray-200">
-          <h3 class="text-lg font-medium text-gray-800 mb-3">Test Inputs:</h3>
-          <div class="space-y-4">
-            <div v-for="param in prompt?.variables" :key="param.name">
-              <label :for="`test-input-${param.name}`" class="block text-sm font-medium text-gray-700 mb-1">
-                {{ param.name }} <span class="text-gray-500 text-xs">({{ param.type }})</span>
-              </label>
-              <input
-                v-if="param.type === 'text' || param.type === 'number'"
-                :type="param.type === 'number' ? 'number' : 'text'"
-                :id="`test-input-${param.name}`"
-                v-model="testInputs[param.name]"
-                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                :placeholder="param.description || `Enter value for ${param.name}`"
-              />
-              <select
-                v-else-if="param.type === 'enum' && param.enumOptions"
-                :id="`test-input-${param.name}`"
-                v-model="testInputs[param.name]"
-                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-              >
-                <option v-for="option in param.enumOptions" :key="option" :value="option">{{ option }}</option>
-              </select>
-              <input
-                v-else-if="param.type === 'boolean'"
-                type="checkbox"
-                :id="`test-input-${param.name}`"
-                v-model="testInputs[param.name]"
-                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-            </div>
-          </div>
-          <button
-            @click="runEvaluation"
-            :disabled="isEvaluating"
-            class="mt-6 inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <BoltIcon v-if="!isEvaluating" class="-ml-1 mr-2 h-5 w-5" />
-            <ArrowPathIcon v-else class="-ml-1 mr-2 h-4 w-4 animate-spin" />
-            {{ isEvaluating ? 'Evaluating...' : 'Run Evaluation' }}
-          </button>
-        </div>
-
+ -->
         <div v-if="evaluationResult" class="mt-8">
           <h3 class="text-xl font-semibold text-gray-800 mb-4">Evaluation Results:</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

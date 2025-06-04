@@ -13,7 +13,7 @@ import type { FormErrors, FormInstance, FormSelectOption } from '@/types/form';
 import type { CreatePrompt } from '@/types/prompts';
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import PromptVariableSection from './PromptVariableSection.vue';
+import PromptVariableEditSection from './PromptVariableEditSection.vue';
 
 
 const router = useRouter();
@@ -29,7 +29,6 @@ const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
 
 // --- Lifecycle Hooks ---
 onMounted(async () => {
-
   await fetchAvailableRepositories();
 });
 
@@ -224,7 +223,7 @@ const registerRef = async (key:string, instance: any) => {
           </template>
         </FormSection>
 
-        <PromptVariableSection :variables="editableVariables" :ref="el => registerRef('variables', el)" />
+        <PromptVariableEditSection :variables="editableVariables" :ref="el => registerRef('variables', el)" />
 
         <div class="flex justify-end space-x-4 mt-8">
           <CancelButton :buttonName="'Cancel'" />

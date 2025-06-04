@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Loading from '@/components/base/Loading.vue';
+import Loading from '@/components/base/common/Loading.vue';
 
 
 const props = defineProps({
