@@ -5,6 +5,7 @@ import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
 import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import { useRepositoryStore } from '@/stores/repository';
 import { FormErrors, FormInstance } from '@/types/form';
 import { Repository } from '@/types/repositories';
 import { onMounted, reactive, ref } from 'vue';
@@ -13,6 +14,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
+const store = useRepositoryStore();
 
 // Loading and error states
 const errors = reactive<FormErrors>({});
@@ -74,6 +76,7 @@ const handleSubmit = async () => {
     }
 
     const response = await apiService.repository.update(repositoryId, newRepositoryData);
+    store.repositories.set(response.data.id, response.data);
     router.push({ name: 'RepositoryOverview' });
 
   } catch (error) {

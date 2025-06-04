@@ -7,6 +7,7 @@ import FormMultiFields from '@/components/layouts/form/FormMultiFields.vue';
 import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { usePromptStore } from '@/stores/prompt';
+import { useRepositoryStore } from '@/stores/repository';
 import type { CreateVariable, DocumentStatus } from '@/types/common';
 import type { FormErrors, FormInstance, FormSelectOption } from '@/types/form';
 import type { UpdatePrompt } from '@/types/prompts';
@@ -17,7 +18,10 @@ import PromptVariableSection from './PromptVariableSection.vue';
 
 const route = useRoute();
 const router = useRouter();
-const store = usePromptStore();
+const store = {
+  repository: useRepositoryStore(),
+  prompt: usePromptStore(),
+};
 
 const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
 const editableVariables = ref<CreateVariable[]>([])
@@ -38,9 +42,9 @@ onMounted(async () => {
   }
 
   try {
-    store.updateState({currentPromptId: promptId})
+    store.prompt.updateState({currentPromptId: promptId})
     isLoading.value = true;
-    promptData.value = store.getPrompt;
+    promptData.value = store.prompt.getPrompt;
     console.log('getPrompt', promptData.value)
     if (!promptData.value) {
       const response = await apiService.prompt.get(promptId);
@@ -182,11 +186,13 @@ const handleSubmit = async () => {
       // Add other relevant fields like createdBy
     };
 
-    const promptResponse = await apiService.prompt.update(store.currentPromptId, newTemplateData);
+    const promptResponse = await apiService.prompt.update(store.prompt.currentPromptId, newTemplateData);
     const repositoryResponse = await apiService.repository.get(promptResponse.data.promptSetId);
     const promptTextIds = new Set(repositoryResponse.data.promptTextIds);
     promptTextIds.add(promptResponse.data.id);
-    apiService.repository.update(repositoryResponse.data.id, {promptTextIds: Array.from(promptTextIds)})
+    const updatedRepositoryResponse = await apiService.repository.update(repositoryResponse.data.id, {promptTextIds: Array.from(promptTextIds)});
+    store.prompt.prompts.set(promptResponse.data.id, promptResponse.data);
+    store.repository.repositories.set(updatedRepositoryResponse.data.id, updatedRepositoryResponse.data);
 
     // In a real application, send newTemplateData to your backend API
     // const response = await api.createTemplate(newTemplateData);
