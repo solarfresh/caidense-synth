@@ -36,7 +36,7 @@ onMounted(async () => {
     const response = await apiService.repository.get(repositoryId)
     if (response.data) {
       repositoryData.value = response.data
-      repositoryFound.value = true
+      repositoryFound.value = true;
     }
   } catch (error) {
     console.error('Error fetching repository:', error);
@@ -53,7 +53,7 @@ const handleSubmit = async () => {
   errors.name = undefined;
 
   // Basic validation
-  const repositoryName = repositoryForm.get('name')?.editableContent.trim();
+  const repositoryName = repositoryForm.get('name')?.editableContent?.trim();
   if (!repositoryName) {
     errors.name = 'Repository name is required.';
     return;
@@ -63,7 +63,7 @@ const handleSubmit = async () => {
   try {
     // Parse tags from string to array
     const tagsArray = repositoryForm.get('tags')?.editableContent
-      .split(',')
+      ?.split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== '');
 

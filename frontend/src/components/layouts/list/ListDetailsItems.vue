@@ -21,6 +21,10 @@ const props = defineProps({
   createButtonName: {
     type: String,
     required: true
+  },
+  hasTestButton: {
+    type: Boolean,
+    default: false
   }
 })
 const emits = defineEmits<{
@@ -58,7 +62,7 @@ const emits = defineEmits<{
         </div>
         <div class="flex space-x-2">
           <button @click="$emit('edit', item.id)" class="text-indigo-600 hover:text-indigo-900 p-1 rounded-md hover:bg-gray-100 transition"><PencilIcon class="h-5 w-5" /></button>
-          <button @click="$emit('test', item.id)" class="text-green-600 hover:text-green-900 p-1 rounded-md hover:bg-gray-100 transition"><PlayIcon class="h-5 w-5" /></button>
+          <button v-if="hasTestButton" @click="$emit('test', item.id)" class="text-green-600 hover:text-green-900 p-1 rounded-md hover:bg-gray-100 transition"><PlayIcon class="h-5 w-5" /></button>
           <button @click="$emit('delete', item.id)" class="text-red-600 hover:text-red-900 p-1 rounded-md hover:bg-red-50 transition"><TrashIcon class="h-5 w-5" /></button>
         </div>
       </li>

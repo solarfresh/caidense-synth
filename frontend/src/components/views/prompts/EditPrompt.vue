@@ -6,22 +6,56 @@ import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormMultiFields from '@/components/layouts/form/FormMultiFields.vue';
 import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import { usePromptStore } from '@/stores/prompt';
 import type { CreateVariable, DocumentStatus } from '@/types/common';
 import type { FormErrors, FormInstance, FormSelectOption } from '@/types/form';
-import type { CreatePrompt } from '@/types/prompts';
+import type { UpdatePrompt } from '@/types/prompts';
 import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import PromptVariableSection from './PromptVariableSection.vue';
 
 
-const templateForm = reactive<Map<string, FormInstance>>(new Map())
+const route = useRoute();
+const router = useRouter();
+const store = usePromptStore();
+
+const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
 const editableVariables = ref<CreateVariable[]>([])
 const errors = reactive<FormErrors>({});
+const isLoading = ref(true);
 const isSubmitting = ref(false);
-const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
+const promptData = ref<UpdatePrompt | null>(null);
+const promptFound = ref(false); // To indicate if the collection exists
+const templateForm = reactive<Map<string, FormInstance>>(new Map())
 
-// --- Lifecycle Hooks ---
 onMounted(async () => {
-  await fetchAvailableRepositories();
+  fetchAvailableRepositories();
+  const promptId = route.params.id as string;
+  if (!promptId) {
+    promptFound.value = false;
+    isLoading.value = false;
+    return;
+  }
+
+  try {
+    store.updateState({currentPromptId: promptId})
+    isLoading.value = true;
+    promptData.value = store.getPrompt;
+    console.log('getPrompt', promptData.value)
+    if (!promptData.value) {
+      const response = await apiService.prompt.get(promptId);
+      promptData.value = response.data;
+      console.log('apiResponse', promptData.value)
+    }
+    editableVariables.value = promptData.value?.variables || [];
+    promptFound.value = true;
+  } catch (error) {
+    console.error('Error fetching template:', error);
+    promptFound.value = false; // Assume not found on error
+    alert('Failed to load tempalte data.');
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 async function fetchAvailableRepositories() {
@@ -138,7 +172,7 @@ const handleSubmit = async () => {
         : undefined,
     })) || [];
 
-    const newTemplateData: CreatePrompt = {
+    const newTemplateData: UpdatePrompt = {
       name: templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent || '',
       promptSetId: templateForm.get('multiFields')?.formInstance?.get('repositoryName')?.editableContent || '',
       description: templateForm.get('description')?.editableContent || '',
@@ -148,11 +182,12 @@ const handleSubmit = async () => {
       // Add other relevant fields like createdBy
     };
 
-    const promptResponse = await apiService.prompt.create(newTemplateData);
+    const promptResponse = await apiService.prompt.update(store.currentPromptId, newTemplateData);
     const repositoryResponse = await apiService.repository.get(promptResponse.data.promptSetId);
     const promptTextIds = new Set(repositoryResponse.data.promptTextIds);
     promptTextIds.add(promptResponse.data.id);
     apiService.repository.update(repositoryResponse.data.id, {promptTextIds: Array.from(promptTextIds)})
+
     // In a real application, send newTemplateData to your backend API
     // const response = await api.createTemplate(newTemplateData);
     // router.push({ name: 'TemplateDetails', params: { collectionId: templateForm.collectionId, templateId: newTemplateData.id } });
@@ -172,7 +207,7 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormContainer :title="'Create New Prompt Template'">
+  <FormContainer :title="'Edit Prompt Template'" :is-loading="isLoading" :loading-description="'Loading template details...'" :item-found="promptFound" :item-found-description="'Template not found!'">
     <template #page>
       <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormSection :title="'Basic Information'">
@@ -183,6 +218,7 @@ const registerRef = async (key:string, instance: any) => {
               {
                 name: 'input',
                 props: {
+                  content: promptData?.name,
                   hasMargin: false,
                   labelId: 'templateName',
                   labelName: 'Template Name',
@@ -194,6 +230,7 @@ const registerRef = async (key:string, instance: any) => {
               {
                 name: 'select',
                 props: {
+                  content: promptData?.promptSetId,
                   hasMargin: false,
                   labelId: 'repositoryName',
                   labelName: 'Belongs to Repository',
@@ -203,12 +240,12 @@ const registerRef = async (key:string, instance: any) => {
                 }
               }
             ]" />
-            <FormTextarea :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this template\'s purpose.'" :ref="el => registerRef('description', el)" />
+            <FormTextarea :content="promptData?.description" :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this template\'s purpose.'" :ref="el => registerRef('description', el)" />
           </template>
         </FormSection>
         <FormSection :title="'Template Content'">
           <template #fields>
-            <FormTextarea :isRequired="true" :labelId="'templateContent'" :labelName="'Prompt Text'" :description="'Use `{VARIABLE_NAME}` to define variables that will be replaced with dynamic data.'" :placeholder="'e.g., Summarize the following text in {TONE} tone: {TEXT}'" @input="extractVariables" :ref="el => registerRef('templateContent', el)" />
+            <FormTextarea :content="promptData?.promptText" :isRequired="true" :labelId="'templateContent'" :labelName="'Prompt Text'" :description="'Use `{VARIABLE_NAME}` to define variables that will be replaced with dynamic data.'" :placeholder="'e.g., Summarize the following text in {TONE} tone: {TEXT}'" @input="extractVariables" :ref="el => registerRef('templateContent', el)" />
           </template>
         </FormSection>
 
@@ -216,7 +253,7 @@ const registerRef = async (key:string, instance: any) => {
 
         <div class="flex justify-end space-x-4 mt-8">
           <CancelButton :buttonName="'Cancel'" />
-          <SubmitButton :isSubmitting="isSubmitting" :buttonName="'Create Template'" :dynamic-button-name="'Creating...'" />
+          <SubmitButton :isSubmitting="isSubmitting" :buttonName="'Save Changes'" :dynamic-button-name="'Saving...'" />
         </div>
       </form>
     </template>

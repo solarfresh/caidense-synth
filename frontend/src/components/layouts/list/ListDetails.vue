@@ -66,6 +66,14 @@ const props = defineProps({
   itemsTitle: {
     type: String,
     default: ''
+  },
+  goBackButtonName: {
+    type: String,
+    default: ''
+  },
+  goBackRouterName: {
+    type: String,
+    default: ''
   }
 })
 const emits = defineEmits<{
@@ -97,6 +105,8 @@ const detailsFound = computed(() => {
             :list-details-description="listDetailsDescription"
             :list-details-overview-info="listDetailsInfo"
             :list-details-overview-tags="listDetailsTags"
+            :go-back-button-name="goBackButtonName"
+            :go-back-router-name="goBackRouterName"
             @edit="$emit('editDetails')"
             @delete="$emit('deleteDetails')"
           />
@@ -105,6 +115,7 @@ const detailsFound = computed(() => {
             :items-name="itemsName"
             :items-title="itemsTitle"
             :create-button-name="createButtonName"
+            :has-test-button="false"
             @create="$emit('createDetails')"
             @view="itemId => $emit('viewItem', itemId)"
             @edit="itemId => $emit('editItem', itemId)"

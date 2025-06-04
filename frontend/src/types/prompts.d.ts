@@ -29,7 +29,7 @@ export interface UpdatePrompt {
   description?: string;
   tags?: string[];
   promptText?: string;
-  variables?: Variable[];
+  variables?: CreateVariable[];
   status?: DocumentStatus;
   promptSetId?: string;
 }
