@@ -150,6 +150,8 @@ const handleDeleteTemplate = async (promptId: string) => {
     :itemsName="'prompt templates'"
     :itemsTitle="`Templates in this Repository (${promptCount})`"
     :itemFoundDescription="'Prompt Template Not Found'"
+    :goBackButtonName="'Back to List'"
+    :goBackRouterName="'RepositoryOverview'"
     @editDetails="handleEditRepository"
   />
 </template>

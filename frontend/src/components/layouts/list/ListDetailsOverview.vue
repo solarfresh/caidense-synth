@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
 import EditButton from '@/components/base/buttons/EditButton.vue';
+import GoBackButton from '@/components/base/buttons/GoBackButton.vue';
 import { ListDetailsOverviewItems as ListDetailsOverviewItemsType } from '@/types/list';
 import { TagIcon } from '@heroicons/vue/24/outline';
 import ListDetailsOverviewItems from './ListDetailsOverviewItems.vue';
@@ -38,6 +39,14 @@ const props = defineProps({
   deleteButtonName: {
     type: String,
     default: ''
+  },
+  goBackButtonName: {
+    type: String,
+    default: ''
+  },
+  goBackRouterName: {
+    type: String,
+    default: ''
   }
 })
 const emits = defineEmits<{
@@ -48,6 +57,8 @@ const emits = defineEmits<{
 
 <template>
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+    <GoBackButton v-if="goBackButtonName" :button-name="goBackButtonName" :go-back-router-name="goBackRouterName" />
+
     <h1 class="text-4xl font-extrabold text-gray-900 mb-4 md:mb-0">
       {{ listDetailsName }}
     </h1>
