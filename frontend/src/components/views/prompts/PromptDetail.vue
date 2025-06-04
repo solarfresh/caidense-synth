@@ -18,6 +18,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PromptContentViewSection from './PromptContentViewSection.vue';
 import PromptVariableViewSection from './PromptVariableViewSection.vue';
+import FormSelect from '@/components/layouts/form/FormSelect.vue';
 
 
 const store = {
@@ -37,7 +38,10 @@ interface EvaluationResult {
 const route = useRoute();
 const router = useRouter();
 
+const availablePrompTemplates = ref();
 const prompt = ref<Prompt | null>(null);
+const promptVariables = ref();
+const promptEvaluationTemplate = ref();
 const repository = ref<Repository | null>(null);
 const isLoading = ref(true);
 const isEvaluating = ref(false);
@@ -74,6 +78,12 @@ onMounted(async () => {
       repository.value = response.data;
       store.repository.repositories.set(prompt.value.promptSetId, response.data);
     }
+
+    response = await apiService.prompt.getAll({filter: JSON.stringify({promptSetId: prompt.value.promptSetId})});
+    availablePrompTemplates.value = response.data.map(prompt => {
+      store.prompt.prompts.set(prompt.id, prompt);
+      return {id: prompt.id, name: prompt.name}
+    });
   } catch (error) {
     console.error('Error fetching template details:', error);
     prompt.value = null; // Mark as not found on error
@@ -140,6 +150,10 @@ const handleDeleteTemplate = async () => {
 const runEvaluation = async () => {
   if (!prompt.value) return;
 
+  console.log('========= promptVariables =========');
+  console.log(promptVariables.value);
+  console.log('========= promptEvaluationTemplate =========');
+  console.log(promptEvaluationTemplate.value);
   // Basic validation for test inputs
   // for (const variable of prompt.value.variables) {
   //   if (variable.type === 'text' && !testInputs[variable.name]?.trim()) {
@@ -244,12 +258,13 @@ const runEvaluation = async () => {
     <template #content>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <PromptContentViewSection />
-        <PromptVariableViewSection />
+        <PromptVariableViewSection :ref="'promptVariables'" />
       </div>
 
       <section class="bg-white rounded-lg shadow-xl p-8 border border-gray-200">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold text-gray-800 py-2">Evaluation & Optimization</h2>
+          <FormSelect :labelId="'selectPromptTemplate'" :labelName="'Evaluation Template'" :options="availablePrompTemplates" :ref="'promptEvaluationTemplate'" />
           <ExecuteButton @click="runEvaluation" :isEvaluating="isEvaluating" :buttonName="'Run Evaluation'" :dynamicButtonName="'Evaluating...'" />
         </div>
 
