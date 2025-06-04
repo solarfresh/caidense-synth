@@ -2,9 +2,9 @@
 import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
 import EditButton from '@/components/base/buttons/EditButton.vue';
 import GoBackButton from '@/components/base/buttons/GoBackButton.vue';
-import { ListDetailsOverviewItems as ListDetailsOverviewItemsType } from '@/types/list';
+import { DetailsOverviewItemsType } from '@/types/details';
 import { TagIcon } from '@heroicons/vue/24/outline';
-import ListDetailsOverviewItems from './ListDetailsOverviewItems.vue';
+import DetailsOverviewItems from './DetailsOverviewItems.vue';
 
 
 const props = defineProps({
@@ -12,23 +12,23 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  listDetailsId: {
+  detailsId: {
     type: String,
     required: true
   },
-  listDetailsName: {
+  detailsName: {
     type: String,
     required: true
   },
-  listDetailsDescription: {
+  detailsDescription: {
     type: String,
     default: ''
   },
-  listDetailsOverviewInfo: {
-    type: Array<ListDetailsOverviewItemsType>,
+  detailsOverviewInfo: {
+    type: Array<DetailsOverviewItemsType>,
     default: []
   },
-  listDetailsOverviewTags: {
+  detailsOverviewTags: {
     type: Array<string>,
     default: []
   },
@@ -60,7 +60,7 @@ const emits = defineEmits<{
     <GoBackButton v-if="goBackButtonName" :button-name="goBackButtonName" :go-back-router-name="goBackRouterName" />
 
     <h1 class="text-4xl font-extrabold text-gray-900 mb-4 md:mb-0">
-      {{ listDetailsName }}
+      {{ detailsName }}
     </h1>
     <div class="flex space-x-3">
       <EditButton v-if="editButtonName" :button-name="editButtonName" @click="$emit('edit')" />
@@ -69,21 +69,21 @@ const emits = defineEmits<{
   </div>
 
   <div class="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-200">
-    <p class="text-gray-700 text-lg mb-4">{{ listDetailsDescription }}</p>
+    <p class="text-gray-700 text-lg mb-4">{{ detailsDescription }}</p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 text-sm text-gray-600">
-      <ListDetailsOverviewItems v-for="info in listDetailsOverviewInfo" :icon="info.icon" :text="info.text" />
+      <DetailsOverviewItems v-for="info in detailsOverviewInfo" :icon="info.icon" :text="info.text" />
       <div v-if="isShowTags" class="flex items-center col-span-1 md:col-span-2">
         <TagIcon class="h-4 w-4 mr-2 text-gray-500" />
         Tags:
         <div class="flex flex-wrap gap-2 ml-2">
           <span
-            v-for="tag in listDetailsOverviewTags"
+            v-for="tag in detailsOverviewTags"
             :key="tag"
             class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
           >
             {{ tag }}
           </span>
-          <span v-if="listDetailsOverviewTags.length === 0" class="text-gray-500 italic">No tags</span>
+          <span v-if="detailsOverviewTags.length === 0" class="text-gray-500 italic">No tags</span>
         </div>
       </div>
     </div>

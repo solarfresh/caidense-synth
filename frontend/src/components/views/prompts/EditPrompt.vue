@@ -16,7 +16,6 @@ import PromptVariableSection from './PromptVariableSection.vue';
 
 
 const route = useRoute();
-const router = useRouter();
 const store = usePromptStore();
 
 const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
+import Details from '@/components/layouts/detail/Details.vue'
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
+import ListDetailsItems from '@/components/layouts/list/ListDetailsItems.vue';
 import { useRepositoryStore } from '@/stores/repository';
 import { usePromptStore } from '@/stores/prompt';
 import type { Prompt } from '@/types/prompts';
@@ -86,13 +88,13 @@ const handleDeleteCollection = async () => {
 
 const handleAddNewTemplate = () => {
   if (repository.value) {
-    // router.push({ name: 'CreateTemplate', query: { repositoryId: repository.value.id } });
+    router.push({ name: 'CreatePrompt' });
   }
 };
 
 const handleViewTemplate = (promptId: string) => {
   if (repository.value) {
-    // router.push({ name: 'TemplateDetails', params: { repositoryId: repository.value.id, templateId: templateId } });
+    // router.push({ name: 'CreatePrompt', params: { id: promptId } });
   }
 };
 
@@ -127,16 +129,16 @@ const handleDeleteTemplate = async (promptId: string) => {
 </script>
 
 <template>
-  <ListDetails
-    :createButtonName="'Add New Template'"
+  <Details
     :deleteButtonName="'Delete Repository'"
     :editButtonName="'Edit Repository'"
     :isLoading="isLoading"
     :loadingDescription="'Loading repository details...'"
-    :listDetailsId="repository?.id || ''"
-    :listDetailsName="repository?.name || ''"
-    :listDetailsDescription="repository?.description || ''"
-    :listDetailsInfo="[
+    :detailsId="repository?.id || ''"
+    :detailsName="repository?.name || ''"
+    :detailsDescription="repository?.description || ''"
+    :detailsFoundDescription="'Repository Not Found'"
+    :detailsInfo="[
       {
         icon: ClockIcon,
         text: `Created: ${format(repository?.createdAt || new Date(), 'MMM d, yyyy')}`
@@ -150,14 +152,21 @@ const handleDeleteTemplate = async (promptId: string) => {
         text: `Templates: ${promptCount}`
       }
     ]"
-    :listDetailsTags="repository?.tags || []"
-    :items="prompts || []"
-    :itemsName="'prompt templates'"
-    :itemsTitle="`Templates in this Repository (${promptCount})`"
-    :itemFoundDescription="'Prompt Template Not Found'"
+    :detailsTags="repository?.tags || []"
     :goBackButtonName="'Back to List'"
     :goBackRouterName="'RepositoryOverview'"
     @editDetails="handleEditRepository"
-    @editItem="handleEditTemplate"
-  />
+  >
+    <template #content>
+      <ListDetailsItems
+        :items="prompts || []"
+        :itemsName="'prompt templates'"
+        :itemsTitle="`Templates in this Repository (${promptCount})`"
+        :createButtonName="'Add New Template'"
+        :has-test-button="false"
+        @create="handleAddNewTemplate"
+        @edit="handleEditTemplate"
+      />
+    </template>
+  </Details>
 </template>

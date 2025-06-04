@@ -1,5 +1,6 @@
 import CreatePrompt from '@/components/views/prompts/CreatePrompt.vue';
 import EditPrompt from '@/components/views/prompts/EditPrompt.vue';
+import PromptDetail from '@/components/views/prompts/PromptDetail.vue';
 import CreateRepository from '@/components/views/repositories/CreateRepository.vue';
 import EditRepository from '@/components/views/repositories/EditRepository.vue';
 import RepositoryDetails from '@/components/views/repositories/RepositoryDetails.vue';
@@ -12,6 +13,12 @@ const promptRoutes = [
     path: '/prompts/create',
     name: 'CreatePrompt',
     component: CreatePrompt
+  },
+  {
+    path: '/prompts/:id',
+    name: 'PromptDetail',
+    component: PromptDetail,
+    props: true,
   },
   {
     path: '/prompts/:id/edit',

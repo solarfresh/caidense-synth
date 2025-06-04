@@ -6,6 +6,7 @@ import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormMultiFields from '@/components/layouts/form/FormMultiFields.vue';
 import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import { useRepositoryStore } from '@/stores/repository';
 import type { CreateVariable, DocumentStatus } from '@/types/common';
 import type { FormErrors, FormInstance, FormSelectOption } from '@/types/form';
 import type { CreatePrompt } from '@/types/prompts';
@@ -13,14 +14,16 @@ import { onMounted, reactive, ref } from 'vue';
 import PromptVariableSection from './PromptVariableSection.vue';
 
 
-const templateForm = reactive<Map<string, FormInstance>>(new Map())
-const editableVariables = ref<CreateVariable[]>([])
+const store = useRepositoryStore();
+const templateForm = reactive<Map<string, FormInstance>>(new Map());
+const editableVariables = ref<CreateVariable[]>([]);
 const errors = reactive<FormErrors>({});
 const isSubmitting = ref(false);
 const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
 
 // --- Lifecycle Hooks ---
 onMounted(async () => {
+
   await fetchAvailableRepositories();
 });
 
@@ -194,6 +197,7 @@ const registerRef = async (key:string, instance: any) => {
               {
                 name: 'select',
                 props: {
+                  content: store.currentRepositoryId || '',
                   hasMargin: false,
                   labelId: 'repositoryName',
                   labelName: 'Belongs to Repository',

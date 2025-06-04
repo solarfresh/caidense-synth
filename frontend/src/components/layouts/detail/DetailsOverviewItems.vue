@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ListDetailsOverviewItems } from '@/types/list'
+import { DetailsOverviewItemsType } from '@/types/details'
 
 
-const props = defineProps<ListDetailsOverviewItems>()
+const props = defineProps<DetailsOverviewItemsType>()
 </script>
 
 <template>
