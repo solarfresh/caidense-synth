@@ -2,6 +2,7 @@
 import { apiService } from '@/api/apiService';
 import ListDetails from '@/components/layouts/list/ListDetails.vue';
 import { useRepositoryStore } from '@/stores/repository';
+import { usePromptStore } from '@/stores/prompt';
 import type { Prompt } from '@/types/prompts';
 import type { Repository } from '@/types/repositories';
 import {
@@ -17,7 +18,10 @@ import { useRoute, useRouter } from 'vue-router';
 // --- State Management ---
 const route = useRoute();
 const router = useRouter();
-const store = useRepositoryStore();
+const store = {
+  repository: useRepositoryStore(),
+  prompt: usePromptStore(),
+};
 
 const repository = ref<Repository | null>(null);
 const isLoading = ref(true);
@@ -36,18 +40,19 @@ onMounted(async () => {
     isLoading.value = true;
     let response = undefined
 
-    await store.updateState({currentRepositoryId: repositoryId});
-    repository.value = store.repositories.get(repositoryId) || null;
+    store.repository.updateState({currentRepositoryId: repositoryId});
+    repository.value = store.repository.repositories.get(repositoryId) || null;
     if (repository.value === null) {
       response = await apiService.repository.get(repositoryId);
       repository.value = response.data;
     }
     promptCount.value = repository.value?.promptTextIds.length || 0;
-    prompts.value = store.getPrompts;
+    prompts.value = store.repository.getPrompts;
     if (prompts.value.length === 0) {
       response = await apiService.prompt.getAll({filter: JSON.stringify({promptSetId: repositoryId})});
       prompts.value = response.data || [];
-      store.updatePrompts(prompts.value);
+      store.repository.updatePrompts(prompts.value);
+      store.prompt.updatePrompts(prompts.value);
     }
   } catch (error) {
     console.error('Error fetching repository details:', error);
@@ -93,7 +98,7 @@ const handleViewTemplate = (promptId: string) => {
 
 const handleEditTemplate = (promptId: string) => {
   if (repository.value) {
-    // router.push({ name: 'EditTemplate', params: { repositoryId: repository.value.id, templateId: templateId } });
+    router.push({ name: 'EditPrompt', params: { id: promptId } });
   }
 };
 
@@ -153,5 +158,6 @@ const handleDeleteTemplate = async (promptId: string) => {
     :goBackButtonName="'Back to List'"
     :goBackRouterName="'RepositoryOverview'"
     @editDetails="handleEditRepository"
+    @editItem="handleEditTemplate"
   />
 </template>
