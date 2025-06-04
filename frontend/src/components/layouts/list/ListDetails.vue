@@ -115,6 +115,7 @@ const detailsFound = computed(() => {
             :items-name="itemsName"
             :items-title="itemsTitle"
             :create-button-name="createButtonName"
+            :has-test-button="false"
             @create="$emit('createDetails')"
             @view="itemId => $emit('viewItem', itemId)"
             @edit="itemId => $emit('editItem', itemId)"
