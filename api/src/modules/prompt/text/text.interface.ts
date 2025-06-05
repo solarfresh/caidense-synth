@@ -1,5 +1,5 @@
 import { DocumentStatus, Variable } from '@caidense/reasoning/common/common.interface';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 
 export interface PromptText extends Document {
@@ -33,6 +33,11 @@ export interface PromptText extends Document {
    * This indicates the overall availability of the template.
    */
   status: DocumentStatus;
+
+  /**
+   *
+   */
+  promptSetId: Types.ObjectId;
 
   /**
    * Timestamp when the template was first created.

@@ -10,7 +10,7 @@ async function bootstrap() {
     // Enable CORS for development
     // Allow requests from the frontend application
     app.enableCors({
-      origin: 'http://localhost:' + (process.env.FRONTEND_PORT ?? '5173'),
+      origin: process.env.FRONTEND_PORTS.split(',').map(port => `http://localhost:${port}`),
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       allowedHeaders: 'Content-Type, Accept',
     });

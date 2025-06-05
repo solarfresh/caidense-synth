@@ -5,11 +5,11 @@ import {
   Delete,
   Get,
   HttpCode, // For custom status codes like 204 No Content on delete
-  HttpStatus // For HttpStatus enums
-  ,
+  HttpStatus, // For HttpStatus enums
   Param,
   Post,
   Put,
+  Query,
   UseInterceptors
 } from '@nestjs/common';
 import { Document } from 'mongoose'; // Assuming Mongoose is used
@@ -62,10 +62,16 @@ export class BaseController<T extends Document, S extends BaseService<T>> {
    * @returns A Promise resolving to an array of resources.
    */
   @Get()
-  async findAll(@Param() filter?: any): Promise<T[]> { // Using @Param here is a placeholder, typically you use @Query() for filters
-     // Delegate the find all logic to the service
-     // Pass the filter, the service will decide how to apply it
-    return this.service.findAll(filter);
+  async findAll(query?: any): Promise<T[]> {
+    // Delegate the find all logic to the service
+    // Pass the filter, the service will decide how to apply it
+    const filter = query?.filter
+    if (filter){
+      const parsedFilter = JSON.parse(filter);
+      return this.service.findAll(parsedFilter);
+    }
+
+    return this.service.findAll();
   }
 
   /**

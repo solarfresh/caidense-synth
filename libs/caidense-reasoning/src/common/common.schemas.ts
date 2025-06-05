@@ -28,6 +28,8 @@ export class VariableSchemaClass implements Variable {
   @Prop({ type: String })
   systemRef?: string
 
+  @Prop({ type: [String] })
+  enumOptions?: string[];
 }
 
 export const VariableSchema = SchemaFactory.createForClass(VariableSchemaClass);

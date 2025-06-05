@@ -1,6 +1,6 @@
 import { BaseController } from '@/modules/base/base.controller';
 import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
-import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, ValidationPipe } from '@nestjs/common';
 import { CreatePromptTextDto } from './dto/create-text.dto'; // Assuming create-text.dto.ts exists
 import { UpdatePromptTextDto } from './dto/update-text.dto'; // Assuming update-text.dto.ts exists
 import { PromptTextDocument } from './text.schemas'; // Assuming text.schemas.ts exists
@@ -44,11 +44,11 @@ export class PromptTextController extends BaseController<PromptTextDocument, Pro
     @Get('text')
     @ApiOperation({ summary: 'Retrieve all prompt text documents' }) // Describe the operation
     @ApiResponse({ status: 200, description: 'Successfully retrieved all prompt text documents.' }) // Describe successful response
-    async findAll(): Promise<PromptTextDocument[]> {
+    async findAll(@Query() query?: any): Promise<PromptTextDocument[]> {
         // Call the base controller's findAll method.
         // If you need filtering via query params, you'd add @Query() here
         // and potentially pass it to super.findAll().
-        return super.findAll();
+        return super.findAll(query);
     }
 
     /**
