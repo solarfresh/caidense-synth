@@ -3,12 +3,12 @@ import { apiService } from '@/api/apiService';
 import Details from '@/components/layouts/detail/Details.vue';
 import { usePromptStore } from '@/stores/prompt';
 import { useRepositoryStore } from '@/stores/repository';
+import type { FormInstance } from '@/types/form';
 import type { EvaluationResult, Prompt } from '@/types/prompts';
 import type { Repository } from '@/types/repositories';
 import {
   ArrowPathIcon, // For empty evaluation state
   ClockIcon,
-  // DocumentDuplicateIcon,
   FolderIcon
 } from '@heroicons/vue/24/outline'; // Or /20/outline for smaller icons
 import { format, formatDistanceToNow } from 'date-fns';
@@ -17,6 +17,7 @@ import { useRoute, useRouter } from 'vue-router';
 import PromptContentViewSection from './PromptContentViewSection.vue';
 import PromptEvaluationSection from './PromptEvaluationSection.vue';
 import PromptVariableViewSection from './PromptVariableViewSection.vue';
+import { keyBy } from 'lodash';
 
 
 const store = {
@@ -30,13 +31,12 @@ const router = useRouter();
 
 const availablePrompTemplates = ref();
 const prompt = ref<Prompt | null>(null);
-const promptVariables = ref();
+const promptVariables = ref<FormInstance | null>(null);
 const promptEvaluationTemplate = ref();
 const repository = ref<Repository | null>(null);
 const isLoading = ref(true);
 const isEvaluating = ref(false);
 const evaluationResult = ref<EvaluationResult | null>(null);
-const showRawEvaluatorOutput = ref(false);
 
 // For testing inputs
 const testInputs = reactive<{ [key: string]: any }>({});
@@ -83,25 +83,6 @@ onMounted(async () => {
   }
 });
 
-// Helper for evaluation score styling
-const scoreClass = (score: number) => {
-  if (score >= 4) return 'text-green-600 font-bold';
-  if (score >= 3) return 'text-yellow-600 font-bold';
-  return 'text-red-600 font-bold';
-};
-
-// Helper to render TextGrad insights with inline styles for demo
-const renderTextGrad = (insights: EvaluationResult['textGradInsights']) => {
-  if (!insights) return '';
-  let html = '';
-  insights.forEach(item => {
-    const color = item.score > 0.5 ? 'green' : item.score < -0.5 ? 'red' : 'inherit'; // Simplified logic
-    const weight = Math.abs(item.score) > 0.3 ? 'font-semibold' : ''; // Simplified
-    html += `<span style="color: ${color};" class="${weight}">${item.text}</span>`;
-  });
-  return html;
-};
-
 // --- Event Handlers / Actions ---
 const handleEditTemplate = () => {
   if (prompt.value) {
@@ -140,17 +121,20 @@ const handleDeleteTemplate = async () => {
 const runEvaluation = async () => {
   if (!prompt.value) return;
 
-  console.log('========= promptVariables =========');
-  console.log(promptVariables.value);
-  console.log('========= promptEvaluationTemplate =========');
-  console.log(promptEvaluationTemplate.value);
+  Array.from(promptVariables.value?.formInstance?.entries() || []).map(([key, obj]) => {
+    testInputs[key] = obj.editableContent;
+  })
+
+  console.log('========= testInputs =========')
+  console.log(testInputs);
+
   // Basic validation for test inputs
-  // for (const variable of prompt.value.variables) {
-  //   if (variable.type === 'text' && !testInputs[variable.name]?.trim()) {
-  //     alert(`Please provide input for parameter: ${variable.name}`);
-  //     return;
-  //   }
-  // }
+  for (const variable of prompt.value.variables) {
+    if (variable.type === 'text' && !testInputs[variable.name]?.trim()) {
+      alert(`Please provide input for parameter: ${variable.name}`);
+      return;
+    }
+  }
 
   isEvaluating.value = true;
   evaluationResult.value = null; // Clear previous results
@@ -163,6 +147,10 @@ const runEvaluation = async () => {
       const value = testInputs[varName];
       return value !== undefined ? String(value) : match; // Replace or keep original placeholder if not found
     });
+
+    console.log('========= filledPrompt =========')
+    console.log(filledPrompt);
+
     const llmResponse = `Simulated LLM response for "${prompt.value.name}" using inputs: ${JSON.stringify(testInputs)}. This response aims to ${prompt.value.description.toLowerCase()}. Example output based on prompt: "The summarized text covers key points about AI, including its history, current applications, and future impact on society."`;
 
     // 2. Simulate LLM B (Evaluator Prompt)

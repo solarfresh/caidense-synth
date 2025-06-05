@@ -40,10 +40,10 @@ defineExpose({
         <h3 class="text-lg font-medium text-gray-800 mb-3">Test Inputs:</h3>
         <div class="space-y-4">
           <div v-for="variable in prompt?.variables" :key="variable.name">
-            <FormTextarea v-if="variable.type === 'text'" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :placeholder="variable.description || `Enter value for ${variable.name}`" :ref="el => registerRef(`test-input-${variable.name}`, el)" />
-            <FormInput v-else-if="variable.type === 'number'" :type="'number'" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :placeholder="variable.description || `Enter value for ${variable.name}`" :ref="el => registerRef(`test-input-${variable.name}`, el)" />
-            <FormSelect v-else-if="variable.type === 'enum' && variable.enumOptions" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :options="variable.enumOptions" :ref="el => registerRef(`test-input-${variable.name}`, el)" />
-            <FormInput v-else-if="variable.type === 'boolean'" :type="'checkbox'" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :placeholder="variable.description || `Enter value for ${variable.name}`" :ref="el => registerRef(`test-input-${variable.name}`, el)" />
+            <FormTextarea v-if="variable.type === 'text'" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :placeholder="variable.description || `Enter value for ${variable.name}`" :ref="el => registerRef(variable.name, el)" />
+            <FormInput v-else-if="variable.type === 'number'" :type="'number'" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :placeholder="variable.description || `Enter value for ${variable.name}`" :ref="el => registerRef(variable.name, el)" />
+            <FormSelect v-else-if="variable.type === 'enum' && variable.enumOptions" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :options="variable.enumOptions" :ref="el => registerRef(variable.name, el)" />
+            <FormInput v-else-if="variable.type === 'boolean'" :type="'checkbox'" :labelId="`test-input-${variable.name}`" :labelName="variable.name" :subLabelName="`(${variable.type})`" :placeholder="variable.description || `Enter value for ${variable.name}`" :ref="el => registerRef(variable.name, el)" />
           </div>
         </div>
       </div>

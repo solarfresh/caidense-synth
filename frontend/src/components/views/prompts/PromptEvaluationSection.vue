@@ -27,6 +27,18 @@ const emits = defineEmits<{
   (e: 'runEvaluation'): void;
 }>();
 
+// Helper to render TextGrad insights with inline styles for demo
+const renderTextGrad = (insights: EvaluationResult['textGradInsights']) => {
+  if (!insights) return '';
+  let html = '';
+  insights.forEach(item => {
+    const color = item.score > 0.5 ? 'green' : item.score < -0.5 ? 'red' : 'inherit'; // Simplified logic
+    const weight = Math.abs(item.score) > 0.3 ? 'font-semibold' : ''; // Simplified
+    html += `<span style="color: ${color};" class="${weight}">${item.text}</span>`;
+  });
+  return html;
+};
+
 // Helper for evaluation score styling
 const scoreClass = (score: number) => {
   if (score >= 4) return 'text-green-600 font-bold';
