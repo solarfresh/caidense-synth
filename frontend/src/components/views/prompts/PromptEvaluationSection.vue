@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ExecuteButton from '@/components/base/buttons/ExecuteButton.vue';
+import Markdown from '@/components/base/content/Markdown.vue';
 import FormSelect from '@/components/layouts/form/FormSelect.vue';
-import type { EvaluationResult } from '@/types/prompts';
-import { PropType, ref } from 'vue';
+import type { FormInstance } from '@/types/form';
+import type { EvaluationMetrics, EvaluationResult } from '@/types/prompts';
 import { ClipboardDocumentListIcon } from '@heroicons/vue/24/outline';
+import { PropType, reactive, ref, watch } from 'vue';
 
 
 const props = defineProps({
@@ -22,10 +24,25 @@ const props = defineProps({
 });
 
 const showRawEvaluatorOutput = ref(false);
+const formInstance = reactive<Map<string, FormInstance>>(new Map());
+const evaluationMetrics = ref<EvaluationMetrics | null>(null);
+const evaluationScore = ref<string>('');
+const optimizationSuggestions = ref<Array<string>>([])
 
 const emits = defineEmits<{
   (e: 'runEvaluation'): void;
 }>();
+
+watch(() => props.evaluationResult, (newValue) => {
+  evaluationMetrics.value = newValue?.evaluatorReport || null;
+  const prompt_template_clarity = evaluationMetrics.value?.prompt_template_clarity || 0;
+  const prompt_template_completeness = evaluationMetrics.value?.prompt_template_completeness || 0;
+  const ai_response_quality = evaluationMetrics.value?.ai_response_quality || 0;
+  const ai_response_relevance = evaluationMetrics.value?.ai_response_relevance || 0;
+  const prompt_template_guidance = evaluationMetrics.value?.prompt_template_guidance || 0;
+  evaluationScore.value = ((prompt_template_clarity + prompt_template_completeness + ai_response_quality + ai_response_relevance + prompt_template_guidance) / 5).toFixed(1);
+  optimizationSuggestions.value = evaluationMetrics.value?.optimization_suggestions || [];
+}, {immediate: true});
 
 // Helper to render TextGrad insights with inline styles for demo
 const renderTextGrad = (insights: EvaluationResult['textGradInsights']) => {
@@ -45,13 +62,23 @@ const scoreClass = (score: number) => {
   if (score >= 3) return 'text-yellow-600 font-bold';
   return 'text-red-600 font-bold';
 };
+
+const registerRef = async (key:string, instance: any) => {
+  if (instance) {
+    formInstance.set(key, instance)
+  }
+}
+
+defineExpose({
+  formInstance
+});
 </script>
 
 <template>
   <section class="bg-white rounded-lg shadow-xl p-8 border border-gray-200">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-semibold text-gray-800 py-2">Evaluation & Optimization</h2>
-      <FormSelect :labelId="'selectPromptTemplate'" :labelName="'Evaluation Template'" :options="availablePrompTemplates" :ref="'promptEvaluationTemplate'" />
+      <FormSelect :labelId="'selectPromptTemplate'" :labelName="'Evaluation Template'" :options="availablePrompTemplates" :ref="el => registerRef('selectPromptTemplate', el)" />
       <ExecuteButton @click="$emit('runEvaluation')" :isEvaluating="isEvaluating" :buttonName="'Run Evaluation'" :dynamicButtonName="'Evaluating...'" />
     </div>
 
@@ -84,16 +111,18 @@ const scoreClass = (score: number) => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <h4 class="text-lg font-medium text-gray-800 mb-3">LLM Response:</h4>
-          <div class="bg-gray-50 p-4 rounded-md text-sm whitespace-pre-wrap break-words border border-gray-200">
-            {{ evaluationResult.llmResponse }}
+          <div class="bg-gray-50 p-4 rounded-md text-sm border border-gray-200">
+            <Markdown :markdownText="evaluationResult.llmResponse" />
           </div>
         </div>
 
         <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <h4 class="text-lg font-medium text-gray-800 mb-3">Evaluator Report:</h4>
           <div class="bg-gray-50 p-4 rounded-md text-sm whitespace-pre-wrap break-words border border-gray-200">
-            <p class="mb-2 font-medium">Overall Score: <span :class="scoreClass(evaluationResult.score)">{{ evaluationResult.score }}/5</span></p>
-            <p>{{ evaluationResult.evaluatorReport }}</p>
+            <p class="mb-2 font-medium">Overall Score: <span :class="scoreClass(Number(evaluationScore))">{{ evaluationScore }}/5</span></p>
+            <ul class="list-disc px-4">
+              <li v-for="suggestion in optimizationSuggestions">{{ suggestion }}</li>
+            </ul>
           </div>
           <button
             @click="showRawEvaluatorOutput = !showRawEvaluatorOutput"
@@ -101,7 +130,9 @@ const scoreClass = (score: number) => {
           >
             {{ showRawEvaluatorOutput ? 'Hide Raw Output' : 'Show Raw Evaluator Output' }}
           </button>
-          <pre v-if="showRawEvaluatorOutput" class="bg-gray-100 p-3 rounded-md text-xs mt-2 overflow-auto">{{ evaluationResult.rawEvaluatorOutput }}</pre>
+          <pre v-if="showRawEvaluatorOutput" class="bg-gray-100 p-3 rounded-md text-xs mt-2 overflow-auto">
+            <Markdown class="prose-code:bg-gray-100" :markdownText="evaluationResult.rawEvaluatorOutput" />
+          </pre>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Loading from '@/components/base/common/Loading.vue';
+import Loading from '@/components/base/content/Loading.vue';
 import { DetailsOverviewItemsType } from '@/types/details';
 import { computed } from 'vue';
 import DetailsOverview from './DetailsOverview.vue';

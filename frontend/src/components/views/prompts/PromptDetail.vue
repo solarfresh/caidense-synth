@@ -4,7 +4,8 @@ import Details from '@/components/layouts/detail/Details.vue';
 import { usePromptStore } from '@/stores/prompt';
 import { useRepositoryStore } from '@/stores/repository';
 import type { FormInstance } from '@/types/form';
-import type { EvaluationResult, Prompt } from '@/types/prompts';
+import type { GenAIRequest } from '@/types/genai';
+import type { EvaluationMetrics, EvaluationResult, Prompt } from '@/types/prompts';
 import type { Repository } from '@/types/repositories';
 import {
   ArrowPathIcon, // For empty evaluation state
@@ -12,12 +13,12 @@ import {
   FolderIcon
 } from '@heroicons/vue/24/outline'; // Or /20/outline for smaller icons
 import { format, formatDistanceToNow } from 'date-fns';
+import MarkdownIt from 'markdown-it';
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PromptContentViewSection from './PromptContentViewSection.vue';
 import PromptEvaluationSection from './PromptEvaluationSection.vue';
 import PromptVariableViewSection from './PromptVariableViewSection.vue';
-import { keyBy } from 'lodash';
 
 
 const store = {
@@ -125,9 +126,6 @@ const runEvaluation = async () => {
     testInputs[key] = obj.editableContent;
   })
 
-  console.log('========= testInputs =========')
-  console.log(testInputs);
-
   // Basic validation for test inputs
   for (const variable of prompt.value.variables) {
     if (variable.type === 'text' && !testInputs[variable.name]?.trim()) {
@@ -139,57 +137,56 @@ const runEvaluation = async () => {
   isEvaluating.value = true;
   evaluationResult.value = null; // Clear previous results
   try {
-    // Simulate complex evaluation process involving two LLM calls + TextGrad
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    // 1. Simulate LLM A (Content Generation)
-    const filledPrompt = prompt.value.promptText.replace(/\{([A-Z0-9_]+)\}/g, (match, varName) => {
+    const testPrompt = prompt.value.promptText.replace(/\{([A-Z0-9_]+)\}/g, (match, varName) => {
       const value = testInputs[varName];
       return value !== undefined ? String(value) : match; // Replace or keep original placeholder if not found
     });
 
-    console.log('========= filledPrompt =========')
-    console.log(filledPrompt);
+    const genaiRequest: GenAIRequest = {
+      prompt: testPrompt,
+      modelName: 'gemini-2.0-flash'
+    };
+    const testResponse = await apiService.genai.GoogleAIStudio(genaiRequest);
+    const llmResponse = testResponse.data.candidates[0].content.parts[0].text;
 
-    const llmResponse = `Simulated LLM response for "${prompt.value.name}" using inputs: ${JSON.stringify(testInputs)}. This response aims to ${prompt.value.description.toLowerCase()}. Example output based on prompt: "The summarized text covers key points about AI, including its history, current applications, and future impact on society."`;
+    const evaluatePromptTemplateId = promptEvaluationTemplate.value.formInstance?.get('selectPromptTemplate').editableContent;
+    const evaluatePromptTemplate = store.prompt.prompts.get(evaluatePromptTemplateId);
 
-    // 2. Simulate LLM B (Evaluator Prompt)
+    testInputs['AI_RESPONSE'] = llmResponse;
+    testInputs['ORIGINAL_PROMPT_TEMPLATE'] = prompt.value.promptText;
+
+    const evaluatePrompt = evaluatePromptTemplate?.promptText.replace(/\{([A-Z0-9_]+)\}/g, (match, varName) => {
+      const value = testInputs[varName];
+      return value !== undefined ? String(value) : match; // Replace or keep original placeholder if not found
+    });
+    genaiRequest.prompt = evaluatePrompt || '';
+    const evaluateResponse = await apiService.genai.GoogleAIStudio(genaiRequest);
+    const rawEvaluatorOutput = evaluateResponse.data.candidates[0].content.parts[0].text;;
+
+    const md = new MarkdownIt({
+      html: true,
+      breaks: true,
+    });
+    const jsonRawEvaluatorOutput: EvaluationMetrics = md.parse(rawEvaluatorOutput, {}).reduce((acc, token) => {
+      if (token.type === 'fence' && token.info === 'json') {
+        let jsonContent = JSON.parse(token.content);
+        return {...acc, ...jsonContent};
+      }
+    }, {
+      prompt_template_clarity: 0,
+      prompt_template_completeness: 0,
+      ai_response_quality: 0,
+      ai_response_relevance: 0,
+      prompt_template_guidance: 0,
+      optimization_suggestions: [],
+    })
+
     const evaluatorReport = `The LLM response was highly relevant and addressed all key aspects of the prompt. The tone was appropriate. Overall, a very good response.`;
-    const rawEvaluatorOutput = JSON.stringify({
-        overall_score: 4.5,
-        relevance: 5,
-        accuracy: 4,
-        completeness: 4.5,
-        tone: 5,
-        safety: 5,
-        reasoning: "The response directly answered the prompt's request for a summary, covering the key points comprehensively and maintaining a neutral tone. There were no factual errors found.",
-        suggestions: "Consider adding a specific length constraint to the prompt for more consistent summary outputs."
-    }, null, 2);
-
-    // 3. Simulate TextGrad insights (simplified for demo)
-    const textGradInsights = [
-      { text: 'Summarize', score: 0.7 },
-      { text: 'the', score: 0.1 },
-      { text: 'following', score: 0.15 },
-      { text: 'text', score: 0.6 },
-      { text: 'in', score: 0.05 },
-      { text: testInputs['TONE'] || 'neutral', score: 0.4 }, // Example: influence of TONE param
-      { text: 'tone', score: 0.3 },
-      { text: ':', score: 0.01 },
-      { text: testInputs['TEXT']?.substring(0,20) || 'input text...', score: 0.8 }, // Example: influence of TEXT param
-      { text: '...', score: 0.05 },
-      { text: 'Final Answer: ', score: 0.2 },
-      { text: 'The summarized text was excellent.', score: 0.9 },
-      { text: 'No issues found.', score: -0.1 } // Example of potential negative impact area
-    ];
 
     evaluationResult.value = {
       llmResponse: llmResponse,
-      evaluatorReport: evaluatorReport,
+      evaluatorReport: jsonRawEvaluatorOutput || null,
       rawEvaluatorOutput: rawEvaluatorOutput,
-      score: 4.5, // Extract from rawEvaluatorOutput in real app
-      textGradInsights: textGradInsights,
-      optimizationSuggestions: "Consider adding a specific length constraint to the prompt for more consistent summary outputs. Explore alternative phrasing for 'following text' to enhance clarity.",
     };
 
   } catch (error) {
@@ -202,7 +199,6 @@ const runEvaluation = async () => {
 </script>
 
 <template>
-
   <Details
     :deleteButtonName="'Delete Template'"
     :editButtonName="'Edit Template'"
@@ -239,7 +235,7 @@ const runEvaluation = async () => {
         <PromptVariableViewSection :ref="'promptVariables'" />
       </div>
 
-      <PromptEvaluationSection @runEvaluation="runEvaluation" :availablePrompTemplates="availablePrompTemplates" :isEvaluating="isEvaluating" :evaluationResult="evaluationResult" />
+      <PromptEvaluationSection @runEvaluation="runEvaluation" :availablePrompTemplates="availablePrompTemplates" :isEvaluating="isEvaluating" :evaluationResult="evaluationResult" :ref="'promptEvaluationTemplate'" />
     </template>
   </Details>
 </template>
