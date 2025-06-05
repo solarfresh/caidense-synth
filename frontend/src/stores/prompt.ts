@@ -21,7 +21,6 @@ export const usePromptStore = defineStore('prompt', {
   },
   getters: {
     getPrompt: (state): Prompt | null => {
-      console.log(state.prompts.get(state.currentPromptId));
       return state.prompts.get(state.currentPromptId) || null;
     }
   }

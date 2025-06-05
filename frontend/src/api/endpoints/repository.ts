@@ -27,3 +27,8 @@ export const PromptEndpoints = {
   delete: (promptId: string) =>
     `${CAIDENSE_SYNTH_API_URL}/prompt/text/${promptId}`,
 }
+
+export const GenAIEndPoints = {
+  GoogleAIStudio: () =>
+    `${CAIDENSE_SYNTH_API_URL}/genai/google/aistudio/generate`
+}

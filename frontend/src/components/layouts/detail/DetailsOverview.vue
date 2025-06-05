@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
+import DuplicateButton from '@/components/base/buttons/DuplicateButton.vue';
 import EditButton from '@/components/base/buttons/EditButton.vue';
 import GoBackButton from '@/components/base/buttons/GoBackButton.vue';
 import { DetailsOverviewItemsType } from '@/types/details';
@@ -40,6 +41,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  duplicateButtonName: {
+    type: String,
+    default: ''
+  },
   goBackButtonName: {
     type: String,
     default: ''
@@ -50,8 +55,9 @@ const props = defineProps({
   }
 })
 const emits = defineEmits<{
-  (e: 'edit'): void;
   (e: 'delete'): void;
+  (e: 'duplicate'): void;
+  (e: 'edit'): void;
 }>();
 </script>
 
@@ -64,6 +70,7 @@ const emits = defineEmits<{
     </h1>
     <div class="flex space-x-3">
       <EditButton v-if="editButtonName" :button-name="editButtonName" @click="$emit('edit')" />
+      <DuplicateButton v-if="duplicateButtonName" :button-name="duplicateButtonName" @click="$emit('duplicate')" />
       <DeleteButton v-if="deleteButtonName" :button-name="deleteButtonName" @click="$emit('delete')" />
     </div>
   </div>

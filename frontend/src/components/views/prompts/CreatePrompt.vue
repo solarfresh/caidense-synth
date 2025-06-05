@@ -6,17 +6,21 @@ import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormMultiFields from '@/components/layouts/form/FormMultiFields.vue';
 import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import { usePromptStore } from '@/stores/prompt';
 import { useRepositoryStore } from '@/stores/repository';
 import type { CreateVariable, DocumentStatus } from '@/types/common';
 import type { FormErrors, FormInstance, FormSelectOption } from '@/types/form';
 import type { CreatePrompt } from '@/types/prompts';
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import PromptVariableSection from './PromptVariableSection.vue';
+import PromptVariableEditSection from './PromptVariableEditSection.vue';
 
 
 const router = useRouter();
-const store = useRepositoryStore();
+const store = {
+  repository: useRepositoryStore(),
+  prompt: usePromptStore(),
+};
 const templateForm = reactive<Map<string, FormInstance>>(new Map());
 const editableVariables = ref<CreateVariable[]>([]);
 const errors = reactive<FormErrors>({});
@@ -25,7 +29,6 @@ const availableRepositories = ref<FormSelectOption[]>([]); // For the dropdown
 
 // --- Lifecycle Hooks ---
 onMounted(async () => {
-
   await fetchAvailableRepositories();
 });
 
@@ -157,7 +160,9 @@ const handleSubmit = async () => {
     const repositoryResponse = await apiService.repository.get(promptResponse.data.promptSetId);
     const promptTextIds = new Set(repositoryResponse.data.promptTextIds);
     promptTextIds.add(promptResponse.data.id);
-    apiService.repository.update(repositoryResponse.data.id, {promptTextIds: Array.from(promptTextIds)})
+    const updatedRepositoryResponse = await apiService.repository.update(repositoryResponse.data.id, {promptTextIds: Array.from(promptTextIds)});
+    store.prompt.prompts.set(promptResponse.data.id, promptResponse.data);
+    store.repository.repositories.set(updatedRepositoryResponse.data.id, updatedRepositoryResponse.data);
     // In a real application, send newTemplateData to your backend API
     // const response = await api.createTemplate(newTemplateData);
     router.push({ name: 'PromptDetail', params: { id: promptResponse.data.id } });
@@ -199,7 +204,7 @@ const registerRef = async (key:string, instance: any) => {
               {
                 name: 'select',
                 props: {
-                  content: store.currentRepositoryId || '',
+                  content: store.repository.currentRepositoryId || '',
                   hasMargin: false,
                   labelId: 'repositoryName',
                   labelName: 'Belongs to Repository',
@@ -218,7 +223,7 @@ const registerRef = async (key:string, instance: any) => {
           </template>
         </FormSection>
 
-        <PromptVariableSection :variables="editableVariables" :ref="el => registerRef('variables', el)" />
+        <PromptVariableEditSection :variables="editableVariables" :ref="el => registerRef('variables', el)" />
 
         <div class="flex justify-end space-x-4 mt-8">
           <CancelButton :buttonName="'Cancel'" />

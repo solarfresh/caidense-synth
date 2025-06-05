@@ -1,6 +1,6 @@
 {
   "name": "caidense-synth-frontend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
+    "@tailwindcss/typography": "^0.5.16",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
     "lodash": "^4.17.21",
