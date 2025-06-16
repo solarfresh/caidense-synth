@@ -14,7 +14,7 @@ const workflowRoutes = [
     path: '/workflows',
     name: 'WorkflowOverview',
     component: WorkflowOverview
-  }
+  },
 ]
 
 const promptRoutes = [

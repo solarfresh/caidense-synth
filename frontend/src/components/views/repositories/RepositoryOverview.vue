@@ -106,6 +106,7 @@ const handleViewCollection = (id: string) => {
   <Container :page-title="'Repositories'" :create-button-name="'New Repository'" @create="goToCreateRepository">
     <template #content>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!--
         <aside v-if="showSidebar" class="md:col-span-1 bg-white p-6 rounded-lg shadow-sm">
           <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
           <div class="mb-4">
@@ -144,7 +145,7 @@ const handleViewCollection = (id: string) => {
             </select>
           </div>
         </aside>
-
+ -->
         <div :class="{'md:col-span-3': showSidebar, 'md:col-span-4': !showSidebar}">
           <div v-if="filteredRepositories.length === 0" class="text-center py-10 text-gray-600">
             <p class="text-lg">No repositories found.</p>
