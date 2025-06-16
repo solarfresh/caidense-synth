@@ -1,11 +1,11 @@
 <script setup lang="ts">
-// import AppHeader from './components/shared/Header.vue';
+import Header from '@/components/shared/Header.vue';
 import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <div class="flex-col h-screen overflow-y-auto no-scrollbar">
-    <!-- <AppHeader /> -->
+  <div class="flex-col no-scrollbar">
+    <Header />
     <RouterView />
   </div>
 </template>

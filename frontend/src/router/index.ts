@@ -5,8 +5,17 @@ import CreateRepository from '@/components/views/repositories/CreateRepository.v
 import EditRepository from '@/components/views/repositories/EditRepository.vue';
 import RepositoryDetails from '@/components/views/repositories/RepositoryDetails.vue';
 import RepositoryOverview from '@/components/views/repositories/RepositoryOverview.vue';
+import WorkflowOverview from '@/components/views/workflows/WorkflowOverview.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
+
+const workflowRoutes = [
+  {
+    path: '/workflows',
+    name: 'WorkflowOverview',
+    component: WorkflowOverview
+  },
+]
 
 const promptRoutes = [
   {
@@ -56,10 +65,11 @@ const repositoryRoutes = [
 const routes = [
   {
     path: '/',
-    name: 'RepositoryOverview',
+    name: 'Home',
     component: RepositoryOverview,
   }
 ]
+  .concat(workflowRoutes)
   .concat(promptRoutes)
   .concat(repositoryRoutes)
 
