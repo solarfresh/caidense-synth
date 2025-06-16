@@ -1,7 +1,11 @@
-<script setup>
-import { ref, computed } from 'vue';
-import Container from '@/components/shared/Container.vue';
+<script setup lang="ts">
 import TableSection from '@/components/layouts/table/TableSection.vue';
+import Container from '@/components/shared/Container.vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter();
 
 const searchQuery = ref('');
 const selectedStatus = ref('');
@@ -15,29 +19,8 @@ const workflows = ref([
   // Add more workflow data here
 ]);
 
-const filteredWorkflows = computed(() => {
-  return workflows.value
-    .filter(workflow => workflow.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    .filter(workflow => !selectedStatus.value || workflow.status === selectedStatus.value)
-    .sort((a, b) => {
-      if (sortBy.value === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy.value === 'lastModifiedDesc') {
-        return new Date(b.modifiedAt) - new Date(a.modifiedAt);
-      } else if (sortBy.value === 'createdAtDesc') {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      }
-      return 0;
-    });
-});
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-};
-
 const goToCreateWorkflow = () => {
-
+  router.push({ name: 'CreateWorkflow' });
 };
 </script>
 
@@ -88,7 +71,7 @@ const goToCreateWorkflow = () => {
         </aside>
  -->
         <div class="md:col-span-4">
-          <div v-if="filteredWorkflows.length === 0" class="text-center py-10 text-gray-600">
+          <div v-if="workflows.length === 0" class="text-center py-10 text-gray-600">
             <p class="text-lg">No workflows found.</p>
             <p class="text-sm mt-2">Click "Create New Workflow" to get started!</p>
           </div>

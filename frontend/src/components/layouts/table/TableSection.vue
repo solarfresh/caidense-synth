@@ -2,14 +2,13 @@
 import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
 import EditButton from '@/components/base/buttons/EditButton.vue';
 import ViewButton from '@/components/base/buttons/ViewButton.vue';
-import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { format } from 'date-fns';
 import TableCell from './TableCell.vue';
 
 
 const props = defineProps({
   columns: {
-    type: [String],
+    type: Array<string>,
     required: true
   },
   items: {

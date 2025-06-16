@@ -64,7 +64,7 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
+  <div class="min-h-screen bg-gray-100 flex flex-col">
     <div class="flex-grow container mx-auto px-4 py-8">
       <Loading :isLoading="isLoading" :loadingDescription="loadingDescription" :itemFound="itemFound" :itemFoundDescription="itemFoundDescription">
         <template #page>
