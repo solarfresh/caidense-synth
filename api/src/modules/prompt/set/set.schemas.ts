@@ -23,7 +23,7 @@ export class PromptSetDocument extends Document implements PromptSet {
   @Prop({ type: [Types.ObjectId] }) // Assuming PromptSetEntry maps to a BSON Object or a subdocument schema if defined elsewhere
   promptTextIds: Types.ObjectId[];
 
-  @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
+  @Prop({ type: String, default: DocumentStatus.DRAFT })
   status: DocumentStatus;
 
   @Prop(Date)

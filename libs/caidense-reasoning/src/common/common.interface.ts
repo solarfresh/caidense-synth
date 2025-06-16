@@ -43,6 +43,8 @@ export interface Variable {
 }
 
 export enum DocumentStatus {
+  COMPLETED = 'completed',
   DRAFT = 'draft',
-  FINALIZED = 'finalized',
+  PENDING_REVIEW = 'pending_review',
+  FAILED = 'failed'
 }
