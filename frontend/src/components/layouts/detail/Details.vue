@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Loading from '@/components/base/content/Loading.vue';
+import Container from '@/components/shared/Container.vue';
 import { DetailsOverviewItemsType } from '@/types/details';
 import { computed } from 'vue';
 import DetailsOverview from './DetailsOverview.vue';
@@ -71,28 +71,29 @@ const detailsFound = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-10">
-    <div class="container mx-auto px-4">
-      <Loading :isLoading="isLoading" :loadingDescription="loadingDescription" :itemFound="detailsFound" :itemFoundDescription="detailsFoundDescription">
-        <template #page>
-          <DetailsOverview
-            :delete-button-name="deleteButtonName"
-            :edit-button-name="editButtonName"
-            :is-show-tags="isShowTags"
-            :details-id="detailsId"
-            :details-name="detailsName"
-            :details-description="detailsDescription"
-            :details-overview-info="detailsInfo"
-            :details-overview-tags="detailsTags"
-            :go-back-button-name="goBackButtonName"
-            :go-back-router-name="goBackRouterName"
-            @edit="$emit('editDetails')"
-            @delete="$emit('deleteDetails')"
-          />
+  <Container
+    :delete-button-name="deleteButtonName"
+    :edit-button-name="editButtonName"
+    :isLoading="isLoading"
+    :loadingDescription="loadingDescription"
+    :itemFound="detailsFound"
+    :itemFoundDescription="detailsFoundDescription"
+    :go-back-button-name="goBackButtonName"
+    :go-back-router-name="goBackRouterName"
+    :page-title="detailsName"
+    @edit="$emit('editDetails')"
+    @delete="$emit('deleteDetails')"
+  >
+    <template #content>
+      <DetailsOverview
+        :is-show-tags="isShowTags"
+        :details-id="detailsId"
+        :details-description="detailsDescription"
+        :details-overview-info="detailsInfo"
+        :details-overview-tags="detailsTags"
+      />
 
-          <slot name="content" />
-        </template>
-      </Loading>
-    </div>
-  </div>
+      <slot name="content" />
+    </template>
+  </Container>
 </template>

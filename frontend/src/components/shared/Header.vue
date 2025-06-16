@@ -13,13 +13,13 @@ import { RocketLaunchIcon, FolderIcon, CubeIcon } from '@heroicons/vue/24/outlin
       </div>
 
       <div class="hidden sm:flex items-center space-x-4">
-        <router-link to="/repositories" class="text-gray-700 hover:text-indigo-600 font-semibold transition duration-150 ease-in-out">
-          <FolderIcon class="w-5 h-5 mr-1 inline-block" />
-          Prompt Repositories
-        </router-link>
         <router-link to="/workflows" class="text-gray-700 hover:text-indigo-600 font-semibold transition duration-150 ease-in-out">
           <RocketLaunchIcon class="w-5 h-5 mr-1 inline-block" />
           Workflows
+        </router-link>
+        <router-link to="/repositories" class="text-gray-700 hover:text-indigo-600 font-semibold transition duration-150 ease-in-out">
+          <FolderIcon class="w-5 h-5 mr-1 inline-block" />
+          Prompt Repositories
         </router-link>
       </div>
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
+import Container from '@/components/shared/Container.vue';
 import RepositoryCard from '@/components/views/repositories/RepositoryCard.vue';
 import { useRepositoryStore } from '@/stores/repository';
 import type { Repository } from '@/types/repositories';
-import { PlusIcon } from '@heroicons/vue/24/outline';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -103,19 +103,8 @@ const handleViewCollection = (id: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
-    <div class="flex-grow container mx-auto px-4 py-8">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Repositories</h1>
-        <button
-          @click="goToCreateRepository"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
-        >
-          <PlusIcon class="-ml-1 mr-2 h-5 w-5" />
-          New Repository
-        </button>
-      </div>
-
+  <Container :page-title="'Repositories'" :create-button-name="'New Repository'" @create="goToCreateRepository">
+    <template #content>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <aside v-if="showSidebar" class="md:col-span-1 bg-white p-6 rounded-lg shadow-sm">
           <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
@@ -174,6 +163,6 @@ const handleViewCollection = (id: string) => {
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </Container>
 </template>

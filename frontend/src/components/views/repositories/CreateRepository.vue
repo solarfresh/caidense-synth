@@ -2,9 +2,9 @@
 import { apiService } from '@/api/apiService';
 import CancelButton from '@/components/base/buttons/CancelButton.vue';
 import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
-import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import Container from '@/components/shared/Container.vue';
 import { useRepositoryStore } from '@/stores/repository';
 import { FormErrors, FormInstance } from '@/types/form';
 import { reactive, ref } from 'vue';
@@ -68,8 +68,8 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormContainer :title="'Create New Repository'">
-    <template #page>
+  <Container :page-title="'Create New Repository'">
+    <template #content>
       <form @submit.prevent="handleSubmit">
         <FormInput :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
         <FormTextarea :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />
@@ -81,5 +81,5 @@ const registerRef = async (key:string, instance: any) => {
         </div>
       </form>
     </template>
-  </FormContainer>
+  </Container>
 </template>

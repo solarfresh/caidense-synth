@@ -65,7 +65,7 @@ const repositoryRoutes = [
 const routes = [
   {
     path: '/',
-    name: 'RepositoryOverview',
+    name: 'Home',
     component: RepositoryOverview,
   }
 ]

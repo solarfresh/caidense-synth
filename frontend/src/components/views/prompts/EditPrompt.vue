@@ -2,10 +2,10 @@
 import { apiService } from '@/api/apiService';
 import CancelButton from '@/components/base/buttons/CancelButton.vue';
 import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
-import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormMultiFields from '@/components/layouts/form/FormMultiFields.vue';
 import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import Container from '@/components/shared/Container.vue';
 import { usePromptStore } from '@/stores/prompt';
 import { useRepositoryStore } from '@/stores/repository';
 import type { CreateVariable, DocumentStatus } from '@/types/common';
@@ -213,8 +213,8 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormContainer :title="'Edit Prompt Template'" :is-loading="isLoading" :loading-description="'Loading template details...'" :item-found="promptFound" :item-found-description="'Template not found!'">
-    <template #page>
+  <Container :page-title="'Edit Prompt Template'" :is-loading="isLoading" :loading-description="'Loading template details...'" :item-found="promptFound" :item-found-description="'Template not found!'">
+    <template #content>
       <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormSection :title="'Basic Information'">
           <template #fields>
@@ -263,5 +263,5 @@ const registerRef = async (key:string, instance: any) => {
         </div>
       </form>
     </template>
-  </FormContainer>
+  </Container>
 </template>
