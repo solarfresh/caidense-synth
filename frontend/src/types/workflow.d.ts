@@ -177,6 +177,12 @@ interface Thinking {
   updatedAt: Date;
 }
 
+export interface CreateWorkflow {
+  name: string;
+  description?: string;
+  tags?: string[];
+}
+
 export interface Workflow {
   id: string;
   name: string;

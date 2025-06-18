@@ -4,16 +4,20 @@ import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import Container from '@/components/shared/Container.vue';
-import { FormInstance } from '@/types/form';
+import { FormErrors, FormInstance } from '@/types/form';
 import { computed, reactive, ref } from 'vue';
+import { apiService } from '@/api/apiService';
+import { useRouter } from 'vue-router';
 
 
+const errors = reactive<FormErrors>({});
 const isSubmitting = ref(false);
+const router = useRouter();
 const workflowForm = reactive<Map<string, FormInstance>>(new Map())
 
 const workflowFormData = computed(() => {
   return {
-    name: workflowForm.get('name')?.editableContent?.trim(),
+    name: workflowForm.get('name')?.editableContent?.trim() || '',
     description: workflowForm.get('description')?.editableContent?.trim(),
     tags: workflowForm.get('tags')?.editableContent
         ?.split(',')
@@ -23,7 +27,21 @@ const workflowFormData = computed(() => {
 })
 
 const handleSubmit = async () => {
-  console.log('Workflow From Data:', workflowFormData.value);
+  errors.name = undefined;
+  if (!workflowFormData.value.name) {
+    errors.name = 'Workflow name is required.';
+  };
+
+  isSubmitting.value = true;
+  try {
+    const response = await apiService.workflow.create(workflowFormData.value);
+
+    router.push({ name: 'WorkflowDetails', params: { id: response.data.id } });
+  } catch (error) {
+    console.error('Error creating workflow:', error);
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 
 const registerRef = async (key:string, instance: any) => {

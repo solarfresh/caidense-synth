@@ -3,7 +3,7 @@ import type { CreatePrompt, Prompt, UpdatePrompt } from '@/types/prompts';
 import type { CreateRepository, Repository, UpdateRepository } from '@/types/repositories';
 import axios, { AxiosResponse } from 'axios';
 import { GenAIEndPoints, PromptEndpoints, RepositoryEndpoints, WorkflowEndpoints } from './endpoints';
-import type { Workflow} from '@/types/workflow';
+import type { CreateWorkflow, Workflow} from '@/types/workflow';
 
 
 const apiClient = axios.create({
@@ -55,6 +55,9 @@ export const apiService = {
   workflow: {
     getAll: (filter?: any): Promise<AxiosResponse<Workflow[]>> => {
       return apiClient.get(WorkflowEndpoints.getAll(), {params: filter});
+    },
+    create: (data: CreateWorkflow): Promise<AxiosResponse<Workflow>> => {
+      return apiClient.post(WorkflowEndpoints.create(), data);
     },
   }
 }
