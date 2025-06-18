@@ -6,7 +6,7 @@ import { Document, Types } from 'mongoose';
 
 export interface ReasoningThinking extends Document {
   /**
-   *
+   * A human-readable name for this version of the flow definition.
    */
   name: string;
 

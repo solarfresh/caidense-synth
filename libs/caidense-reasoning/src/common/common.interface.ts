@@ -3,7 +3,7 @@
  */
 export interface Variable {
   /**
-   * The unique name of the variable within the scope (inputs or outputs).
+   * The name of the variable within the scope (inputs or outputs).
    */
   name: string;
 

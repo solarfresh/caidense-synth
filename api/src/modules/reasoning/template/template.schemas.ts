@@ -21,7 +21,7 @@ export class ReasoningTemplateDocument extends Document implements ReasoningTemp
   tags?: string[];
 
   @Prop({ type: Types.ObjectId, ref: 'ReasoningThinkingDocument'})
-  thinkingId?: Types.ObjectId;
+  activatedReasoningThinkingId?: Types.ObjectId;
 
   @Prop({ type: String, default: DocumentStatus.DRAFT })
   status: DocumentStatus;
