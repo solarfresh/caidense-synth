@@ -5,18 +5,25 @@ import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import Container from '@/components/shared/Container.vue';
 import { FormInstance } from '@/types/form';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 
 const isSubmitting = ref(false);
-const workflowName = ref('');
-const workflowDescription = ref('');
-// const workflowCategory = ref('');
 const workflowForm = reactive<Map<string, FormInstance>>(new Map())
 
+const workflowFormData = computed(() => {
+  return {
+    name: workflowForm.get('name')?.editableContent?.trim(),
+    description: workflowForm.get('description')?.editableContent?.trim(),
+    tags: workflowForm.get('tags')?.editableContent
+        ?.split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag !== ''),
+  }
+})
 
 const handleSubmit = async () => {
-
+  console.log('Workflow From Data:', workflowFormData.value);
 };
 
 const registerRef = async (key:string, instance: any) => {
