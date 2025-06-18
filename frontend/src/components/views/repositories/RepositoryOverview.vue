@@ -80,12 +80,12 @@ const filteredRepositories = computed(() => {
 
 // --- Event Handlers / Actions ---
 const goToCreateRepository = () => {
-  router.push({ name: 'CreateRepository' }); // Assuming a router path named 'CreateCollection'
+  router.push({ name: 'CreateRepository' });
 };
 
 const handleEditRepository = (id: string) => {
   console.log('Editing repository:', id);
-  router.push({ name: 'EditRepository', params: { id } }); // Assuming a router path 'EditCollection/:id'
+  router.push({ name: 'EditRepository', params: { id } });
 };
 
 const handleDeleteCollection = (id: string) => {

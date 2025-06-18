@@ -2,14 +2,11 @@
 import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
 import EditButton from '@/components/base/buttons/EditButton.vue';
 import ViewButton from '@/components/base/buttons/ViewButton.vue';
-import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline';
-import { format } from 'date-fns';
-import TableCell from './TableCell.vue';
 
 
 const props = defineProps({
   columns: {
-    type: [String],
+    type: Array<string>,
     required: true
   },
   items: {
@@ -34,15 +31,8 @@ const props = defineProps({
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      <tr v-for="workflow in items" :key="workflow.id">
-        <TableCell :content="workflow.name" :custom-class="'font-medium text-gray-900'" />
-        <TableCell
-          :content="workflow.status"
-          :custom-class="'text-gray-500'"
-          :high-light-class="workflow.status === 'Active' ? 'bg-green-100 text-green-800' : workflow.status === 'Inactive' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'"
-        />
-        <TableCell :content="format(workflow?.createdAt || new Date(), 'MMM d, yyyy')" :custom-class="'text-gray-500'" />
-        <TableCell :content="format(workflow?.modifiedAt || new Date(), 'MMM d, yyyy')" :custom-class="'text-gray-500'" />
+      <tr v-for="item in items" :key="item.id">
+        <slot name="cell" :item="item" />
         <td v-if="showActions" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
           <ViewButton :icon-only="true" class="mr-2" />
           <EditButton :icon-only="true" class="mr-2" />

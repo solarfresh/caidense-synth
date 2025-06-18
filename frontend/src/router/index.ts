@@ -5,6 +5,7 @@ import CreateRepository from '@/components/views/repositories/CreateRepository.v
 import EditRepository from '@/components/views/repositories/EditRepository.vue';
 import RepositoryDetails from '@/components/views/repositories/RepositoryDetails.vue';
 import RepositoryOverview from '@/components/views/repositories/RepositoryOverview.vue';
+import CreateWorkflow from '@/components/views/workflows/CreateWorkflow.vue';
 import WorkflowOverview from '@/components/views/workflows/WorkflowOverview.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -15,6 +16,11 @@ const workflowRoutes = [
     name: 'WorkflowOverview',
     component: WorkflowOverview
   },
+  {
+    path: '/workflows/create',
+    name: 'CreateWorkflow',
+    component: CreateWorkflow
+  }
 ]
 
 const promptRoutes = [

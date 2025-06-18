@@ -1,7 +1,8 @@
 import { BaseService } from '@caidense/reasoning/common/common.service';
+import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking.schemas';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { ReasoningTemplateDocument } from './template.schemas';
 
 
@@ -9,7 +10,13 @@ import { ReasoningTemplateDocument } from './template.schemas';
 export class ReasoningTemplateService extends BaseService<ReasoningTemplateDocument> {
   constructor(
     @InjectModel(ReasoningTemplateDocument.name) private reasoningTemplateModel: Model<ReasoningTemplateDocument>,
+    @InjectModel(ReasoningThinkingDocument.name) private reasoningThinkingModel: Model<ReasoningThinkingDocument>,
   ) {
     super(reasoningTemplateModel);
+  }
+
+  async findAll(filter?: FilterQuery<ReasoningTemplateDocument>): Promise<ReasoningTemplateDocument[]> {
+    const documents = await this.reasoningTemplateModel.find(filter).populate('activatedReasoningThinkingId').exec();
+    return documents.map((document) => {return document.toJSON();});
   }
 }

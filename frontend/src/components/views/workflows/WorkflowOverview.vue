@@ -1,43 +1,37 @@
-<script setup>
-import { ref, computed } from 'vue';
-import Container from '@/components/shared/Container.vue';
+<script setup lang="ts">
+import { apiService } from '@/api/apiService';
+import TableCell from '@/components/layouts/table/TableCell.vue';
 import TableSection from '@/components/layouts/table/TableSection.vue';
+import Container from '@/components/shared/Container.vue';
+import type { Workflow } from '@/types/workflow';
+import { format } from 'date-fns';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter();
 
 const searchQuery = ref('');
 const selectedStatus = ref('');
 const sortBy = ref('name');
 
-const workflows = ref([
-  { id: 1, name: 'Text Summarization Workflow', status: 'Active', createdAt: '2025-06-01T10:00:00Z', modifiedAt: '2025-06-05T14:30:00Z' },
-  { id: 2, name: 'Image Generation Pipeline', status: 'Active', createdAt: '2025-05-20T09:15:00Z', modifiedAt: '2025-06-10T11:00:00Z' },
-  { id: 3, name: 'Sentiment Analysis Chain', status: 'Draft', createdAt: '2025-06-12T16:45:00Z', modifiedAt: '2025-06-12T16:45:00Z' },
-  { id: 4, name: 'Translation Service', status: 'Inactive', createdAt: '2025-04-15T11:30:00Z', modifiedAt: '2025-05-01T08:00:00Z' },
-  // Add more workflow data here
-]);
+const workflows = ref<Workflow[]>([]);
 
-const filteredWorkflows = computed(() => {
-  return workflows.value
-    .filter(workflow => workflow.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    .filter(workflow => !selectedStatus.value || workflow.status === selectedStatus.value)
-    .sort((a, b) => {
-      if (sortBy.value === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy.value === 'lastModifiedDesc') {
-        return new Date(b.modifiedAt) - new Date(a.modifiedAt);
-      } else if (sortBy.value === 'createdAtDesc') {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      }
-      return 0;
-    });
-});
+onMounted(() => {
+  fetchWorkflows();
+})
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+const fetchWorkflows = async () => {
+  try {
+    const response = await apiService.workflow.getAll();
+    workflows.value = response.data;
+  } catch (error) {
+    console.error('Error fetching workflows:', error)
+  }
 };
 
 const goToCreateWorkflow = () => {
-
+  router.push({ name: 'CreateWorkflow' });
 };
 </script>
 
@@ -88,13 +82,24 @@ const goToCreateWorkflow = () => {
         </aside>
  -->
         <div class="md:col-span-4">
-          <div v-if="filteredWorkflows.length === 0" class="text-center py-10 text-gray-600">
+          <div v-if="workflows.length === 0" class="text-center py-10 text-gray-600">
             <p class="text-lg">No workflows found.</p>
             <p class="text-sm mt-2">Click "Create New Workflow" to get started!</p>
           </div>
 
           <div v-else class="bg-white shadow-md rounded-md overflow-hidden">
-            <TableSection :columns="['Name', 'Status', 'Created At', 'Modified At']" :items="workflows" :show-actions="true" />
+            <TableSection :columns="['Name', 'Status', 'Created At', 'Modified At']" :items="workflows" >
+              <template #cell="{ item }">
+                  <TableCell :content="item?.name" :custom-class="'font-medium text-gray-900'" />
+                  <TableCell
+                    :content="item?.status"
+                    :custom-class="'text-gray-500 uppercase'"
+                    :high-light-class="item.status === 'completed' ? 'bg-green-100 text-green-800' : item.status === 'Inactive' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'"
+                  />
+                  <TableCell :content="format(item?.createdAt || new Date(), 'MMM d, yyyy')" :custom-class="'text-gray-500'" />
+                  <TableCell :content="format(item?.updatedAt || new Date(), 'MMM d, yyyy')" :custom-class="'text-gray-500'" />
+              </template>
+            </TableSection>
           </div>
         </div>
       </div>

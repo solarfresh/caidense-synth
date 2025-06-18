@@ -3,7 +3,7 @@
  */
 export interface Variable {
   /**
-   * The unique name of the variable within the scope (inputs or outputs).
+   * The name of the variable within the scope (inputs or outputs).
    */
   name: string;
 
@@ -43,6 +43,8 @@ export interface Variable {
 }
 
 export enum DocumentStatus {
+  COMPLETED = 'completed',
   DRAFT = 'draft',
-  FINALIZED = 'finalized',
+  PENDING_REVIEW = 'pending_review',
+  FAILED = 'failed'
 }

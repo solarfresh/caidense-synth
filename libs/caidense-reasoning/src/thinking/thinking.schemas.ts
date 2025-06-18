@@ -37,7 +37,7 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   @Prop({ type: Types.ObjectId, required: true})
   reasoningTemplateId: Types.ObjectId;
 
-  @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
+  @Prop({ type: String, default: DocumentStatus.DRAFT })
   status: DocumentStatus;
 
   @Prop(Date)

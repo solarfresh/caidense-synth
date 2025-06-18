@@ -1,5 +1,5 @@
 import { BaseController } from '@/modules/base/base.controller';
-import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, ValidationPipe } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import for Swagger documentation
 import { CreateReasoningTemplateDto } from './dto/create-template.dto';
 import { UpdateReasoningTemplateDto } from './dto/update-template.dto';
@@ -50,11 +50,14 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       type: [ReasoningTemplateDocument],
   })
   @ApiResponse({ status: 404, description: 'Not Found - No templates found.' })
-  async findAll(): Promise<ReasoningTemplateDocument[]> {
-     // Call the base controller's findAll method.
-     // If you need filtering via query params, you'd add @Query() here
-     // and potentially pass it to super.findAll().
-     return super.findAll();
+  async findAll(@Query() query?: any): Promise<ReasoningTemplateDocument[]> {
+    const filter = query?.filter
+    if (filter){
+      const parsedFilter = JSON.parse(filter);
+      return this.reasoningTemplateService.findAll(parsedFilter);
+    }
+
+    return this.reasoningTemplateService.findAll();
   }
 
   /**

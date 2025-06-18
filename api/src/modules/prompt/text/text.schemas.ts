@@ -27,7 +27,7 @@ export class PromptTextDocument extends Document implements PromptText {
   @Prop({ type: [VariableSchema] })
   variables: Variable[];
 
-  @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
+  @Prop({ type: String, default: DocumentStatus.DRAFT })
   status: DocumentStatus;
 
   @Prop({ type: Types.ObjectId })

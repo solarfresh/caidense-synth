@@ -97,7 +97,7 @@ const registerRef = async (key:string, instance: any) => {
 <template>
   <Container :page-title="'Edit Repository'" :is-loading="isLoading" :loading-description="'Loading repository details...'" :item-found="repositoryFound" :item-found-description="'Repository not found!'">
     <template #content>
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormInput :content="repositoryData?.name || ''" :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
         <FormTextarea :content="repositoryData?.description || ''" :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />
         <FormInput :content="repositoryData?.tags.join(', ') || ''" :description="'Separate tags with commas.'" :isRequired="false" :labelId="'tags'" :labelName="'Categories/Tags (comma-separated)'" :placeholder="'e.g., general, utility, marketing'" :type="'text'" :ref="el => registerRef('tags', el)" />

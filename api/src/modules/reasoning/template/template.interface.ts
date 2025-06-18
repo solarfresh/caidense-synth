@@ -16,6 +16,11 @@ export interface ReasoningTemplate extends Document {
   /**
    *
    */
+  tags?: string[];
+
+  /**
+   *
+   */
   activatedReasoningThinkingId?: Types.ObjectId
 
   /**
