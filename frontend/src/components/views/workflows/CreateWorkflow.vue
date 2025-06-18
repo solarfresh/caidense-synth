@@ -36,7 +36,7 @@ const handleSubmit = async () => {
   try {
     const response = await apiService.workflow.create(workflowFormData.value);
 
-    router.push({ name: 'WorkflowDetails', params: { id: response.data.id } });
+    router.push({ name: 'WorkflowDetail', params: { id: response.data.id } });
   } catch (error) {
     console.error('Error creating workflow:', error);
   } finally {

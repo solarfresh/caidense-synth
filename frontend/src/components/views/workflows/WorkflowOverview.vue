@@ -33,6 +33,10 @@ const fetchWorkflows = async () => {
 const goToCreateWorkflow = () => {
   router.push({ name: 'CreateWorkflow' });
 };
+
+const goToWorkflowDetail = (workflowId: string) => {
+  router.push({ name: 'WorkflowDetail', params: { id: workflowId }})
+}
 </script>
 
 <template>
@@ -88,7 +92,11 @@ const goToCreateWorkflow = () => {
           </div>
 
           <div v-else class="bg-white shadow-md rounded-md overflow-hidden">
-            <TableSection :columns="['Name', 'Status', 'Created At', 'Modified At']" :items="workflows" >
+            <TableSection
+              :columns="['Name', 'Status', 'Created At', 'Modified At']"
+              :items="workflows"
+              @edit="goToWorkflowDetail"
+            >
               <template #cell="{ item }">
                   <TableCell :content="item?.name" :custom-class="'font-medium text-gray-900'" />
                   <TableCell
