@@ -1,9 +1,9 @@
 import type { GenAIRequest } from '@/types/genai';
 import type { CreatePrompt, Prompt, UpdatePrompt } from '@/types/prompts';
 import type { CreateRepository, Repository, UpdateRepository } from '@/types/repositories';
+import type { CreateThinking, CreateWorkflow, UpdateThinking, Workflow } from '@/types/workflow';
 import axios, { AxiosResponse } from 'axios';
 import { GenAIEndPoints, PromptEndpoints, RepositoryEndpoints, WorkflowEndpoints } from './endpoints';
-import type { CreateWorkflow, Workflow} from '@/types/workflow';
 
 
 const apiClient = axios.create({
@@ -59,5 +59,14 @@ export const apiService = {
     create: (data: CreateWorkflow): Promise<AxiosResponse<Workflow>> => {
       return apiClient.post(WorkflowEndpoints.create(), data);
     },
+    get: (templateId: string, filter?: any): Promise<AxiosResponse<Workflow>> => {
+      return apiClient.get(WorkflowEndpoints.get(templateId), {params: filter});
+    },
+    createThinking: (templateId: string, data: CreateThinking): Promise<AxiosResponse<Workflow>> => {
+      return apiClient.post(WorkflowEndpoints.createThinking(templateId), data);
+    },
+    updateThinking: (templateId: string, data: UpdateThinking): Promise<AxiosResponse<Workflow>> => {
+      return apiClient.put(WorkflowEndpoints.updateThinking(templateId), data);
+    }
   }
 }

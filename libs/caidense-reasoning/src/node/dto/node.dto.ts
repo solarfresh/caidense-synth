@@ -28,6 +28,14 @@ export class ExecutionNodeDto {
   label?: string;
 
   @ApiProperty({
+    description: "An optional position object defining the node's coordinates in a visual layout.",
+    required: false,
+    example: { x: 10, y: 100 },
+  })
+  @Type(() => Object)
+  position?: object;
+
+  @ApiProperty({
     description: 'Optional configuration object specific to the node type.',
     required: false,
     // Use schema to provide a more specific structure example if possible
@@ -93,6 +101,7 @@ export class ExecutionNodeDto {
     this._id = plainObject._id.toHexString();
     this.type = plainObject.type;
     this.label = plainObject.label;
+    this.position = plainObject.position;
     this.config = plainObject.config;
     this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming.toHexString ? incoming.toHexString() : incoming) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];

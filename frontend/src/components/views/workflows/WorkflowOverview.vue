@@ -3,6 +3,7 @@ import { apiService } from '@/api/apiService';
 import TableCell from '@/components/layouts/table/TableCell.vue';
 import TableSection from '@/components/layouts/table/TableSection.vue';
 import Container from '@/components/shared/Container.vue';
+import { useWorkflowStore } from '@/stores/workflow';
 import type { Workflow } from '@/types/workflow';
 import { format } from 'date-fns';
 import { onMounted, ref } from 'vue';
@@ -10,6 +11,7 @@ import { useRouter } from 'vue-router';
 
 
 const router = useRouter();
+const store = useWorkflowStore();
 
 const searchQuery = ref('');
 const selectedStatus = ref('');
@@ -25,6 +27,7 @@ const fetchWorkflows = async () => {
   try {
     const response = await apiService.workflow.getAll();
     workflows.value = response.data;
+    store.updateWorkflows(workflows.value);
   } catch (error) {
     console.error('Error fetching workflows:', error)
   }
@@ -33,6 +36,11 @@ const fetchWorkflows = async () => {
 const goToCreateWorkflow = () => {
   router.push({ name: 'CreateWorkflow' });
 };
+
+const goToWorkflowDetail = (workflowId: string) => {
+  store.$state.currentWorkflowId = workflowId;
+  router.push({ name: 'WorkflowDetail', params: { id: workflowId }})
+}
 </script>
 
 <template>
@@ -88,9 +96,13 @@ const goToCreateWorkflow = () => {
           </div>
 
           <div v-else class="bg-white shadow-md rounded-md overflow-hidden">
-            <TableSection :columns="['Name', 'Status', 'Created At', 'Modified At']" :items="workflows" >
+            <TableSection
+              :columns="['Name', 'Status', 'Created At', 'Modified At']"
+              :items="workflows"
+              @edit="goToWorkflowDetail"
+            >
               <template #cell="{ item }">
-                  <TableCell :content="item?.name" :custom-class="'font-medium text-gray-900'" />
+                  <TableCell @click="goToWorkflowDetail(item.id)" :content="item?.name" :custom-class="'font-medium text-gray-900'" />
                   <TableCell
                     :content="item?.status"
                     :custom-class="'text-gray-500 uppercase'"

@@ -13,4 +13,8 @@ export const WorkflowEndpoints = {
     `${CAIDENSE_SYNTH_API_URL}/reasoning/template/${templateId}`,
   delete: (templateId: string) =>
     `${CAIDENSE_SYNTH_API_URL}/reasoning/template/${templateId}`,
+  createThinking: (templateId: string) =>
+    `${CAIDENSE_SYNTH_API_URL}/reasoning/template/${templateId}/thinking/create`,
+  updateThinking: (templateId: string) =>
+    `${CAIDENSE_SYNTH_API_URL}/reasoning/template/${templateId}/thinking/update`,
 };

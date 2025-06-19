@@ -8,6 +8,20 @@ export enum ExecutionNodeType {
   SCRIPT = 'script',
 }
 
+export interface Position {
+  /**
+   * The x-coordinate of the node's position in a visual layout.
+   * Typically represents horizontal placement.
+   */
+  x: number;
+
+  /**
+   * The y-coordinate of the node's position in a visual layout.
+   * Typically represents vertical placement.
+   */
+  y: number;
+};
+
 export interface ExecutionNodeConfig {
   // Depending on the 'type' property of IFlowNode,
   // this object will have different properties.
@@ -35,6 +49,11 @@ export interface ExecutionNode {
    * @example 'Call System_Text_Analyzer'
    */
   label?: string;
+
+  /**
+   * An optional position object defining the node's coordinates in a visual layout.
+   */
+  position?: Position;
 
   /**
    * Optional configuration object specific to this node's type.

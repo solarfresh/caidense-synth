@@ -18,6 +18,12 @@ const props = defineProps({
     default: true
   }
 });
+
+const emits = defineEmits<{
+  (e: 'view', id: string): void;
+  (e: 'edit', id: string): void;
+  (e: 'delete'): void;
+}>();
 </script>
 
 <template>
@@ -34,9 +40,9 @@ const props = defineProps({
       <tr v-for="item in items" :key="item.id">
         <slot name="cell" :item="item" />
         <td v-if="showActions" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <ViewButton :icon-only="true" class="mr-2" />
-          <EditButton :icon-only="true" class="mr-2" />
-          <DeleteButton :icon-only="true" />
+          <!-- <ViewButton :icon-only="true" class="mr-2" @click="$emit('view', item.id)" /> -->
+          <EditButton :icon-only="true" class="mr-2" @click="$emit('edit', item.id)" />
+          <DeleteButton :icon-only="true" @click="$emit('delete')" />
         </td>
       </tr>
     </tbody>
