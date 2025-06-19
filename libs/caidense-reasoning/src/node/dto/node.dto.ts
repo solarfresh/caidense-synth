@@ -28,6 +28,14 @@ export class ExecutionNodeDto {
   label?: string;
 
   @ApiProperty({
+    description: "An optional position object defining the node's coordinates in a visual layout.",
+    required: false,
+    example: { x: 10, y: 100 },
+  })
+  @Type(() => Object)
+  position?: object;
+
+  @ApiProperty({
     description: 'Optional configuration object specific to the node type.',
     required: false,
     // Use schema to provide a more specific structure example if possible

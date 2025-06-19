@@ -27,6 +27,16 @@ export class UpdateExecutionNodeDto {
   label?: string;
 
   @ApiProperty({
+    description: "An optional position object defining the node's coordinates in a visual layout.",
+    required: false,
+    example: { x: 10, y: 100 },
+  })
+  @IsOptional()
+  @IsObject()
+  @Type(() => Object)
+  position?: object;
+
+  @ApiProperty({
     description: 'Optional configuration object specific to the node type.',
     required: false,
     example: { logicType: 'sumAndCompare', threshold: 100 },

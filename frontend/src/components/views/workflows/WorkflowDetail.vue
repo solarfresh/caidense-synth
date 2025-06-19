@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import { apiService } from '@/api/apiService';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import Container from '@/components/shared/Container.vue';
 import { useWorkflowStore } from '@/stores/workflow';
 import type { Workflow } from '@/types/workflow';
 import { useVueFlow, VueFlow } from '@vue-flow/core';
 import { ObjectId } from 'bson';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
-import { apiService } from '@/api/apiService';
 
 
 const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow();
@@ -18,8 +18,28 @@ const store = useWorkflowStore();
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
-const nodes = ref([])
 const workflow = ref<Workflow | null>(null);
+
+const edges = computed(() => {
+  const workflow = store.getCurrentWorkflow;
+  if (!workflow) return [];
+
+  return workflow.activatedReasoningThinkingId.edges;
+});
+
+const nodes = computed(() => {
+  const workflow = store.getCurrentWorkflow;
+  if (!workflow) return [];
+
+  return workflow.activatedReasoningThinkingId.nodes.map(node => {
+    return {
+      id: node.id,
+      type: node.type,
+      position: node?.position || {x: 0, y: 0},
+      data: { label: node.label },
+    }
+  });
+});
 
 watch(isDragging, (dragging) => {
   document.body.style.userSelect = dragging ? 'none' : ''
@@ -125,7 +145,7 @@ onConnect(addEdges)
           <WorkflowDetailSidebar @dragstart="onDragStart" />
         </div>
         <div class="flex-auto p-6 mx-4 bg-white shadow-md rounded-md">
-          <VueFlow :nodes="nodes" @dragover="onDragOver" @dragleave="onDragLeave">
+          <VueFlow :nodes="nodes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
             <FlowBackground
               :style="{
                 backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',

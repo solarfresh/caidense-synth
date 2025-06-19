@@ -8,6 +8,20 @@ export enum ExecutionNodeType {
   SCRIPT = 'script',
 }
 
+interface Position {
+  /**
+   * The x-coordinate of the node's position in a visual layout.
+   * Typically represents horizontal placement.
+   */
+  x: number;
+
+  /**
+   * The y-coordinate of the node's position in a visual layout.
+   * Typically represents vertical placement.
+   */
+  y: number;
+};
+
 interface Variable {
   /**
    * The name of the variable within the scope (inputs or outputs).
@@ -46,6 +60,11 @@ interface Variable {
 }
 
 export interface ExecutionEdge {
+  /**
+   * A unique identifier for the edge within the execution flow.
+   */
+  id: string;
+
   /**
    * The ID of the source node from which this edge originates.
    */
@@ -102,6 +121,11 @@ export interface ExecutionNodeConfig {
 
 interface ExecutionNode {
   /**
+   * A unique identifier for the node within the execution flow.
+   */
+  id: string;
+
+  /**
    * The type of the node, determining its function and behavior in the flow.
    * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'llmCall')
    * or a custom type representing specific logic (e.g., 'promptNode', 'decisionNode').
@@ -114,6 +138,11 @@ interface ExecutionNode {
    * @example 'Call System_Text_Analyzer'
    */
   label?: string;
+
+  /**
+   * An optional position object defining the node's coordinates in a visual layout.
+   */
+  position?: Position;
 
   /**
    * Optional configuration object specific to this node's type.
