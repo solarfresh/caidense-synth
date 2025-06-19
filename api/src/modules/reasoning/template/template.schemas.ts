@@ -8,6 +8,10 @@ import { ReasoningTemplate } from './template.interface';
   timestamps: true,
   toJSON: {
     virtuals: true,
+    transform(doc: any, ret: any) {
+      delete ret.__v;
+      delete ret._id;
+    }
   },
 })
 export class ReasoningTemplateDocument extends Document implements ReasoningTemplate {

@@ -8,7 +8,7 @@ export enum ExecutionNodeType {
   SCRIPT = 'script',
 }
 
-interface Position {
+export interface Position {
   /**
    * The x-coordinate of the node's position in a visual layout.
    * Typically represents horizontal placement.

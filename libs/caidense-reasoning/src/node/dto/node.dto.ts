@@ -101,6 +101,7 @@ export class ExecutionNodeDto {
     this._id = plainObject._id.toHexString();
     this.type = plainObject.type;
     this.label = plainObject.label;
+    this.position = plainObject.position;
     this.config = plainObject.config;
     this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming.toHexString ? incoming.toHexString() : incoming) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];

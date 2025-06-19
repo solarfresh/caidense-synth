@@ -27,7 +27,11 @@ const workflow = ref<Workflow | null>(null);
 const submitFormData = computed(() => {
   let thinking = {} as Thinking;
   if(workflow.value?.activatedReasoningThinkingId) {
-    thinking = workflow.value?.activatedReasoningThinkingId;
+    thinking.name = workflow.value?.activatedReasoningThinkingId.name;
+    thinking.description = workflow.value?.activatedReasoningThinkingId.description;
+    thinking.inputs = workflow.value?.activatedReasoningThinkingId.inputs;
+    thinking.outputs = workflow.value?.activatedReasoningThinkingId.outputs;
+    thinking.status = workflow.value?.activatedReasoningThinkingId.status;
   } else {
     thinking.name = workflow.value?.name || '';
     thinking.description = workflow.value?.description || '';
@@ -103,7 +107,14 @@ const fetchWorkflow = async () => {
 };
 
 const handleSubmit = async () => {
-  console.log(submitFormData.value);
+  let response = undefined;
+  if (workflow.value?.activatedReasoningThinkingId) {
+    response = await apiService.workflow.updateThinking(store.currentWorkflowId, submitFormData.value);
+  } else {
+    response = await apiService.workflow.createThinking(store.currentWorkflowId, submitFormData.value);
+  }
+
+  store.workflows.set(response.data.id, response.data);
 };
 
 const onDragStart = (event: DragEvent, type: string) => {

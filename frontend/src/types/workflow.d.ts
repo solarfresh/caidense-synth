@@ -23,6 +23,8 @@ interface Position {
 };
 
 interface Variable {
+  id: string;
+
   /**
    * The name of the variable within the scope (inputs or outputs).
    */
@@ -193,6 +195,17 @@ interface ExecutionNode {
   updatedAt: Date;
 }
 
+export interface CreateThinking {
+  id?: string;
+  name?: string;
+  description?: string;
+  nodes?: ExecutionNode[];
+  edges?: ExecutionEdge[];
+  inputs?: Variable[];
+  outputs?: Variable[];
+  status?: DocumentStatus;
+}
+
 interface Thinking {
   id: string;
   name: string;
@@ -204,6 +217,17 @@ interface Thinking {
   status: DocumentStatus;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface UpdateThinking {
+  id?: string;
+  name?: string;
+  description?: string;
+  nodes?: ExecutionNode[];
+  edges?: ExecutionEdge[];
+  inputs?: Variable[];
+  outputs?: Variable[];
+  status?: DocumentStatus;
 }
 
 export interface CreateWorkflow {
