@@ -19,4 +19,9 @@ export class ReasoningTemplateService extends BaseService<ReasoningTemplateDocum
     const documents = await this.reasoningTemplateModel.find(filter).populate('activatedReasoningThinkingId').exec();
     return documents.map((document) => {return document.toJSON();});
   }
+
+  async findById(id: string): Promise<ReasoningTemplateDocument> {
+    const document = await this.reasoningTemplateModel.findById(id).populate('activatedReasoningThinkingId').exec();
+    return document.toJSON();
+  };
 }

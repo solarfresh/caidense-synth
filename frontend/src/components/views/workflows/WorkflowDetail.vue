@@ -1,27 +1,50 @@
 <script setup lang="ts">
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import Container from '@/components/shared/Container.vue';
+import { useWorkflowStore } from '@/stores/workflow';
+import type { Workflow } from '@/types/workflow';
 import { useVueFlow, VueFlow } from '@vue-flow/core';
 import { ObjectId } from 'bson';
-import { ref, watch, onUnmounted } from 'vue';
-import WorkflowSidebar from './WorkflowSidebar.vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
+import { apiService } from '@/api/apiService';
 
 
 const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow();
+const route = useRoute();
+const store = useWorkflowStore();
 
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
 const nodes = ref([])
+const workflow = ref<Workflow | null>(null);
 
 watch(isDragging, (dragging) => {
   document.body.style.userSelect = dragging ? 'none' : ''
 })
 
+onMounted(() => {
+  fetchWorkflow();
+});
 
 onUnmounted(() => {
   document.removeEventListener('drop', onDragEnd);
-})
+});
+
+const fetchWorkflow = async () => {
+  workflow.value = store.getCurrentWorkflow;
+
+  if (!workflow.value) {
+    const workflowId = route.params.id as string;
+    const response = await apiService.workflow.get(workflowId);
+
+    workflow.value = response.data;
+    store.currentWorkflowId = workflowId;
+    store.workflows.set(workflowId, workflow.value);
+  }
+};
 
 const onDragStart = (event: DragEvent, type: string) => {
   if (event.dataTransfer) {
@@ -94,12 +117,12 @@ onConnect(addEdges)
 
 <template>
   <Container
-    :page-title="'Editing Workflow'"
+    :page-title="workflow?.name"
   >
     <template #content>
       <div class="flex h-screen" @drop="onDrop">
         <div class="flex-none p-6 mx-4 bg-white shadow-md rounded-md">
-          <WorkflowSidebar @dragstart="onDragStart" />
+          <WorkflowDetailSidebar @dragstart="onDragStart" />
         </div>
         <div class="flex-auto p-6 mx-4 bg-white shadow-md rounded-md">
           <VueFlow :nodes="nodes" @dragover="onDragOver" @dragleave="onDragLeave">

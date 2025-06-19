@@ -59,5 +59,8 @@ export const apiService = {
     create: (data: CreateWorkflow): Promise<AxiosResponse<Workflow>> => {
       return apiClient.post(WorkflowEndpoints.create(), data);
     },
+    get: (templateId: string, filter?: any): Promise<AxiosResponse<Workflow>> => {
+      return apiClient.get(WorkflowEndpoints.get(templateId), {params: filter});
+    },
   }
 }

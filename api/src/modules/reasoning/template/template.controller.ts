@@ -78,7 +78,7 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning template with the given ID not found.' })
   async findById(@Param('id') id: string): Promise<ReasoningTemplateDocument> {
      // Call the base controller's findById method.
-     return super.findById(id);
+     return this.reasoningTemplateService.findById(id);
   }
 
   @Put(':id')
