@@ -3,42 +3,55 @@ import { apiService } from '@/api/apiService';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import Container from '@/components/shared/Container.vue';
 import { useWorkflowStore } from '@/stores/workflow';
-import type { Workflow } from '@/types/workflow';
-import { useVueFlow, VueFlow } from '@vue-flow/core';
+import type { ExecutionEdge, Thinking, Workflow } from '@/types/workflow';
+import { ExecutionNodeType } from '@/types/workflow';
+import { Edge, Node, useVueFlow, VueFlow } from '@vue-flow/core';
 import { ObjectId } from 'bson';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 
 
-const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow();
+const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodeDrag, onNodesInitialized, updateNode } = useVueFlow();
 const route = useRoute();
 const store = useWorkflowStore();
 
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
+const edges = ref<Edge[]>([]);
+const nodes = ref<Node[]>([]);
 const workflow = ref<Workflow | null>(null);
 
-const edges = computed(() => {
-  const workflow = store.getCurrentWorkflow;
-  if (!workflow) return [];
 
-  return workflow.activatedReasoningThinkingId.edges;
-});
+const submitFormData = computed(() => {
+  let thinking = {} as Thinking;
+  if(workflow.value?.activatedReasoningThinkingId) {
+    thinking = workflow.value?.activatedReasoningThinkingId;
+  } else {
+    thinking.name = workflow.value?.name || '';
+    thinking.description = workflow.value?.description || '';
+  }
 
-const nodes = computed(() => {
-  const workflow = store.getCurrentWorkflow;
-  if (!workflow) return [];
-
-  return workflow.activatedReasoningThinkingId.nodes.map(node => {
+  thinking.nodes = nodes.value.map(node => {
     return {
       id: node.id,
-      type: node.type,
-      position: node?.position || {x: 0, y: 0},
-      data: { label: node.label },
+      type: node.type as ExecutionNodeType,
+      position: node.position,
+      label: node.data.label,
+      config: node.data.config,
+      incoming: node.data.incoming,
+      inputs: node.data.inputs,
+      script: node.data.script,
+      outgoing: node.data.outgoing,
+      outputs: node.data.outputs,
+      createdAt: node.data.createdAt,
+      updatedAt: node.data.updatedAt
     }
   });
+  thinking.edges = edges.value as ExecutionEdge[];
+
+  return thinking;
 });
 
 watch(isDragging, (dragging) => {
@@ -64,6 +77,33 @@ const fetchWorkflow = async () => {
     store.currentWorkflowId = workflowId;
     store.workflows.set(workflowId, workflow.value);
   }
+
+  if (workflow.value.activatedReasoningThinkingId) {
+    nodes.value = workflow.value.activatedReasoningThinkingId.nodes.map(node => {
+      return {
+        id: node.id,
+        type: node.type,
+        position: node?.position || {x: 0, y: 0},
+        data: {
+          label: node.label,
+          config: node.config,
+          incoming: node.incoming,
+          inputs: node.inputs,
+          script: node.script,
+          outgoing: node.outgoing,
+          outputs: node.outputs,
+          createdAt: node.createdAt,
+          updatedAt: node.updatedAt
+        },
+      }
+    });
+
+    edges.value = workflow.value.activatedReasoningThinkingId.edges;
+  }
+};
+
+const handleSubmit = async () => {
+  console.log(submitFormData.value);
 };
 
 const onDragStart = (event: DragEvent, type: string) => {
@@ -79,6 +119,7 @@ const onDragStart = (event: DragEvent, type: string) => {
 }
 
 const onDragOver = (event: DragEvent) => {
+  console.log(event);
   event.preventDefault()
 
   if (draggedType.value) {
@@ -132,12 +173,25 @@ const onDrop = (event: DragEvent) => {
   addNodes(newNode);
 }
 
+
+onNodeDrag(({ node, event }) => {
+  const index = nodes.value.findIndex(obj => obj.id === node.id);
+  if (index !== -1) {
+    nodes.value[index].position = node.position;
+  };
+});
+
 onConnect(addEdges)
 </script>
 
 <template>
   <Container
     :page-title="workflow?.name"
+    :go-back-button-name="'Go Back'"
+    :go-back-router-name="'WorkflowOverview'"
+    :edit-button-name="'Save Workflow'"
+    :delete-button-name="'Delete Workflow'"
+    @edit="handleSubmit"
   >
     <template #content>
       <div class="flex h-screen" @drop="onDrop">
