@@ -26,7 +26,7 @@ const emits = defineEmits<{
 
   <div v-if="isOpen" class="fixed z-50 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-full p-4 text-center">
-      <div class="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:max-w-md sm:w-full sm:p-6">
+      <div class="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:max-w-2x1 sm:w-full sm:p-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg leading-6 font-medium text-gray-900">
             {{ title }}
