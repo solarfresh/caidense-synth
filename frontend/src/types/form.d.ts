@@ -29,6 +29,7 @@ export interface FormProps {
   optionName?: string;
   options?: array<FormSelectOption>;
   placeholder?: string;
+  rows?: number;
   subLabelName?: string;
   type?: string;
 }

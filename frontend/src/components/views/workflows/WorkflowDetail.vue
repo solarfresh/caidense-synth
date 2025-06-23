@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
+import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
 import { useWorkflowStore } from '@/stores/workflow';
 import type { ExecutionEdge, Thinking, Workflow } from '@/types/workflow';
@@ -10,19 +11,22 @@ import { ObjectId } from 'bson';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
+import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
 
 
-const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodeDrag, onNodesInitialized, updateNode } = useVueFlow();
+const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodeDoubleClick, onNodeDrag, onNodesInitialized, updateNode } = useVueFlow();
 const route = useRoute();
 const store = useWorkflowStore();
 
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
+const isEditNode = ref(false);
 const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
 const workflow = ref<Workflow | null>(null);
 
+const nodeConfig = ref<Node | null>(null);
 
 const submitFormData = computed(() => {
   let thinking = {} as Thinking;
@@ -184,6 +188,11 @@ const onDrop = (event: DragEvent) => {
   addNodes(newNode);
 }
 
+onNodeDoubleClick((event) => {
+  isEditNode.value = true;
+  console.log(event.node);
+  nodeConfig.value = event.node;
+});
 
 onNodeDrag(({ node, event }) => {
   const index = nodes.value.findIndex(obj => obj.id === node.id);
@@ -224,4 +233,9 @@ onConnect(addEdges)
       </div>
     </template>
   </Container>
+  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false">
+    <template #fields>
+      <WorkflowNodeFormData :node-config="nodeConfig" />
+    </template>
+  </FormModal>
 </template>
