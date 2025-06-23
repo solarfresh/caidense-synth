@@ -22,9 +22,9 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <div v-if="true" class="fixed z-50 inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+  <div v-if="isOpen" class="fixed z-50 inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
-  <div v-if="true" class="fixed z-50 inset-0 overflow-y-auto">
+  <div v-if="isOpen" class="fixed z-50 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-full p-4 text-center">
       <div class="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:max-w-md sm:w-full sm:p-6">
         <div class="flex items-center justify-between mb-4">
@@ -37,7 +37,7 @@ const emits = defineEmits<{
         <slot name="fields" />
 
         <div class="mt-5 sm:mt-6 space-x-2 flex justify-end">
-          <CancelButton @click="$emit('close')" :button-name="'Cancel'" />
+          <CancelButton @click="$emit('close')" :button-name="'Cancel'" :is-go-back="false" />
           <SubmitButton @click="$emit('save')" :is-submitting="false" :button-name="'Save Configuration'" :dynamic-button-name="'Saving...'" />
         </div>
       </div>
