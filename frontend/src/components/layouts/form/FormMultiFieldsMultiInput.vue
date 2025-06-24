@@ -18,8 +18,6 @@ const props = defineProps({
   }
 });
 
-const componentIndexes = ref([1]);
-
 const components = shallowRef(new Map([
   ['input', FormInput],
   ['select', FormSelect],

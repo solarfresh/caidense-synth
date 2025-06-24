@@ -58,3 +58,17 @@ export interface Block {
    */
   updatedAt: Date;
 }
+
+export interface CreateBlock {
+  name: string;
+  description?: string;
+  type: string;
+  config?: BlockConfig;
+};
+
+export interface UpdateBlock {
+  name?: string;
+  description?: string;
+  type?: string;
+  config?: BlockConfig;
+};
