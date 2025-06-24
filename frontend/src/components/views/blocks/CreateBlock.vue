@@ -99,7 +99,7 @@ const registerRef = async (key:string, instance: any) => {
             <FormMultiFieldsMultiInput
               :ref="el => registerRef('config', el)"
               :add-button-name="'Add Config'"
-              :componentInfo="[
+              :componentGroup="[[
               {
                 name: 'input',
                 props: {
@@ -122,7 +122,7 @@ const registerRef = async (key:string, instance: any) => {
                   type: 'text'
                 }
               }
-            ]" />
+            ]]" />
           </template>
         </FormSection>
 

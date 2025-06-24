@@ -4,7 +4,7 @@ import RemoveButton from '@/components/base/buttons/RemoveButton.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormSelect from '@/components/layouts/form/FormSelect.vue';
 import { FormInstance, FormProps } from '@/types/form';
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 
 
 const props = defineProps({
@@ -12,8 +12,8 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  componentInfo: {
-    type: Array<{name: string; props: FormProps;}>,
+  componentGroup: {
+    type: Array<Array<{name: string; props: FormProps;}>>,
     required: true,
   }
 });
@@ -22,33 +22,46 @@ const components = shallowRef(new Map([
   ['input', FormInput],
   ['select', FormSelect],
 ]))
+const formGroup = ref(props.componentGroup);
+const formInfo = ref(JSON.parse(JSON.stringify(formGroup.value[0] || {})));
 
 const formInstanceArray = ref<[Map<string, FormInstance>]>([new Map()]);
+
+watch(() => props.componentGroup, (newValue) => {
+  formGroup.value = newValue;
+  const copyObj = JSON.parse(JSON.stringify(newValue[0]));
+  formInfo.value = copyObj.map((obj: any) => {
+    obj.props.content = ''
+    return obj;
+  });
+});
 
 defineExpose({
   formInstanceArray
 });
 
 const addComponent = async () => {
+  formGroup.value.push(formInfo.value);
   formInstanceArray.value.push(new Map());
 };
 
-const registerRef = async (componentMap: Map<string, FormInstance>, key:string, instance: any) => {
+const registerRef = async (index: number, key:string, instance: any) => {
   if (instance) {
-    componentMap.set(key, instance);
+    formInstanceArray.value[index]?.set(key, instance);
   }
 }
 
 const removeComponent = async (index: number) => {
+  formGroup.value.splice(index, 1);
   formInstanceArray.value.splice(index, 1);
 };
 </script>
 
 <template>
   <div class="space-y-4">
-    <div v-for="(componentMap, index) in formInstanceArray" class="flex flex-row items-center justify-center sm:w-full space-x-4 mb-2">
+    <div v-for="(componentInfo, index) in formGroup" class="flex flex-row items-center justify-center sm:w-full space-x-4 mb-2">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-        <component v-for="info in componentInfo" :is="components.get(info.name)" v-bind="info.props" :ref="el => registerRef(componentMap, info.props.labelId, el)" />
+        <component v-for="info in componentInfo" :is="components.get(info.name)" v-bind="info.props" :ref="el => registerRef(index, info.props.labelId, el)" />
       </div>
       <RemoveButton :icon-only="true" :button-name="'Remove'" class="inline-flex" @click="removeComponent(index)" />
     </div>

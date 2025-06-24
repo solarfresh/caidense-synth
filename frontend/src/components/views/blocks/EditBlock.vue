@@ -54,7 +54,6 @@ onMounted( async () => {
     const response = await apiService.block.get(blockId.value);
     block.value = response.data;
   }
-  console.log(block.value);
 });
 
 const handleSubmit = async () => {
@@ -121,36 +120,41 @@ const registerRef = async (key:string, instance: any) => {
             <FormMultiFieldsMultiInput
               :ref="el => registerRef('config', el)"
               :add-button-name="'Add Config'"
-              :componentInfo="[
-              {
-                name: 'input',
-                props: {
-                  hasMargin: false,
-                  labelId: 'configKey',
-                  labelName: 'Key',
-                  isRequired: false,
-                  placeholder: 'e.g., promptTemplate',
-                  type: 'text'
-                }
-              },
-              {
-                name: 'input',
-                props: {
-                  hasMargin: false,
-                  labelId: 'configDefaultValue',
-                  labelName: 'Default Value',
-                  isRequired: false,
-                  placeholder: 'e.g., Say hello...',
-                  type: 'text'
-                }
-              }
-            ]" />
+              :componentGroup="Array.from(Object.entries(block?.config || {})).map(([key, value]) => {
+                return [
+                  {
+                    name: 'input',
+                    props: {
+                      content: key,
+                      hasMargin: false,
+                      labelId: 'configKey',
+                      labelName: 'Key',
+                      isRequired: false,
+                      placeholder: 'e.g., promptTemplate',
+                      type: 'text'
+                    }
+                  },
+                  {
+                    name: 'input',
+                    props: {
+                      content: value,
+                      hasMargin: false,
+                      labelId: 'configDefaultValue',
+                      labelName: 'Default Value',
+                      isRequired: false,
+                      placeholder: 'e.g., Say hello...',
+                      type: 'text'
+                    }
+                  }
+                ]
+              })"
+            />
           </template>
         </FormSection>
 
         <div class="flex justify-end space-x-4 mt-8">
           <CancelButton :buttonName="'Cancel'" />
-          <SubmitButton :isSubmitting="isSubmitting" :buttonName="'Create Block'" :dynamic-button-name="'Creating...'" />
+          <SubmitButton :isSubmitting="isSubmitting" :buttonName="'Save Block'" :dynamic-button-name="'Saving...'" />
         </div>
       </form>
     </template>
