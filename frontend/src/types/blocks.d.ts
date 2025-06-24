@@ -10,13 +10,18 @@ interface BlockConfig {
   modelName?: string;
   promptTemplate?: string;
   promptTemplateId?: string;
-  provider?: string;
+  service?: string;
   // SCRIPT Config
   script?: string;
   [key: string]: any;
 }
 
 export interface Block {
+  /**
+   * An unique identifier for the block.
+   */
+  id: string;
+
   /**
    * A readable name for the block
    */

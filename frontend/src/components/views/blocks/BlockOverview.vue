@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { apiService } from '@/api/apiService';
 import Container from '@/components/shared/Container.vue';
 import type { Block } from '@/types/blocks';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import BlockCard from './BlockCard.vue';
 
 
 const router = useRouter();
@@ -10,9 +12,26 @@ const router = useRouter();
 const blocks = ref<Block[]>([]);
 const showSidebar = ref<boolean>(false); // Toggle sidebar visibility
 
+onMounted(() => {
+  fetchBlocks();
+});
+
+const fetchBlocks = async () => {
+  const response = await apiService.block.getAll();
+  blocks.value = response.data;
+};
+
 const goToCreateBlock = () => {
   router.push({ name: 'CreateBlock' });
 };
+
+const handleEditBlock = (id: string) => {
+  console.log('Editing block:', id);
+}
+
+const handleDeleteBlock = (id: string) => {
+  console.log('Deleting block:', id);
+}
 </script>
 
 <template>
@@ -26,16 +45,13 @@ const goToCreateBlock = () => {
           </div>
 
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-<!--
-            <RepositoryCard
-              v-for="repository in filteredRepositories"
-              :key="repository.id"
-              :repository="repository"
-              @edit="handleEditRepository"
-              @delete="handleDeleteCollection"
-              @view="handleViewCollection"
+            <BlockCard
+              v-for="block in blocks"
+              :key="block.id"
+              :block="block"
+              @edit="handleEditBlock"
+              @delete="handleDeleteBlock"
             />
- -->
           </div>
         </div>
       </div>

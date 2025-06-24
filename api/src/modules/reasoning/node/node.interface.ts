@@ -19,6 +19,16 @@ export interface ReasoningNodeConfig {
  */
 export interface ReasoningNode extends Document {
   /**
+   * A readable name for the block
+   */
+  name: string;
+
+  /**
+   * To describe the purpose or functionality of the block.
+   */
+  description?: string;
+
+  /**
    * The type of the node, determining its function and behavior in the flow.
    * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
    * or a custom type representing specific logic (e.g., 'promptNode', 'decisionNode').

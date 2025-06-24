@@ -15,6 +15,18 @@ export class ReasoningNodeDto {
   _id: string;
 
   @ApiProperty({
+    description: 'A readable name for the block.',
+    example: 'LLM Call',
+  })
+  name: string;
+
+  @ApiProperty({
+    description: 'To describe the purpose or functionality of the block.',
+    example: 'Invoke a Large Language Model with a prompt template.',
+  })
+  description: string;
+
+  @ApiProperty({
     description: 'The type of the node, determining its function and behavior in the flow.',
     example: 'systemLogic',
   })
@@ -66,6 +78,8 @@ export class ReasoningNodeDto {
     const plainObject = document.toJSON ? document.toJSON() : document;
 
     this._id = plainObject._id.toHexString();
+    this.name = plainObject.name;
+    this.description = plainObject.description;
     this.type = plainObject.type;
     this.label = plainObject.label;
     this.config = plainObject.config;

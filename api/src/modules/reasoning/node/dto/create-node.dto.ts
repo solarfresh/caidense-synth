@@ -10,6 +10,21 @@ import { IsArray, IsObject, IsOptional, IsString, ValidateNested } from 'class-v
  */
 export class CreateReasoningNodeDto {
   @ApiProperty({
+    description: 'A readable name for the block.',
+    example: 'LLM Call',
+  })
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    description: 'To describe the purpose or functionality of the block.',
+    example: 'Invoke a Large Language Model with a prompt template.',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({
     description: 'The type of the node, determining its function and behavior in the flow.',
     example: 'systemLogic',
   })

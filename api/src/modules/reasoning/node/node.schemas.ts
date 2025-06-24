@@ -16,6 +16,13 @@ import { ReasoningNode, ReasoningNodeConfig } from './node.interface';
   },
 })
 export class ReasoningNodeDocument extends Document implements ReasoningNode {
+
+  @Prop({ type: String, required: true })
+  name: string;
+
+  @Prop({ type: String })
+  description?: string;
+
   /**
    * The type of the node, determining its function and behavior.
    * Maps to ReasoningNode.type.
