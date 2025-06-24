@@ -18,6 +18,16 @@ interface BlockConfig {
 
 export interface Block {
   /**
+   * A readable name for the block
+   */
+  name: string;
+
+  /**
+   * To describe the purpose or functionality of the block.
+   */
+  description: string;
+
+  /**
    * The type of the block, determining its function and behavior in the flow.
    * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
    * or a custom type representing specific logic (e.g., 'promptNode', 'decisionNode').
