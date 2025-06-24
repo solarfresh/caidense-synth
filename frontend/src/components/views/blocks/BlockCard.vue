@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { formatDistanceToNow } from 'date-fns'; // Using date-fns for date formatting
 import type { Block } from '@/types/blocks';
+import { formatDistanceToNow } from 'date-fns'; // Using date-fns for date formatting
 
 
 const props = defineProps<{

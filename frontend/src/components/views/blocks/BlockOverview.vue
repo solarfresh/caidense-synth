@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
 import Container from '@/components/shared/Container.vue';
+import { useBlocktStore } from '@/stores/block';
 import type { Block } from '@/types/blocks';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -8,6 +9,7 @@ import BlockCard from './BlockCard.vue';
 
 
 const router = useRouter();
+const store = useBlocktStore();
 
 const blocks = ref<Block[]>([]);
 const showSidebar = ref<boolean>(false); // Toggle sidebar visibility
@@ -19,6 +21,7 @@ onMounted(() => {
 const fetchBlocks = async () => {
   const response = await apiService.block.getAll();
   blocks.value = response.data;
+  store.updateBlocks(blocks.value);
 };
 
 const goToCreateBlock = () => {
@@ -27,6 +30,8 @@ const goToCreateBlock = () => {
 
 const handleEditBlock = (id: string) => {
   console.log('Editing block:', id);
+  store.currentBlockId = id;
+  router.push({ name: 'EditBlock', params: { id } });
 }
 
 const handleDeleteBlock = (id: string) => {

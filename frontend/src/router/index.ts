@@ -11,6 +11,7 @@ import CreateWorkflow from '@/components/views/workflows/CreateWorkflow.vue';
 import WorkflowDetail from '@/components/views/workflows/WorkflowDetail.vue';
 import WorkflowOverview from '@/components/views/workflows/WorkflowOverview.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import EditBlock from '@/components/views/blocks/EditBlock.vue';
 
 
 const blockRoutes = [
@@ -23,6 +24,12 @@ const blockRoutes = [
     path: '/blocks/create',
     name: 'CreateBlock',
     component: CreateBlock
+  },
+  {
+    path: '/blocks/:id',
+    name: 'EditBlock',
+    component: EditBlock,
+    props: true,
   }
 ]
 
@@ -41,6 +48,7 @@ const workflowRoutes = [
     path: '/workflows/:id',
     name: 'WorkflowDetail',
     component: WorkflowDetail,
+    props: true,
   }
 ]
 
