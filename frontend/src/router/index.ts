@@ -1,3 +1,5 @@
+import BlockOverview from '@/components/views/blocks/BlockOverview.vue';
+import CreateBlock from '@/components/views/blocks/CreateBlock.vue';
 import CreatePrompt from '@/components/views/prompts/CreatePrompt.vue';
 import EditPrompt from '@/components/views/prompts/EditPrompt.vue';
 import PromptDetail from '@/components/views/prompts/PromptDetail.vue';
@@ -10,6 +12,19 @@ import WorkflowDetail from '@/components/views/workflows/WorkflowDetail.vue';
 import WorkflowOverview from '@/components/views/workflows/WorkflowOverview.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
+
+const blockRoutes = [
+  {
+    path: '/blocks',
+    name: 'BlockOverview',
+    component: BlockOverview
+  },
+  {
+    path: '/blocks/create',
+    name: 'CreateBlock',
+    component: CreateBlock
+  }
+]
 
 const workflowRoutes = [
   {
@@ -81,6 +96,7 @@ const routes = [
     component: RepositoryOverview,
   }
 ]
+  .concat(blockRoutes)
   .concat(workflowRoutes)
   .concat(promptRoutes)
   .concat(repositoryRoutes)
