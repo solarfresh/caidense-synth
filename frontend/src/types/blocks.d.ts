@@ -1,23 +1,27 @@
-import { Variable } from '@caidense/reasoning/common/common.interface';
-import { Document } from 'mongoose';
+export enum BlockType {
+  LLM_CALL = 'llmCall',
+  START_EVENT = 'startEvent',
+  END_EVENT = 'endEvent',
+  SCRIPT = 'script',
+}
 
-
-export interface ReasoningNodeConfig {
+interface BlockConfig {
+  // LLM_CALL Config
   modelName?: string;
   promptTemplate?: string;
   promptTemplateId?: string;
-  provider?: string;
+  service?: string;
+  // SCRIPT Config
   script?: string;
   [key: string]: any;
 }
 
+export interface Block {
+  /**
+   * An unique identifier for the block.
+   */
+  id: string;
 
-/**
- * Defines the structure of a node within a reasoning thinking flow.
- * This interface represents a node's data within a potential flow execution context.
- * execution context.
- */
-export interface ReasoningNode extends Document {
   /**
    * A readable name for the block
    */
@@ -26,10 +30,10 @@ export interface ReasoningNode extends Document {
   /**
    * To describe the purpose or functionality of the block.
    */
-  description?: string;
+  description: string;
 
   /**
-   * The type of the node, determining its function and behavior in the flow.
+   * The type of the block, determining its function and behavior in the flow.
    * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
    * or a custom type representing specific logic (e.g., 'promptNode', 'decisionNode').
    * @example 'aiCall'
@@ -47,19 +51,7 @@ export interface ReasoningNode extends Document {
    * Contains parameters needed for the node's execution logic.
    * @example { templateId: 'abc123', analysisType: 'criteria_evaluation' }
    */
-  config?: ReasoningNodeConfig;
-
-  /**
-   * Optional array defining the inputs specific to this node's logic.
-   * These define what data the node expects from the execution context.
-   */
-  inputs?: Variable[];
-
-  /**
-   * Optional array defining the outputs specific to this node's logic.
-   * These define what data the node might produce and make available in the execution context.
-   */
-  outputs?: Variable[];
+  config?: BlockConfig;
 
   /**
    * The timestamp when the node was created.
@@ -71,3 +63,17 @@ export interface ReasoningNode extends Document {
    */
   updatedAt: Date;
 }
+
+export interface CreateBlock {
+  name: string;
+  description?: string;
+  type: string;
+  config?: BlockConfig;
+};
+
+export interface UpdateBlock {
+  name?: string;
+  description?: string;
+  type?: string;
+  config?: BlockConfig;
+};

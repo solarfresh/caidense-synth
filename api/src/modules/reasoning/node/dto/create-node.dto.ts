@@ -10,6 +10,21 @@ import { IsArray, IsObject, IsOptional, IsString, ValidateNested } from 'class-v
  */
 export class CreateReasoningNodeDto {
   @ApiProperty({
+    description: 'A readable name for the block.',
+    example: 'LLM Call',
+  })
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    description: 'To describe the purpose or functionality of the block.',
+    example: 'Invoke a Large Language Model with a prompt template.',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({
     description: 'The type of the node, determining its function and behavior in the flow.',
     example: 'systemLogic',
   })
@@ -45,15 +60,6 @@ export class CreateReasoningNodeDto {
   @ValidateNested({ each: true })
   @Type(() => CreateVariableDto)
   inputs?: CreateVariableDto[];
-
-  @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  @IsOptional()
-  @IsString()
-  script?: string;
 
   @ApiProperty({
     description: 'Optional array defining the outputs specific to this node\'s logic.',

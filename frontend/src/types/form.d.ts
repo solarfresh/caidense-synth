@@ -10,6 +10,7 @@ export interface FormInstance {
   editableContent?: string;
   editableVariables?: CreateVariable[];
   formInstance?: Map<string, FormInstance>;
+  formInstanceArray?: [Map<string, FormInstance>];
   $el: HTMLElement;
 }
 

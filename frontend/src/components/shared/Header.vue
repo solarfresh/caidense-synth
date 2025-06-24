@@ -21,6 +21,10 @@ import { RocketLaunchIcon, FolderIcon, CubeIcon } from '@heroicons/vue/24/outlin
           <FolderIcon class="w-5 h-5 mr-1 inline-block" />
           Prompt Repositories
         </router-link>
+        <router-link to="/blocks" class="text-gray-700 hover:text-indigo-600 font-semibold transition duration-150 ease-in-out">
+          <CubeIcon class="w-5 h-5 mr-1 inline-block" />
+          Block Library
+        </router-link>
       </div>
 
       <div class="sm:hidden">

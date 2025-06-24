@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
+import { ExecutionNodeConfig } from '../node.interface';
 
 
 /**
@@ -42,7 +43,7 @@ export class ExecutionNodeDto {
     example: { logicType: 'sumAndCompare', threshold: 100 },
   })
   @Type(() => Object)
-  config?: object;
+  config?: ExecutionNodeConfig;
 
   @ApiProperty({
     description: 'Optional array of IDs representing the incoming sequence edges to this node.',
