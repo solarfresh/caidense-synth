@@ -47,15 +47,6 @@ export class CreateReasoningNodeDto {
   inputs?: CreateVariableDto[];
 
   @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  @IsOptional()
-  @IsString()
-  script?: string;
-
-  @ApiProperty({
     description: 'Optional array defining the outputs specific to this node\'s logic.',
     type: [CreateVariableDto],
     isArray: true,

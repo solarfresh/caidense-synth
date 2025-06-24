@@ -46,13 +46,6 @@ export class ReasoningNodeDto {
   inputs?: VariableDto[];
 
   @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  script: string;
-
-  @ApiProperty({
     description: 'Optional array defining the outputs specific to this node\'s logic.',
     type: [VariableDto],
     isArray: true,
@@ -77,7 +70,6 @@ export class ReasoningNodeDto {
     this.label = plainObject.label;
     this.config = plainObject.config;
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
-    this.script = plainObject.script;
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

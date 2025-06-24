@@ -49,15 +49,6 @@ export class UpdateReasoningNodeDto {
   inputs?: UpdateVariableDto[];
 
   @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 150;'
-  })
-  @IsOptional()
-  @IsString()
-  script?: string;
-
-  @ApiProperty({
     description: 'Optional array defining the outputs specific to this node\'s logic.',
     type: [UpdateVariableDto],
     isArray: true,

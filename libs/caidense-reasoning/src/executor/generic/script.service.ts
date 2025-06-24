@@ -20,7 +20,7 @@ export class ScriptExecutor extends ExecutorBase {
       console.error(`ScriptExecutor received unexpected node type: ${node.type}`);
     }
 
-    const script = new vm.Script(node.script);
+    const script = new vm.Script(node.config.script);
     const sandbox = await this.getInputs(node, tracker)
     const context = vm.createContext(sandbox);
     const vmTimeout = this.configService.get('VM_TIMEOUT') | 1000;

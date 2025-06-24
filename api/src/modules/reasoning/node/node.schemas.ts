@@ -39,13 +39,6 @@ export class ReasoningNodeDocument extends Document implements ReasoningNode {
   config?: ReasoningNodeConfig;
 
   /**
-   * Optional script code to be executed by this node type.
-   * Maps to script.
-   */
-  @Prop({ type: String })
-  script?: string;
-
-  /**
    * Optional array defining the inputs specific to this node's logic.
    * Stored as an array of embedded Variable documents.
    * Maps to inputs.
