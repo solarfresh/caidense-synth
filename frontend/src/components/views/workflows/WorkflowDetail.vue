@@ -3,7 +3,9 @@ import { apiService } from '@/api/apiService';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
+import { useBlocktStore } from '@/stores/block';
 import { useWorkflowStore } from '@/stores/workflow';
+import type { Block } from '@/types/blocks';
 import type { ExecutionEdge, Thinking, Workflow } from '@/types/workflow';
 import { ExecutionNodeType } from '@/types/workflow';
 import { Edge, Node, useVueFlow, VueFlow } from '@vue-flow/core';
@@ -16,8 +18,12 @@ import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
 
 const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodeDoubleClick, onNodeDrag, onNodesInitialized, updateNode } = useVueFlow();
 const route = useRoute();
-const store = useWorkflowStore();
+const store = {
+  block: useBlocktStore(),
+  workflow: useWorkflowStore()
+};
 
+const blocks = ref<Array<Block> | null>(null);
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
@@ -67,6 +73,7 @@ watch(isDragging, (dragging) => {
 })
 
 onMounted(() => {
+  fetchBlocks();
   fetchWorkflow();
 });
 
@@ -74,16 +81,26 @@ onUnmounted(() => {
   document.removeEventListener('drop', onDragEnd);
 });
 
+const fetchBlocks = async () => {
+  blocks.value = store.block.getBlocks;
+
+  if (blocks.value.length < 1) {
+    const response = await apiService.block.getAll();
+    blocks.value = response.data;
+    store.block.updateBlocks(blocks.value);
+  }
+};
+
 const fetchWorkflow = async () => {
-  workflow.value = store.getCurrentWorkflow;
+  workflow.value = store.workflow.getCurrentWorkflow;
 
   if (!workflow.value) {
     const workflowId = route.params.id as string;
     const response = await apiService.workflow.get(workflowId);
 
     workflow.value = response.data;
-    store.currentWorkflowId = workflowId;
-    store.workflows.set(workflowId, workflow.value);
+    store.workflow.currentWorkflowId = workflowId;
+    store.workflow.workflows.set(workflowId, workflow.value);
   }
 
   if (workflow.value.activatedReasoningThinkingId) {
@@ -113,12 +130,12 @@ const fetchWorkflow = async () => {
 const handleSubmit = async () => {
   let response = undefined;
   if (workflow.value?.activatedReasoningThinkingId) {
-    response = await apiService.workflow.updateThinking(store.currentWorkflowId, submitFormData.value);
+    response = await apiService.workflow.updateThinking(store.workflow.currentWorkflowId, submitFormData.value);
   } else {
-    response = await apiService.workflow.createThinking(store.currentWorkflowId, submitFormData.value);
+    response = await apiService.workflow.createThinking(store.workflow.currentWorkflowId, submitFormData.value);
   }
 
-  store.workflows.set(response.data.id, response.data);
+  store.workflow.workflows.set(response.data.id, response.data);
 };
 
 const onDragStart = (event: DragEvent, type: string) => {
@@ -216,7 +233,7 @@ onConnect(addEdges)
     <template #content>
       <div class="flex h-screen" @drop="onDrop">
         <div class="flex-none p-6 mx-4 bg-white shadow-md rounded-md">
-          <WorkflowDetailSidebar @dragstart="onDragStart" />
+          <WorkflowDetailSidebar :blocks="blocks || []" @dragstart="onDragStart" />
         </div>
         <div class="flex-auto p-6 mx-4 bg-white shadow-md rounded-md">
           <VueFlow :nodes="nodes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
