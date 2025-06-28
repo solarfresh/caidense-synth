@@ -246,3 +246,8 @@ export interface Workflow {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface VueFlowNodeData {
+  label: string;
+  config: ExecutionNodeConfig;
+};

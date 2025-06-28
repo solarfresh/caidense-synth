@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
+import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
+import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
 import { useBlocktStore } from '@/stores/block';
 import { useWorkflowStore } from '@/stores/workflow';
 import type { Block } from '@/types/blocks';
-import type { ExecutionEdge, Thinking, Workflow } from '@/types/workflow';
-import { ExecutionNodeType } from '@/types/workflow';
+import { ExecutionEdge, ExecutionNodeType, Thinking, Workflow } from '@/types/workflow';
 import { Edge, Node, useVueFlow, VueFlow } from '@vue-flow/core';
 import { ObjectId } from 'bson';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
@@ -30,6 +31,10 @@ const isDragging = ref(false);
 const isEditNode = ref(false);
 const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
+const nodeTypes = {
+  endEvent: markRaw(EndEventNode),
+  startEvent: markRaw(StartEventNode),
+}
 const workflow = ref<Workflow | null>(null);
 
 const nodeConfig = ref<Node | null>(null);
@@ -124,6 +129,21 @@ const fetchWorkflow = async () => {
     });
 
     edges.value = workflow.value.activatedReasoningThinkingId.edges;
+  } else {
+    nodes.value = [
+      {
+        id: new ObjectId().toHexString(),
+        type: 'startEvent',
+        position: {x: 0, y: 0},
+        data: { label: 'Start Event' },
+      },
+      {
+        id: new ObjectId().toHexString(),
+        type: 'endEvent',
+        position: {x: 0, y: 64},
+        data: { label: 'End Event' },
+      }
+    ];
   }
 };
 
@@ -236,7 +256,7 @@ onConnect(addEdges)
           <WorkflowDetailSidebar :blocks="blocks || []" @dragstart="onDragStart" />
         </div>
         <div class="flex-auto p-6 mx-4 bg-white shadow-md rounded-md">
-          <VueFlow :nodes="nodes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
+          <VueFlow :nodes="nodes" :nodeTypes="nodeTypes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
             <FlowBackground
               :style="{
                 backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',

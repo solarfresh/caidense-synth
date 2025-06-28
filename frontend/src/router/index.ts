@@ -48,7 +48,7 @@ const workflowRoutes = [
     path: '/workflows/:id',
     name: 'WorkflowDetail',
     component: WorkflowDetail,
-    props: true,
+    // props: true,
   }
 ]
 
