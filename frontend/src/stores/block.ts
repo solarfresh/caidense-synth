@@ -22,6 +22,9 @@ export const useBlocktStore = defineStore('block', {
   getters: {
     getBlock: (state): Block | null => {
       return state.blocks.get(state.currentBlockId) || null;
+    },
+    getBlocks: (state): Array<Block> => {
+      return [...state.blocks.values()];
     }
   }
 });
