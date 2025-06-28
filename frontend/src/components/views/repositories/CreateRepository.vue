@@ -40,7 +40,7 @@ const handleSubmit = async () => {
     const newRepositoryData = {
       name: repositoryName,
       description: repositoryForm.get('description')?.editableContent || '',
-      prompts: [],
+      promptTextIds: [],
       tags: tagsArray || []
     }
 
