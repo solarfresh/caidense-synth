@@ -171,7 +171,6 @@ const onDragStart = (event: DragEvent, type: string) => {
 }
 
 const onDragOver = (event: DragEvent) => {
-  console.log(event);
   event.preventDefault()
 
   if (draggedType.value) {
@@ -227,7 +226,6 @@ const onDrop = (event: DragEvent) => {
 
 onNodeDoubleClick((event) => {
   isEditNode.value = true;
-  console.log(event.node);
   nodeConfig.value = event.node;
 });
 
