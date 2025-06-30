@@ -167,11 +167,6 @@ interface ExecutionNode {
   inputs?: Variable[];
 
   /**
-   * Optional script code to be executed by this node type.
-   */
-  script?: string
-
-  /**
    * Optional array of IDs representing the outgoing sequence edges from this node.
    * These edges determine the next steps in the execution process.
    * @example ['edge1', 'edge2']

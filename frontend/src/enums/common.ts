@@ -1,5 +1,6 @@
 export enum VariableType {
-  Text = 'text',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean'
+  Text = 'Text',
+  NUMBER = 'Number',
+  BOOLEAN = 'Boolean',
+  OBJECT = 'Object'
 }

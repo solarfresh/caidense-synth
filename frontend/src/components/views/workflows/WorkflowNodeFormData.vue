@@ -6,7 +6,7 @@ import { VariableType } from '@/enums/common';
 import type { Variable } from '@/types/common';
 import type { FormInstance } from '@/types/form';
 import { Node } from '@vue-flow/core';
-import { PropType, computed, reactive, ref, watch } from 'vue';
+import { PropType, computed, reactive, ref } from 'vue';
 
 
 const props = defineProps({
@@ -54,7 +54,7 @@ const inputsComponentGroup = computed(() => {
       {
         name: 'select',
         props: {
-          content: String(variableTypeArray.value.findIndex(obj => obj.name === variable.type)),
+          content: variableTypeArray.value.findIndex(obj => obj.name.toLocaleLowerCase() === variable.type.toLocaleLowerCase()),
           hasMargin: false,
           labelId: 'inputType',
           labelName: 'Type',
@@ -68,6 +68,85 @@ const inputsComponentGroup = computed(() => {
           content: variable.description,
           hasMargin: false,
           labelId: 'inputDescription',
+          labelName: 'Description',
+          isRequired: false,
+          placeholder: 'e.g., The article content',
+          type: 'text'
+        }
+      }
+    ]})
+  } else {
+    return [[
+      {
+        name: 'input',
+        props: {
+          hasMargin: false,
+          labelId: 'inputName',
+          labelName: 'Name',
+          isRequired: false,
+          placeholder: 'e.g., TEXT, TONE',
+          type: 'text'
+        }
+      },
+      {
+        name: 'select',
+        props: {
+          content: 0,
+          hasMargin: false,
+          labelId: 'inputType',
+          labelName: 'Type',
+          isRequired: false,
+          options: variableTypeArray.value
+        }
+      },
+      {
+        name: 'input',
+        props: {
+          hasMargin: false,
+          labelId: 'inputDescription',
+          labelName: 'Description',
+          isRequired: false,
+          placeholder: 'e.g., The article content',
+          type: 'text'
+        }
+      }
+    ]]
+  }
+})
+
+const outputsComponentGroup = computed(() => {
+  if (nodeData.value.outputs.length) {
+    return nodeData.value.outputs.map((variable: Variable) => {
+      return [
+      {
+        name: 'input',
+        props: {
+          content: variable.name,
+          hasMargin: false,
+          labelId: 'outputName',
+          labelName: 'Name',
+          isRequired: false,
+          placeholder: 'e.g., TEXT, TONE',
+          type: 'text'
+        }
+      },
+      {
+        name: 'select',
+        props: {
+          content: variableTypeArray.value.findIndex(obj => obj.name.toLocaleLowerCase() === variable.type.toLocaleLowerCase()),
+          hasMargin: false,
+          labelId: 'outputType',
+          labelName: 'Type',
+          isRequired: false,
+          options: variableTypeArray.value
+        }
+      },
+      {
+        name: 'input',
+        props: {
+          content: variable.description,
+          hasMargin: false,
+          labelId: 'outputDescription',
           labelName: 'Description',
           isRequired: false,
           placeholder: 'e.g., The article content',
@@ -91,7 +170,7 @@ const inputsComponentGroup = computed(() => {
       {
         name: 'select',
         props: {
-          content: '0',
+          content: 0,
           hasMargin: false,
           labelId: 'outputType',
           labelName: 'Type',
@@ -114,105 +193,32 @@ const inputsComponentGroup = computed(() => {
   }
 })
 
-const outputsComponentGroup = computed(() => {
-  if (nodeData.value.outputs.length) {
-    return nodeData.value.outputs.map((variable: Variable) => {
-      return [
-      {
-        name: 'input',
-        props: {
-          content: variable.name,
-          hasMargin: false,
-          labelId: 'inputName',
-          labelName: 'Name',
-          isRequired: false,
-          placeholder: 'e.g., TEXT, TONE',
-          type: 'text'
-        }
-      },
-      {
-        name: 'select',
-        props: {
-          content: String(variableTypeArray.value.findIndex(obj => obj.name === variable.type)),
-          hasMargin: false,
-          labelId: 'inputType',
-          labelName: 'Type',
-          isRequired: false,
-          options: variableTypeArray.value
-        }
-      },
-      {
-        name: 'input',
-        props: {
-          content: variable.description,
-          hasMargin: false,
-          labelId: 'inputDescription',
-          labelName: 'Description',
-          isRequired: false,
-          placeholder: 'e.g., The article content',
-          type: 'text'
-        }
+const submitNodeFormData = computed(() => {
+  let obj = {
+    id: props.nodeConfig?.id,
+    type: nodeData.value.type,
+    label: nodeForm.get('nodeName')?.editableContent,
+    inputs: nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
+      return {
+        name: instance.get('inputName')?.editableContent,
+        type: variableTypeArray.value[instance.get('inputType')?.editableContent ? Number(instance.get('inputType')?.editableContent) : 0].name.toLowerCase(),
+        description: instance.get('inputDescription')?.editableContent
       }
-    ]})
-  } else {
-    return [[
-      {
-        name: 'input',
-        props: {
-          hasMargin: false,
-          labelId: 'inputName',
-          labelName: 'Name',
-          isRequired: false,
-          placeholder: 'e.g., TEXT, TONE',
-          type: 'text'
-        }
-      },
-      {
-        name: 'select',
-        props: {
-          content: '0',
-          hasMargin: false,
-          labelId: 'inputType',
-          labelName: 'Type',
-          isRequired: false,
-          optionName: 'TEXT',
-          options: variableTypeArray.value
-        }
-      },
-      {
-        name: 'input',
-        props: {
-          hasMargin: false,
-          labelId: 'inputDescription',
-          labelName: 'Description',
-          isRequired: false,
-          placeholder: 'e.g., The article content',
-          type: 'text'
-        }
+    }).filter(obj => obj.name !== undefined),
+    outputs: nodeForm.get('outputs')?.formInstanceArray?.map((instance) => {
+      return {
+        name: instance.get('outputName')?.editableContent,
+        type: variableTypeArray.value[instance.get('outputType')?.editableContent ? Number(instance.get('outputType')?.editableContent) : 0].name.toLowerCase(),
+        description: instance.get('outputDescription')?.editableContent
       }
-    ]]
-  }
-})
+    }).filter(obj => obj.name !== undefined),
+  };
+  return obj;
+});
 
-const addInputs = async () => {
-  nodeData.value.inputs.append({
-    name: '',
-    type: 'text',
-    description: '',
-  });
-};
-
-const addOutputs = async () => {
-  nodeData.value.outputs.append({
-    name: '',
-    type: 'text',
-    description: '',
-  });
-};
-
-const removeInputs = async () => {};
-
-const removeOutputs = async () => {};
+defineExpose({
+  submitNodeFormData
+});
 
 const registerRef = async (key:string, instance: any) => {
   if (instance) {
@@ -222,9 +228,9 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormInput :label-name="'Node Name'" :label-id="'nodeName'" :content="nodeData.label" :placeholder="'Enter node name'" />
-  <FormTextarea v-if="nodeData.type === 'llmCall'" :label-name="'Prompt Template'" :label-id="'nodeScript'" :content="nodeData.promptTemplate" :rows="10" />
-  <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" />
+  <FormInput :label-name="'Node Name'" :label-id="'nodeName'" :content="nodeData.label" :placeholder="'Enter node name'" :ref="el => registerRef('nodeName', el)" />
+  <FormTextarea v-if="nodeData.type === 'llmCall'" :label-name="'Prompt Template'" :label-id="'nodeScript'" :content="nodeData.promptTemplate" :rows="10" :ref="el => registerRef('promptTemplate', el)" />
+  <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" :ref="el => registerRef('script', el)" />
   <FormMultiFieldsMultiInput
     :ref="el => registerRef('inputs', el)"
     :add-button-name="'Add Input'"

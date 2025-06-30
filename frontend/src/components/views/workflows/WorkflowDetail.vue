@@ -38,6 +38,7 @@ const nodeTypes = {
 const workflow = ref<Workflow | null>(null);
 
 const nodeConfig = ref<Node | null>(null);
+const nodeFormData = ref();
 
 const submitFormData = computed(() => {
   let thinking = {} as Thinking;
@@ -119,7 +120,6 @@ const fetchWorkflow = async () => {
           config: node.config,
           incoming: node.incoming,
           inputs: node.inputs,
-          script: node.script,
           outgoing: node.outgoing,
           outputs: node.outputs,
           createdAt: node.createdAt,
@@ -156,6 +156,10 @@ const handleSubmit = async () => {
   }
 
   store.workflow.workflows.set(response.data.id, response.data);
+};
+
+const handleNodeSubmit = async () => {
+  console.log(nodeFormData.value.submitNodeFormData)
 };
 
 const onDragStart = (event: DragEvent, type: string) => {
@@ -268,9 +272,9 @@ onConnect(addEdges)
       </div>
     </template>
   </Container>
-  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false">
+  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false" @save="handleNodeSubmit">
     <template #fields>
-      <WorkflowNodeFormData :node-config="nodeConfig" />
+      <WorkflowNodeFormData :node-config="nodeConfig" :ref="'nodeFormData'" />
     </template>
   </FormModal>
 </template>

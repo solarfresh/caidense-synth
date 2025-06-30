@@ -45,7 +45,6 @@ defineExpose({
 });
 
 const addComponent = async () => {
-  console.log(formGroup.value);
   formGroup.value.push(formInfo.value);
   formInstanceArray.value.push(new Map());
 };
