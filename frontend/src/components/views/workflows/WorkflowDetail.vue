@@ -17,9 +17,10 @@ import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
+import ContextMenu from '@/components/layouts/flow/ContextMenu.vue';
 
 
-const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodeDoubleClick, onNodeDrag, onNodesInitialized, updateNode } = useVueFlow();
+const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onEdgeContextMenu, onNodeClick, onNodeDoubleClick, onNodeDrag, onNodesInitialized, removeEdges, updateNode } = useVueFlow();
 const route = useRoute();
 const store = {
   block: useBlocktStore(),
@@ -28,10 +29,14 @@ const store = {
 
 const activatedReasoningThinking = ref<Thinking | null>(null);
 const blocks = ref<Array<Block> | null>(null);
+const connectingNodeId = ref('');
+const contextMenuStyle = ref({});
+const currentEdgeId = ref('');
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
 const isEditNode = ref(false);
+const isShowContextMenu  = ref(false);
 const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
 const nodeTypes = {
@@ -96,11 +101,25 @@ watch(isDragging, (dragging) => {
 onMounted(() => {
   fetchBlocks();
   fetchWorkflow();
+  document.addEventListener('click', closeContextMenu);
 });
 
 onUnmounted(() => {
+  document.removeEventListener('click', closeContextMenu);
   document.removeEventListener('drop', onDragEnd);
 });
+
+const closeContextMenu = () => {
+  isShowContextMenu.value = false;
+};
+
+const deleteEdge = () => {
+  if (currentEdgeId.value) {
+    removeEdges([currentEdgeId.value]);
+    isShowContextMenu.value = false;
+    currentEdgeId.value = '';
+  }
+};
 
 const fetchBlocks = async () => {
   blocks.value = store.block.getBlocks;
@@ -264,6 +283,36 @@ const onDrop = (event: DragEvent) => {
   addNodes(newNode);
 }
 
+onEdgeContextMenu(({ edge, event }) => {
+  event.preventDefault();
+  currentEdgeId.value = edge.id;
+  isShowContextMenu.value = true;
+  contextMenuStyle.value = {
+    top: `${event.clientY}px`,
+    left: `${event.clientX}px`,
+  };
+});
+
+onNodeClick((event) => {
+  const node = event.node;
+
+  if (!connectingNodeId.value) {
+    // First click: set source node
+    connectingNodeId.value = node.id;
+  } else if (connectingNodeId.value !== node.id) {
+    // Second click: create edge to target node
+    edges.value.push({
+      id: new ObjectId().toHexString(),
+      source: connectingNodeId.value,
+      target: node.id,
+    });
+    connectingNodeId.value = ''; // Reset for next connection
+  } else {
+    // Clicked the same node twice, reset connection
+    connectingNodeId.value = '';
+  }
+});
+
 onNodeDoubleClick((event) => {
   isEditNode.value = true;
   nodeConfig.value = event.node;
@@ -291,9 +340,10 @@ onConnect(addEdges)
     <template #content>
       <div class="flex h-screen" @drop="onDrop">
         <div class="flex-none p-6 mx-4 bg-white shadow-md rounded-md">
-          <WorkflowDetailSidebar :blocks="blocks || []" @dragstart="onDragStart" />
+          <WorkflowDetailSidebar :blocks="blocks || []" @dragstart="onDragStart" @delete="deleteEdge" />
         </div>
         <div class="flex-auto p-6 mx-4 bg-white shadow-md rounded-md">
+          <ContextMenu v-if="isShowContextMenu" :context-menu-style="contextMenuStyle" @delete="deleteEdge" />
           <VueFlow :nodes="nodes" :nodeTypes="nodeTypes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
             <FlowBackground
               :style="{
