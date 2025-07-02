@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
+import ContextMenu from '@/components/layouts/flow/ContextMenu.vue';
 import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
@@ -17,10 +18,9 @@ import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
-import ContextMenu from '@/components/layouts/flow/ContextMenu.vue';
 
 
-const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onEdgeContextMenu, onNodeClick, onNodeDoubleClick, onNodeDrag, onNodesInitialized, removeEdges, updateNode } = useVueFlow();
+const flowStore = useVueFlow();
 const route = useRoute();
 const store = {
   block: useBlocktStore(),
@@ -58,7 +58,7 @@ const submitFormData = computed(() => {
   thinking.inputs = activatedReasoningThinking.value.inputs;
   thinking.outputs = activatedReasoningThinking.value.outputs;
 
-  thinking.nodes = nodes.value.map(node => {
+  thinking.nodes = flowStore.getNodes.value.map(node => {
     let obj: ExecutionNode = {
       id: node.id,
       type: node.type as ExecutionNodeType,
@@ -70,25 +70,21 @@ const submitFormData = computed(() => {
       obj.config = node.data.config;
     }
 
-    if (node.data.incoming?.length) {
-      obj.incoming = node.data.incoming;
-    }
-
-    if (node.data.inputs?.length) {
-      obj.inputs = node.data.inputs;
-    }
-
-    if (node.data.outgoing) {
-      obj.outgoing = node.data.outgoing;
-    }
-
-    if (node.data.outgoing) {
-      obj.outputs = node.data.outputs;
-    }
+    obj.incoming =node.data.incoming?.length ? node.data.incoming : [];
+    obj.inputs =node.data.inputs?.length ? node.data.inputs : [];
+    obj.outgoing =node.data.outgoing?.length ? node.data.outgoing : [];
+    obj.outputs =node.data.outputs?.length ? node.data.outputs : [];
 
     return obj;
   });
-  thinking.edges = activatedReasoningThinking.value.edges;
+
+  thinking.edges = flowStore.getEdges.value.map((edge) => {
+    return {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target
+    }
+  });
   thinking.reasoningTemplateId = workflow.value?.id || '';
 
   return thinking;
@@ -115,7 +111,26 @@ const closeContextMenu = () => {
 
 const deleteEdge = () => {
   if (currentEdgeId.value) {
-    removeEdges([currentEdgeId.value]);
+    const edge = flowStore.findEdge(currentEdgeId.value);
+
+    if (!edge) return;
+
+    flowStore.updateNode(edge.source, (node) => ({
+      data: {
+        ...node.data,
+        outgoing: node.data.outgoing.filter((edgeId: string) => edgeId !== currentEdgeId.value )
+      },
+    }))
+
+    flowStore.updateNode(edge.target, (node) => ({
+      data: {
+        ...node.data,
+        incoming: node.data.incoming.filter((edgeId: string) => edgeId !== currentEdgeId.value)
+      },
+    }))
+
+    flowStore.removeEdges([currentEdgeId.value]);
+
     isShowContextMenu.value = false;
     currentEdgeId.value = '';
   }
@@ -196,7 +211,6 @@ const handleSubmit = async () => {
   if (workflow.value?.activatedReasoningThinkingId) {
     response = await apiService.workflow.updateThinking(store.workflow.currentWorkflowId, submitFormData.value);
   } else {
-    console.log(submitFormData.value);
     response = await apiService.workflow.createThinking(store.workflow.currentWorkflowId, submitFormData.value);
   }
 
@@ -206,12 +220,16 @@ const handleSubmit = async () => {
 const handleNodeSubmit = async () => {
   const nodeId = nodeFormData.value.submitNodeFormData.id;
 
-  updateNode(nodeId, (node) => ({
+  flowStore.updateNode(nodeId, (node) => ({
     data: nodeFormData.value.submitNodeFormData.data,
   }))
 
-  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === nodeTypes.startEvent) {
+  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === ExecutionNodeType.START_EVENT) {
     activatedReasoningThinking.value.inputs = nodeFormData.value.submitNodeFormData.data.inputs;
+  }
+
+  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === ExecutionNodeType.END_EVENT) {
+    activatedReasoningThinking.value.outputs = nodeFormData.value.submitNodeFormData.data.outputs;
   }
 
   isEditNode.value = false;
@@ -255,7 +273,7 @@ const onDragEnd = () => {
 const onDrop = (event: DragEvent) => {
   const nodeId = new ObjectId().toHexString();
 
-  const position = screenToFlowCoordinate({
+  const position = flowStore.screenToFlowCoordinate({
     x: event.clientX,
     y: event.clientY,
   })
@@ -272,18 +290,18 @@ const onDrop = (event: DragEvent) => {
    *
    * We can hook into events even in a callback, and we can remove the event listener after it's been called.
    */
-  const { off } = onNodesInitialized(() => {
-    updateNode(nodeId, (node) => ({
+  const { off } = flowStore.onNodesInitialized(() => {
+    flowStore.updateNode(nodeId, (node) => ({
       position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
     }))
 
     off();
   })
 
-  addNodes(newNode);
+  flowStore.addNodes(newNode);
 }
 
-onEdgeContextMenu(({ edge, event }) => {
+flowStore.onEdgeContextMenu(({ edge, event }) => {
   event.preventDefault();
   currentEdgeId.value = edge.id;
   isShowContextMenu.value = true;
@@ -293,7 +311,7 @@ onEdgeContextMenu(({ edge, event }) => {
   };
 });
 
-onNodeClick((event) => {
+flowStore.onNodeClick((event) => {
   const node = event.node;
 
   if (!connectingNodeId.value) {
@@ -301,11 +319,21 @@ onNodeClick((event) => {
     connectingNodeId.value = node.id;
   } else if (connectingNodeId.value !== node.id) {
     // Second click: create edge to target node
-    edges.value.push({
+    const newEdge = {
       id: new ObjectId().toHexString(),
       source: connectingNodeId.value,
       target: node.id,
-    });
+    };
+    edges.value.push(newEdge);
+
+    flowStore.updateNode(connectingNodeId.value, (node) => ({
+      data: {...node.data, outgoing: node.data.outgoing.push(newEdge.id)},
+    }))
+
+    flowStore.updateNode(node.id, (node) => ({
+      data: {...node.data, incoming: node.data.incoming.push(newEdge.id)},
+    }))
+
     connectingNodeId.value = ''; // Reset for next connection
   } else {
     // Clicked the same node twice, reset connection
@@ -313,19 +341,19 @@ onNodeClick((event) => {
   }
 });
 
-onNodeDoubleClick((event) => {
+flowStore.onNodeDoubleClick((event) => {
   isEditNode.value = true;
   nodeConfig.value = event.node;
 });
 
-onNodeDrag(({ node, event }) => {
+flowStore.onNodeDrag(({ node, event }) => {
   const index = nodes.value.findIndex(obj => obj.id === node.id);
   if (index !== -1) {
     nodes.value[index].position = node.position;
   };
 });
 
-onConnect(addEdges)
+flowStore.onConnect(flowStore.addEdges)
 </script>
 
 <template>
