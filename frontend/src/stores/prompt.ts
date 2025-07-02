@@ -22,6 +22,9 @@ export const usePromptStore = defineStore('prompt', {
   getters: {
     getPrompt: (state): Prompt | null => {
       return state.prompts.get(state.currentPromptId) || null;
+    },
+    getPrompts: (state): Prompt[] => {
+      return [...state.prompts.values()];
     }
   }
 });

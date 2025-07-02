@@ -1,13 +1,6 @@
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 
 
-export enum ExecutionNodeType {
-  LLM_CALL = 'llmCall',
-  START_EVENT = 'startEvent',
-  END_EVENT = 'endEvent',
-  SCRIPT = 'script',
-}
-
 interface Position {
   /**
    * The x-coordinate of the node's position in a visual layout.
@@ -167,11 +160,6 @@ interface ExecutionNode {
   inputs?: Variable[];
 
   /**
-   * Optional script code to be executed by this node type.
-   */
-  script?: string
-
-  /**
    * Optional array of IDs representing the outgoing sequence edges from this node.
    * These edges determine the next steps in the execution process.
    * @example ['edge1', 'edge2']
@@ -187,12 +175,12 @@ interface ExecutionNode {
   /**
    * The timestamp when the node was created.
    */
-  createdAt: Date;
+  createdAt?: Date;
 
   /**
    * The timestamp when the node was last updated.
    */
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface CreateThinking {
@@ -207,16 +195,17 @@ export interface CreateThinking {
 }
 
 interface Thinking {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   nodes: ExecutionNode[];
   edges: ExecutionEdge[];
   inputs: Variable[];
   outputs: Variable[];
-  status: DocumentStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  reasoningTemplateId: string;
+  status?: DocumentStatus;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UpdateThinking {

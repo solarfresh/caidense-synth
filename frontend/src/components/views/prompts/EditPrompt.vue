@@ -45,7 +45,6 @@ onMounted(async () => {
     store.prompt.updateState({currentPromptId: promptId})
     isLoading.value = true;
     promptData.value = store.prompt.getPrompt;
-    console.log('getPrompt', promptData.value)
     if (!promptData.value) {
       const response = await apiService.prompt.get(promptId);
       promptData.value = response.data;

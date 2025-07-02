@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
+import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
-import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
+import { ExecutionNodeType } from '@/enums/workflow';
 import { useBlocktStore } from '@/stores/block';
 import { useWorkflowStore } from '@/stores/workflow';
 import type { Block } from '@/types/blocks';
-import { ExecutionEdge, ExecutionNodeType, Thinking, Workflow } from '@/types/workflow';
+import type { ExecutionNode } from '@/types/workflow';
+import { Thinking, Workflow } from '@/types/workflow';
 import { Edge, Node, useVueFlow, VueFlow } from '@vue-flow/core';
 import { ObjectId } from 'bson';
 import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -24,6 +26,7 @@ const store = {
   workflow: useWorkflowStore()
 };
 
+const activatedReasoningThinking = ref<Thinking | null>(null);
 const blocks = ref<Array<Block> | null>(null);
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
@@ -38,37 +41,50 @@ const nodeTypes = {
 const workflow = ref<Workflow | null>(null);
 
 const nodeConfig = ref<Node | null>(null);
+const nodeFormData = ref();
 
 const submitFormData = computed(() => {
   let thinking = {} as Thinking;
-  if(workflow.value?.activatedReasoningThinkingId) {
-    thinking.name = workflow.value?.activatedReasoningThinkingId.name;
-    thinking.description = workflow.value?.activatedReasoningThinkingId.description;
-    thinking.inputs = workflow.value?.activatedReasoningThinkingId.inputs;
-    thinking.outputs = workflow.value?.activatedReasoningThinkingId.outputs;
-    thinking.status = workflow.value?.activatedReasoningThinkingId.status;
-  } else {
-    thinking.name = workflow.value?.name || '';
-    thinking.description = workflow.value?.description || '';
-  }
+
+  if (!activatedReasoningThinking.value) throw new Error("Activated reasoning thinking is not set");
+
+  thinking.name = activatedReasoningThinking.value.name;
+  thinking.description = activatedReasoningThinking.value.description;
+  thinking.inputs = activatedReasoningThinking.value.inputs;
+  thinking.outputs = activatedReasoningThinking.value.outputs;
 
   thinking.nodes = nodes.value.map(node => {
-    return {
+    let obj: ExecutionNode = {
       id: node.id,
       type: node.type as ExecutionNodeType,
       position: node.position,
       label: node.data.label,
-      config: node.data.config,
-      incoming: node.data.incoming,
-      inputs: node.data.inputs,
-      script: node.data.script,
-      outgoing: node.data.outgoing,
-      outputs: node.data.outputs,
-      createdAt: node.data.createdAt,
-      updatedAt: node.data.updatedAt
+    };
+
+    if (node.data.config) {
+      obj.config = node.data.config;
     }
+
+    if (node.data.incoming?.length) {
+      obj.incoming = node.data.incoming;
+    }
+
+    if (node.data.inputs?.length) {
+      obj.inputs = node.data.inputs;
+    }
+
+    if (node.data.outgoing) {
+      obj.outgoing = node.data.outgoing;
+    }
+
+    if (node.data.outgoing) {
+      obj.outputs = node.data.outputs;
+    }
+
+    return obj;
   });
-  thinking.edges = edges.value as ExecutionEdge[];
+  thinking.edges = activatedReasoningThinking.value.edges;
+  thinking.reasoningTemplateId = workflow.value?.id || '';
 
   return thinking;
 });
@@ -109,7 +125,8 @@ const fetchWorkflow = async () => {
   }
 
   if (workflow.value.activatedReasoningThinkingId) {
-    nodes.value = workflow.value.activatedReasoningThinkingId.nodes.map(node => {
+    activatedReasoningThinking.value = workflow.value.activatedReasoningThinkingId;
+    nodes.value = activatedReasoningThinking.value.nodes.map(node => {
       return {
         id: node.id,
         type: node.type,
@@ -119,7 +136,6 @@ const fetchWorkflow = async () => {
           config: node.config,
           incoming: node.incoming,
           inputs: node.inputs,
-          script: node.script,
           outgoing: node.outgoing,
           outputs: node.outputs,
           createdAt: node.createdAt,
@@ -128,7 +144,7 @@ const fetchWorkflow = async () => {
       }
     });
 
-    edges.value = workflow.value.activatedReasoningThinkingId.edges;
+    edges.value = activatedReasoningThinking.value.edges;
   } else {
     nodes.value = [
       {
@@ -144,6 +160,15 @@ const fetchWorkflow = async () => {
         data: { label: 'End Event' },
       }
     ];
+    activatedReasoningThinking.value = {
+      name: workflow.value?.name || '',
+      description: workflow.value?.description || '',
+      nodes: [],
+      edges: [],
+      inputs: [],
+      outputs: [],
+      reasoningTemplateId: '',
+    };
   }
 };
 
@@ -152,10 +177,25 @@ const handleSubmit = async () => {
   if (workflow.value?.activatedReasoningThinkingId) {
     response = await apiService.workflow.updateThinking(store.workflow.currentWorkflowId, submitFormData.value);
   } else {
+    console.log(submitFormData.value);
     response = await apiService.workflow.createThinking(store.workflow.currentWorkflowId, submitFormData.value);
   }
 
   store.workflow.workflows.set(response.data.id, response.data);
+};
+
+const handleNodeSubmit = async () => {
+  const nodeId = nodeFormData.value.submitNodeFormData.id;
+
+  updateNode(nodeId, (node) => ({
+    data: nodeFormData.value.submitNodeFormData.data,
+  }))
+
+  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === nodeTypes.startEvent) {
+    activatedReasoningThinking.value.inputs = nodeFormData.value.submitNodeFormData.data.inputs;
+  }
+
+  isEditNode.value = false;
 };
 
 const onDragStart = (event: DragEvent, type: string) => {
@@ -171,7 +211,6 @@ const onDragStart = (event: DragEvent, type: string) => {
 }
 
 const onDragOver = (event: DragEvent) => {
-  console.log(event);
   event.preventDefault()
 
   if (draggedType.value) {
@@ -227,7 +266,6 @@ const onDrop = (event: DragEvent) => {
 
 onNodeDoubleClick((event) => {
   isEditNode.value = true;
-  console.log(event.node);
   nodeConfig.value = event.node;
 });
 
@@ -270,9 +308,9 @@ onConnect(addEdges)
       </div>
     </template>
   </Container>
-  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false">
+  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false" @save="handleNodeSubmit">
     <template #fields>
-      <WorkflowNodeFormData :node-config="nodeConfig" />
+      <WorkflowNodeFormData :node-config="nodeConfig" :ref="'nodeFormData'" />
     </template>
   </FormModal>
 </template>
