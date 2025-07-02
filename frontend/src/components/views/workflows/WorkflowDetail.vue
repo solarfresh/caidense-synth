@@ -237,10 +237,6 @@ const handleNodeSubmit = async () => {
   isEditNode.value = false;
 };
 
-const handleTestWorkflow = () => {
-
-};
-
 const onDragStart = (event: DragEvent, type: string) => {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', type)
@@ -398,14 +394,14 @@ flowStore.onConnect(flowStore.addEdges)
       </div>
     </template>
   </Container>
-  <FormModal :is-open="isEditNode" :title="'Configure Node'" :save-button-name="'Save'" @close="isEditNode = false" @save="handleNodeSubmit">
+  <FormModal :is-open="isEditNode" :title="'Configure Node'" :cancel-button-name="'Cancel'" :save-button-name="'Save'" @close="isEditNode = false" @save="handleNodeSubmit">
     <template #fields>
       <WorkflowNodeFormData :node-config="nodeConfig" :ref="'nodeFormData'" />
     </template>
   </FormModal>
-  <FormModal :is-open="isTestWorkflow" :title="'Test Workflow'" :save-button-name="'Run Test'" @close="isTestWorkflow = false" @save="handleTestWorkflow">
+  <FormModal :is-open="isTestWorkflow" :title="'Test Workflow'" @close="isTestWorkflow = false">
     <template #fields>
-      <WorkflowTest />
+      <WorkflowTest :workflow-inputs="workflow?.activatedReasoningThinkingId.inputs" />
     </template>
   </FormModal>
 </template>

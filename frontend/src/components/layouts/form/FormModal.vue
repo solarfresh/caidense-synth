@@ -9,6 +9,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  cancelButtonName: {
+    type: String,
+    default: ''
+  },
   saveButtonName: {
     type: String,
     default: ''
@@ -41,8 +45,8 @@ const emits = defineEmits<{
         <slot name="fields" />
 
         <div class="mt-5 sm:mt-6 space-x-2 flex justify-end">
-          <CancelButton @click="$emit('close')" :button-name="'Cancel'" :is-go-back="false" />
-          <SubmitButton @click="$emit('save')" :is-submitting="false" :button-name="saveButtonName" :dynamic-button-name="'Saving...'" />
+          <CancelButton v-if="cancelButtonName" @click="$emit('close')" :button-name="cancelButtonName" :is-go-back="false" />
+          <SubmitButton v-if="saveButtonName" @click="$emit('save')" :is-submitting="false" :button-name="saveButtonName" :dynamic-button-name="'Saving...'" />
         </div>
       </div>
     </div>
