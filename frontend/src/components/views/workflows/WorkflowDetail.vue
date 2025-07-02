@@ -149,7 +149,7 @@ const fetchWorkflow = async () => {
 
 const handleSubmit = async () => {
   let response = undefined;
-  if (workflow.value?.activatedReasoningThinkingId) {
+  if (workflow.value?.id) {
     response = await apiService.workflow.updateThinking(store.workflow.currentWorkflowId, submitFormData.value);
   } else {
     response = await apiService.workflow.createThinking(store.workflow.currentWorkflowId, submitFormData.value);
@@ -159,7 +159,13 @@ const handleSubmit = async () => {
 };
 
 const handleNodeSubmit = async () => {
-  console.log(nodeFormData.value.submitNodeFormData)
+  const nodeId = nodeFormData.value.submitNodeFormData.id;
+
+  updateNode(nodeId, (node) => ({
+    data: nodeFormData.value.submitNodeFormData.data,
+  }))
+
+  isEditNode.value = false;
 };
 
 const onDragStart = (event: DragEvent, type: string) => {

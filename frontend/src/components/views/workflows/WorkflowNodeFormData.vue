@@ -194,25 +194,29 @@ const outputsComponentGroup = computed(() => {
 })
 
 const submitNodeFormData = computed(() => {
+  const updatedNodeData = props.nodeConfig?.data;
+  updatedNodeData.label = nodeForm.get('nodeName')?.editableContent;
+  updatedNodeData.inputs = nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
+    return {
+      name: instance.get('inputName')?.editableContent,
+      type: variableTypeArray.value[instance.get('inputType')?.editableContent ? Number(instance.get('inputType')?.editableContent) : 0].name.toLowerCase(),
+      description: instance.get('inputDescription')?.editableContent
+    }
+  }).filter(obj => obj.name !== undefined);
+  updatedNodeData.outputs = nodeForm.get('outputs')?.formInstanceArray?.map((instance) => {
+    return {
+      name: instance.get('outputName')?.editableContent,
+      type: variableTypeArray.value[instance.get('outputType')?.editableContent ? Number(instance.get('outputType')?.editableContent) : 0].name.toLowerCase(),
+      description: instance.get('outputDescription')?.editableContent
+    }
+  }).filter(obj => obj.name !== undefined);
+
   let obj = {
     id: props.nodeConfig?.id,
     type: nodeData.value.type,
-    label: nodeForm.get('nodeName')?.editableContent,
-    inputs: nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
-      return {
-        name: instance.get('inputName')?.editableContent,
-        type: variableTypeArray.value[instance.get('inputType')?.editableContent ? Number(instance.get('inputType')?.editableContent) : 0].name.toLowerCase(),
-        description: instance.get('inputDescription')?.editableContent
-      }
-    }).filter(obj => obj.name !== undefined),
-    outputs: nodeForm.get('outputs')?.formInstanceArray?.map((instance) => {
-      return {
-        name: instance.get('outputName')?.editableContent,
-        type: variableTypeArray.value[instance.get('outputType')?.editableContent ? Number(instance.get('outputType')?.editableContent) : 0].name.toLowerCase(),
-        description: instance.get('outputDescription')?.editableContent
-      }
-    }).filter(obj => obj.name !== undefined),
-  };
+    data: updatedNodeData,
+  }
+
   return obj;
 });
 
