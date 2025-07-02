@@ -4,7 +4,7 @@ import RemoveButton from '@/components/base/buttons/RemoveButton.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormSelect from '@/components/layouts/form/FormSelect.vue';
 import { FormInstance, FormProps } from '@/types/form';
-import { ref, shallowRef, watch } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 
 
 const props = defineProps({
@@ -27,15 +27,15 @@ const components = shallowRef(new Map([
   ['select', FormSelect],
 ]))
 const formGroup = ref(props.componentGroup);
-const formInfo = ref(JSON.parse(JSON.stringify(formGroup.value[0] || {})));
-
 const formInstanceArray = ref<[Map<string, FormInstance>]>([new Map()]);
 
-watch(() => props.componentGroup, (newValue) => {
-  formGroup.value = newValue;
-  const copyObj = JSON.parse(JSON.stringify(newValue[0]));
-  formInfo.value = copyObj.map((obj: any) => {
-    obj.props.content = ''
+const formInfo = computed(() => {
+  const copyObj = JSON.parse(JSON.stringify(props.componentGroup[0]));
+  return copyObj.map((obj: any) => {
+    if (obj.name !== 'select') {
+      obj.props.content = ''
+    }
+
     return obj;
   });
 });
