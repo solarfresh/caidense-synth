@@ -18,6 +18,7 @@ import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
+import WorkflowTest from './WorkflowTest.vue';
 
 
 const flowStore = useVueFlow();
@@ -36,6 +37,7 @@ const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
 const isEditNode = ref(false);
+const isTestWorkflow = ref(false);
 const isShowContextMenu  = ref(false);
 const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
@@ -235,6 +237,10 @@ const handleNodeSubmit = async () => {
   isEditNode.value = false;
 };
 
+const handleTestWorkflow = () => {
+
+};
+
 const onDragStart = (event: DragEvent, type: string) => {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', type)
@@ -301,6 +307,10 @@ const onDrop = (event: DragEvent) => {
   flowStore.addNodes(newNode);
 }
 
+const openTestModal = () => {
+  isTestWorkflow.value = true;
+};
+
 flowStore.onEdgeContextMenu(({ edge, event }) => {
   event.preventDefault();
   currentEdgeId.value = edge.id;
@@ -361,9 +371,11 @@ flowStore.onConnect(flowStore.addEdges)
     :page-title="workflow?.name"
     :go-back-button-name="'Go Back'"
     :go-back-router-name="'WorkflowOverview'"
-    :edit-button-name="'Save Workflow'"
-    :delete-button-name="'Delete Workflow'"
+    :edit-button-name="'Save'"
+    :test-button-name="'Test'"
+    :delete-button-name="'Delete'"
     @edit="handleSubmit"
+    @test="openTestModal"
   >
     <template #content>
       <div class="flex h-screen" @drop="onDrop">
@@ -386,9 +398,14 @@ flowStore.onConnect(flowStore.addEdges)
       </div>
     </template>
   </Container>
-  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false" @save="handleNodeSubmit">
+  <FormModal :is-open="isEditNode" :title="'Configure Node'" :save-button-name="'Save'" @close="isEditNode = false" @save="handleNodeSubmit">
     <template #fields>
       <WorkflowNodeFormData :node-config="nodeConfig" :ref="'nodeFormData'" />
+    </template>
+  </FormModal>
+  <FormModal :is-open="isTestWorkflow" :title="'Test Workflow'" :save-button-name="'Run Test'" @close="isTestWorkflow = false" @save="handleTestWorkflow">
+    <template #fields>
+      <WorkflowTest />
     </template>
   </FormModal>
 </template>
