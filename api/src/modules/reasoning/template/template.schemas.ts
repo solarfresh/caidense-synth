@@ -10,7 +10,6 @@ import { ReasoningTemplate } from './template.interface';
     virtuals: true,
     transform(doc: any, ret: any) {
       delete ret.__v;
-      delete ret._id;
     }
   },
 })

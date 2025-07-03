@@ -2,7 +2,7 @@ import type { Block, CreateBlock, UpdateBlock } from '@/types/blocks';
 import type { GenAIRequest } from '@/types/genai';
 import type { CreatePrompt, Prompt, UpdatePrompt } from '@/types/prompts';
 import type { CreateRepository, Repository, UpdateRepository } from '@/types/repositories';
-import type { CreateThinking, CreateWorkflow, UpdateThinking, Workflow } from '@/types/workflow';
+import type { CreateExecution, CreateThinking, CreateWorkflow, UpdateThinking, Workflow } from '@/types/workflow';
 import axios, { AxiosResponse } from 'axios';
 import { GenAIEndPoints, NodeEndpoints, PromptEndpoints, RepositoryEndpoints, WorkflowEndpoints } from './endpoints';
 
@@ -85,6 +85,9 @@ export const apiService = {
     },
     updateThinking: (templateId: string, data: UpdateThinking): Promise<AxiosResponse<Workflow>> => {
       return apiClient.put(WorkflowEndpoints.updateThinking(templateId), data);
-    }
+    },
+    executeWorkflow: (data: CreateExecution): Promise<AxiosResponse<{[key: string]: any}>> => {
+      return apiClient.post(WorkflowEndpoints.executeWorkflow(), data);
+    },
   }
 }

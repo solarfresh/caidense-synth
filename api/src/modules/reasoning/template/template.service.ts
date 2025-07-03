@@ -27,7 +27,7 @@ export class ReasoningTemplateService extends BaseService<ReasoningTemplateDocum
 
   async updateThinking(id: string, updateThinking: UpdateReasoningThinkingDto): Promise<ReasoningTemplateDocument> {
     const templateDocument = await this.reasoningTemplateModel.findById(id).populate('activatedReasoningThinkingId').exec();
-    const thinkingDocument = await this.reasoningThinkingModel.findByIdAndUpdate(templateDocument.activatedReasoningThinkingId._id, updateThinking as any, { new: true }).exec();
+    const thinkingDocument = await this.reasoningThinkingModel.findByIdAndUpdate(templateDocument.activatedReasoningThinkingId._id, updateThinking, { new: true }).exec();
     templateDocument.activatedReasoningThinkingId = thinkingDocument.toJSON() as any;
     return templateDocument.toJSON();
   };

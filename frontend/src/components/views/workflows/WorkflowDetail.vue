@@ -60,7 +60,7 @@ const submitFormData = computed(() => {
   thinking.inputs = activatedReasoningThinking.value.inputs;
   thinking.outputs = activatedReasoningThinking.value.outputs;
 
-  thinking.nodes = flowStore.getNodes.value.map(node => {
+  thinking.nodes = flowStore.nodes.value.map(node => {
     let obj: ExecutionNode = {
       id: node.id,
       type: node.type as ExecutionNodeType,
@@ -72,15 +72,15 @@ const submitFormData = computed(() => {
       obj.config = node.data.config;
     }
 
-    obj.incoming =node.data.incoming?.length ? node.data.incoming : [];
-    obj.inputs =node.data.inputs?.length ? node.data.inputs : [];
-    obj.outgoing =node.data.outgoing?.length ? node.data.outgoing : [];
-    obj.outputs =node.data.outputs?.length ? node.data.outputs : [];
+    obj.incoming = node.data.incoming?.length ? node.data.incoming : [];
+    obj.inputs = node.data.inputs?.length ? node.data.inputs : [];
+    obj.outgoing = node.data.outgoing?.length ? node.data.outgoing : [];
+    obj.outputs = node.data.outputs?.length ? node.data.outputs : [];
 
     return obj;
   });
 
-  thinking.edges = flowStore.getEdges.value.map((edge) => {
+  thinking.edges = flowStore.edges.value.map((edge) => {
     return {
       id: edge.id,
       source: edge.source,
@@ -330,14 +330,14 @@ flowStore.onNodeClick((event) => {
       source: connectingNodeId.value,
       target: node.id,
     };
-    edges.value.push(newEdge);
+    flowStore.addEdges(newEdge);
 
     flowStore.updateNode(connectingNodeId.value, (node) => ({
-      data: {...node.data, outgoing: node.data.outgoing.push(newEdge.id)},
+      data: {...node.data, outgoing: [...node.data.outgoing, newEdge.id]},
     }))
 
     flowStore.updateNode(node.id, (node) => ({
-      data: {...node.data, incoming: node.data.incoming.push(newEdge.id)},
+      data: {...node.data, incoming: [...node.data.incoming, newEdge.id]},
     }))
 
     connectingNodeId.value = ''; // Reset for next connection
@@ -359,7 +359,7 @@ flowStore.onNodeDrag(({ node, event }) => {
   };
 });
 
-flowStore.onConnect(flowStore.addEdges)
+// flowStore.onConnect(flowStore.addEdges)
 </script>
 
 <template>
@@ -401,7 +401,7 @@ flowStore.onConnect(flowStore.addEdges)
   </FormModal>
   <FormModal :is-open="isTestWorkflow" :title="'Test Workflow'" @close="isTestWorkflow = false">
     <template #fields>
-      <WorkflowTest :workflow-inputs="workflow?.activatedReasoningThinkingId.inputs" />
+      <WorkflowTest :thinking-id="workflow?.activatedReasoningThinkingId.id || ''" :workflow-inputs="workflow?.activatedReasoningThinkingId.inputs" />
     </template>
   </FormModal>
 </template>

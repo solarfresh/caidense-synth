@@ -101,7 +101,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: RepositoryOverview,
+    component: WorkflowOverview,
   }
 ]
   .concat(blockRoutes)

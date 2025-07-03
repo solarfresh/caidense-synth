@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
-import type { Variable } from '@/types/workflow';
-import { PropType, computed, ref } from 'vue';
+import { apiService } from '@/api/apiService';
 import TestButton from '@/components/base/buttons/TestButton.vue';
+import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import type { CreateExecution, Variable } from '@/types/workflow';
+import { PropType, computed, ref } from 'vue';
 
 
 const props = defineProps({
+  thinkingId: {
+    type: String,
+    required: true,
+  },
   workflowInputs: {
     type: Array as PropType<Variable[]>,
     required: false
@@ -15,6 +20,13 @@ const props = defineProps({
 const testOutputs = ref({});
 
 const requestContent = computed(() => {
+  if (!submitFormData.value?.config) return;
+
+  const obj = submitFormData.value.config.inputs;
+  return JSON.stringify(obj, null, 2);
+});
+
+const submitFormData = computed(() => {
   let obj = props.workflowInputs?.reduce((acc, variable: Variable) => {
     let defaultValue = undefined;
     switch (variable.type) {
@@ -31,10 +43,19 @@ const requestContent = computed(() => {
     return acc;
   }, {} as {[key: string]: any});
 
-  return JSON.stringify(obj, null, 2);
+  return {
+    thinkingId: props.thinkingId,
+    config: {
+      inputs: obj
+    }
+  }
 });
 
-const handleTest = () => {};
+const handleTest = async () => {
+  if (!submitFormData.value) return;
+  const response = await apiService.workflow.executeWorkflow(submitFormData.value as CreateExecution);
+  testOutputs.value = response.data.data.variables;
+};
 </script>
 
 <template>

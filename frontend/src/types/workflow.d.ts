@@ -1,6 +1,16 @@
 import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
 
 
+interface ExecutionGraphConfig {
+  inputs: object,
+  [key: string]: any;
+}
+
+export interface CreateExecution {
+  thinkingId: string;
+  config?: ExecutionGraphConfig;
+};
+
 interface Position {
   /**
    * The x-coordinate of the node's position in a visual layout.
