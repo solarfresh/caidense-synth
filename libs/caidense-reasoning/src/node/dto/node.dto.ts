@@ -64,13 +64,6 @@ export class ExecutionNodeDto {
   inputs?: VariableDto[];
 
   @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  script: string;
-
-  @ApiProperty({
     description: 'Optional array of IDs representing the outgoing sequence edges from this node.',
     type: [String],
     isArray: true,
@@ -99,15 +92,14 @@ export class ExecutionNodeDto {
   constructor(document: any) {
     const plainObject = document.toJSON ? document.toJSON() : document;
 
-    this._id = plainObject._id.toHexString();
+    this._id = plainObject._id.toHexString ? plainObject._id.toHexString() : plainObject._id;
     this.type = plainObject.type;
     this.label = plainObject.label;
     this.position = plainObject.position;
     this.config = plainObject.config;
-    this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming.toHexString ? incoming.toHexString() : incoming) : [];
+    this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming?.toHexString ? incoming.toHexString() : incoming) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
-    this.script = plainObject.script;
-    this.outgoing = plainObject.outgoing ? plainObject.outgoing.map(outgoing => outgoing.toHexString ? outgoing.toHexString() : outgoing) : [];
+    this.outgoing = plainObject.outgoing ? plainObject.outgoing.map(outgoing => outgoing?.toHexString ? outgoing.toHexString() : outgoing) : [];
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

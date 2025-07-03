@@ -42,6 +42,7 @@ export class ExecutionConsumer extends BaseRabbitMQService {
     const config: ExecutionGraphConfig = request.config
     const graphInstance = await this.reasoningThinkingService.findById(thinkingId);
     const graph = new ReasoningThinkingDto(graphInstance);
+    console.log(graph)
     const { correlationId, replyTo } = msg.properties;
     return await this.executionGraphService.runExecutionGraph(correlationId, graph, config);
   };

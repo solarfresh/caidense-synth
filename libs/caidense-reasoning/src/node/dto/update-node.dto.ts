@@ -70,15 +70,6 @@ export class UpdateExecutionNodeDto {
   inputs?: UpdateVariableDto[];
 
   @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  @IsOptional()
-  @IsString()
-  script?: string;
-
-  @ApiProperty({
     description: 'Optional array of IDs representing the outgoing sequence edges from this node.',
     type: [String],
     isArray: true,

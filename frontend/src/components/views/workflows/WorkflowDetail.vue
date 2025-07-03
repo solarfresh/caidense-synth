@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
+import ContextMenu from '@/components/layouts/flow/ContextMenu.vue';
 import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
@@ -17,9 +18,10 @@ import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
+import WorkflowTest from './WorkflowTest.vue';
 
 
-const { onConnect, addEdges, addNodes, screenToFlowCoordinate, onNodeDoubleClick, onNodeDrag, onNodesInitialized, updateNode } = useVueFlow();
+const flowStore = useVueFlow();
 const route = useRoute();
 const store = {
   block: useBlocktStore(),
@@ -28,10 +30,15 @@ const store = {
 
 const activatedReasoningThinking = ref<Thinking | null>(null);
 const blocks = ref<Array<Block> | null>(null);
+const connectingNodeId = ref('');
+const contextMenuStyle = ref({});
+const currentEdgeId = ref('');
 const draggedType = ref<string | null>(null);
 const isDragOver = ref(false);
 const isDragging = ref(false);
 const isEditNode = ref(false);
+const isTestWorkflow = ref(false);
+const isShowContextMenu  = ref(false);
 const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
 const nodeTypes = {
@@ -53,7 +60,7 @@ const submitFormData = computed(() => {
   thinking.inputs = activatedReasoningThinking.value.inputs;
   thinking.outputs = activatedReasoningThinking.value.outputs;
 
-  thinking.nodes = nodes.value.map(node => {
+  thinking.nodes = flowStore.nodes.value.map(node => {
     let obj: ExecutionNode = {
       id: node.id,
       type: node.type as ExecutionNodeType,
@@ -65,25 +72,21 @@ const submitFormData = computed(() => {
       obj.config = node.data.config;
     }
 
-    if (node.data.incoming?.length) {
-      obj.incoming = node.data.incoming;
-    }
-
-    if (node.data.inputs?.length) {
-      obj.inputs = node.data.inputs;
-    }
-
-    if (node.data.outgoing) {
-      obj.outgoing = node.data.outgoing;
-    }
-
-    if (node.data.outgoing) {
-      obj.outputs = node.data.outputs;
-    }
+    obj.incoming = node.data.incoming?.length ? node.data.incoming : [];
+    obj.inputs = node.data.inputs?.length ? node.data.inputs : [];
+    obj.outgoing = node.data.outgoing?.length ? node.data.outgoing : [];
+    obj.outputs = node.data.outputs?.length ? node.data.outputs : [];
 
     return obj;
   });
-  thinking.edges = activatedReasoningThinking.value.edges;
+
+  thinking.edges = flowStore.edges.value.map((edge) => {
+    return {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target
+    }
+  });
   thinking.reasoningTemplateId = workflow.value?.id || '';
 
   return thinking;
@@ -96,11 +99,44 @@ watch(isDragging, (dragging) => {
 onMounted(() => {
   fetchBlocks();
   fetchWorkflow();
+  document.addEventListener('click', closeContextMenu);
 });
 
 onUnmounted(() => {
+  document.removeEventListener('click', closeContextMenu);
   document.removeEventListener('drop', onDragEnd);
 });
+
+const closeContextMenu = () => {
+  isShowContextMenu.value = false;
+};
+
+const deleteEdge = () => {
+  if (currentEdgeId.value) {
+    const edge = flowStore.findEdge(currentEdgeId.value);
+
+    if (!edge) return;
+
+    flowStore.updateNode(edge.source, (node) => ({
+      data: {
+        ...node.data,
+        outgoing: node.data.outgoing.filter((edgeId: string) => edgeId !== currentEdgeId.value )
+      },
+    }))
+
+    flowStore.updateNode(edge.target, (node) => ({
+      data: {
+        ...node.data,
+        incoming: node.data.incoming.filter((edgeId: string) => edgeId !== currentEdgeId.value)
+      },
+    }))
+
+    flowStore.removeEdges([currentEdgeId.value]);
+
+    isShowContextMenu.value = false;
+    currentEdgeId.value = '';
+  }
+};
 
 const fetchBlocks = async () => {
   blocks.value = store.block.getBlocks;
@@ -177,7 +213,6 @@ const handleSubmit = async () => {
   if (workflow.value?.activatedReasoningThinkingId) {
     response = await apiService.workflow.updateThinking(store.workflow.currentWorkflowId, submitFormData.value);
   } else {
-    console.log(submitFormData.value);
     response = await apiService.workflow.createThinking(store.workflow.currentWorkflowId, submitFormData.value);
   }
 
@@ -187,12 +222,16 @@ const handleSubmit = async () => {
 const handleNodeSubmit = async () => {
   const nodeId = nodeFormData.value.submitNodeFormData.id;
 
-  updateNode(nodeId, (node) => ({
+  flowStore.updateNode(nodeId, (node) => ({
     data: nodeFormData.value.submitNodeFormData.data,
   }))
 
-  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === nodeTypes.startEvent) {
+  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === ExecutionNodeType.START_EVENT) {
     activatedReasoningThinking.value.inputs = nodeFormData.value.submitNodeFormData.data.inputs;
+  }
+
+  if (activatedReasoningThinking.value && nodeFormData.value.submitNodeFormData.type === ExecutionNodeType.END_EVENT) {
+    activatedReasoningThinking.value.outputs = nodeFormData.value.submitNodeFormData.data.outputs;
   }
 
   isEditNode.value = false;
@@ -236,7 +275,7 @@ const onDragEnd = () => {
 const onDrop = (event: DragEvent) => {
   const nodeId = new ObjectId().toHexString();
 
-  const position = screenToFlowCoordinate({
+  const position = flowStore.screenToFlowCoordinate({
     x: event.clientX,
     y: event.clientY,
   })
@@ -253,30 +292,74 @@ const onDrop = (event: DragEvent) => {
    *
    * We can hook into events even in a callback, and we can remove the event listener after it's been called.
    */
-  const { off } = onNodesInitialized(() => {
-    updateNode(nodeId, (node) => ({
+  const { off } = flowStore.onNodesInitialized(() => {
+    flowStore.updateNode(nodeId, (node) => ({
       position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
     }))
 
     off();
   })
 
-  addNodes(newNode);
+  flowStore.addNodes(newNode);
 }
 
-onNodeDoubleClick((event) => {
+const openTestModal = () => {
+  isTestWorkflow.value = true;
+};
+
+flowStore.onEdgeContextMenu(({ edge, event }) => {
+  event.preventDefault();
+  currentEdgeId.value = edge.id;
+  isShowContextMenu.value = true;
+  contextMenuStyle.value = {
+    top: `${event.clientY}px`,
+    left: `${event.clientX}px`,
+  };
+});
+
+flowStore.onNodeClick((event) => {
+  const node = event.node;
+
+  if (!connectingNodeId.value) {
+    // First click: set source node
+    connectingNodeId.value = node.id;
+  } else if (connectingNodeId.value !== node.id) {
+    // Second click: create edge to target node
+    const newEdge = {
+      id: new ObjectId().toHexString(),
+      source: connectingNodeId.value,
+      target: node.id,
+    };
+    flowStore.addEdges(newEdge);
+
+    flowStore.updateNode(connectingNodeId.value, (node) => ({
+      data: {...node.data, outgoing: [...node.data.outgoing, newEdge.id]},
+    }))
+
+    flowStore.updateNode(node.id, (node) => ({
+      data: {...node.data, incoming: [...node.data.incoming, newEdge.id]},
+    }))
+
+    connectingNodeId.value = ''; // Reset for next connection
+  } else {
+    // Clicked the same node twice, reset connection
+    connectingNodeId.value = '';
+  }
+});
+
+flowStore.onNodeDoubleClick((event) => {
   isEditNode.value = true;
   nodeConfig.value = event.node;
 });
 
-onNodeDrag(({ node, event }) => {
+flowStore.onNodeDrag(({ node, event }) => {
   const index = nodes.value.findIndex(obj => obj.id === node.id);
   if (index !== -1) {
     nodes.value[index].position = node.position;
   };
 });
 
-onConnect(addEdges)
+// flowStore.onConnect(flowStore.addEdges)
 </script>
 
 <template>
@@ -284,16 +367,19 @@ onConnect(addEdges)
     :page-title="workflow?.name"
     :go-back-button-name="'Go Back'"
     :go-back-router-name="'WorkflowOverview'"
-    :edit-button-name="'Save Workflow'"
-    :delete-button-name="'Delete Workflow'"
+    :edit-button-name="'Save'"
+    :test-button-name="'Test'"
+    :delete-button-name="'Delete'"
     @edit="handleSubmit"
+    @test="openTestModal"
   >
     <template #content>
       <div class="flex h-screen" @drop="onDrop">
         <div class="flex-none p-6 mx-4 bg-white shadow-md rounded-md">
-          <WorkflowDetailSidebar :blocks="blocks || []" @dragstart="onDragStart" />
+          <WorkflowDetailSidebar :blocks="blocks || []" @dragstart="onDragStart" @delete="deleteEdge" />
         </div>
         <div class="flex-auto p-6 mx-4 bg-white shadow-md rounded-md">
+          <ContextMenu v-if="isShowContextMenu" :context-menu-style="contextMenuStyle" @delete="deleteEdge" />
           <VueFlow :nodes="nodes" :nodeTypes="nodeTypes" :edges="edges" @dragover="onDragOver" @dragleave="onDragLeave">
             <FlowBackground
               :style="{
@@ -308,9 +394,14 @@ onConnect(addEdges)
       </div>
     </template>
   </Container>
-  <FormModal :is-open="isEditNode" :title="'Configure Node'" @close="isEditNode = false" @save="handleNodeSubmit">
+  <FormModal :is-open="isEditNode" :title="'Configure Node'" :cancel-button-name="'Cancel'" :save-button-name="'Save'" @close="isEditNode = false" @save="handleNodeSubmit">
     <template #fields>
       <WorkflowNodeFormData :node-config="nodeConfig" :ref="'nodeFormData'" />
+    </template>
+  </FormModal>
+  <FormModal :is-open="isTestWorkflow" :title="'Test Workflow'" @close="isTestWorkflow = false">
+    <template #fields>
+      <WorkflowTest :thinking-id="workflow?.activatedReasoningThinkingId.id || ''" :workflow-inputs="workflow?.activatedReasoningThinkingId.inputs" />
     </template>
   </FormModal>
 </template>

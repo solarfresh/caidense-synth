@@ -1,9 +1,7 @@
-import { DocumentStatus, Variable } from '@caidense/reasoning/common/common.interface';
-import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
-import { ExecutionEdge } from '@caidense/reasoning/edge/edge.interface';
-import { ExecutionEdgeSchema } from '@caidense/reasoning/edge/edge.schemas';
-import { ExecutionNode } from '@caidense/reasoning/node/node.interface';
-import { ExecutionNodeSchema } from '@caidense/reasoning/node/node.schemas';
+import { DocumentStatus } from '@caidense/reasoning/common/common.interface';
+import { VariableSchema, VariableSchemaClass } from '@caidense/reasoning/common/common.schemas';
+import { ExecutionEdgeSchema, ExecutionEdgeSchemaClass } from '@caidense/reasoning/edge/edge.schemas';
+import { ExecutionNodeClass, ExecutionNodeSchema } from '@caidense/reasoning/node/node.schemas';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ReasoningThinking } from './thinking.interface';
@@ -23,16 +21,16 @@ export class ReasoningThinkingDocument extends Document implements ReasoningThin
   description?: string;
 
   @Prop({ type: [ExecutionNodeSchema]})
-  nodes: ExecutionNode[];
+  nodes: ExecutionNodeClass[];
 
   @Prop({ type: [ExecutionEdgeSchema] })
-  edges: ExecutionEdge[];
+  edges: ExecutionEdgeSchemaClass[];
 
   @Prop({ type: [VariableSchema] })
-  inputs: Variable[];
+  inputs: VariableSchemaClass[];
 
   @Prop({ type: [VariableSchema] })
-  outputs: Variable[];
+  outputs: VariableSchemaClass[];
 
   @Prop({ type: Types.ObjectId, required: true})
   reasoningTemplateId: Types.ObjectId;

@@ -5,6 +5,7 @@ import DuplicateButton from '@/components/base/buttons/DuplicateButton.vue';
 import EditButton from '@/components/base/buttons/EditButton.vue';
 import GoBackButton from '@/components/base/buttons/GoBackButton.vue';
 import CreateButton from '../base/buttons/CreateButton.vue';
+import TestButton from '@/components/base/buttons/TestButton.vue';
 
 
 const props = defineProps({
@@ -21,6 +22,10 @@ const props = defineProps({
     default: ''
   },
   duplicateButtonName: {
+    type: String,
+    default: ''
+  },
+  testButtonName: {
     type: String,
     default: ''
   },
@@ -59,6 +64,7 @@ const emits = defineEmits<{
   (e: 'delete'): void;
   (e: 'duplicate'): void;
   (e: 'edit'): void;
+  (e: 'test'): void;
 }>();
 
 </script>
@@ -77,6 +83,7 @@ const emits = defineEmits<{
             <div class="flex space-x-3">
               <CreateButton v-if="createButtonName" :button-name="createButtonName" @click="$emit('create')" />
               <EditButton v-if="editButtonName" :button-name="editButtonName" @click="$emit('edit')" />
+              <TestButton v-if="testButtonName" :button-name="testButtonName" @click="$emit('test')" />
               <DuplicateButton v-if="duplicateButtonName" :button-name="duplicateButtonName" @click="$emit('duplicate')" />
               <DeleteButton v-if="deleteButtonName" :button-name="deleteButtonName" @click="$emit('delete')" />
             </div>
