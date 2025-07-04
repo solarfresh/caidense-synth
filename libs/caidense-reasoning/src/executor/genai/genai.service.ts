@@ -27,15 +27,23 @@ export class LLMCallExecutor extends ExecutorBase {
     }
 
     const config = node.config as LLMCallNodeConfig;
-    const genaiService = await this.moduleRef.resolve(GenaiServiceMap[config.service]);
-    const promptText = await this.composePrompt(config.promptTemplate, node, tracker);
-    if (!promptText.length) {
-      return;
+    let results: Record<string, any> = {};
+    if (config.isInference) {
+      const genaiService = await this.moduleRef.resolve(GenaiServiceMap[config.service]);
+      const promptText = await this.composePrompt(config.promptTemplate, node, tracker);
+      if (!promptText.length) {
+        return;
+      }
+      const response = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
+      results = {
+        llmOutput: response
+      }
+    } else {
+      results = {
+        llmOutput: config.promptTemplate
+      }
     }
-    const response = await genaiService.generateContentFromAiStudio(promptText, config.modelName)
-    const results: Record<string, any> = {
-      llmOutput: response
-    }
+
     await this.setOutputs(results, node, tracker)
   }
 

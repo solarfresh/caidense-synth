@@ -3,7 +3,7 @@ import type { VueFlowNodeData } from '@/types/workflow';
 import { Handle, Position, type NodeProps } from '@vue-flow/core';
 
 // props were passed from the slot using `v-bind="customNodeProps"`
-const props = defineProps<NodeProps<{ data?: VueFlowNodeData; }>>();
+const props = defineProps<NodeProps<VueFlowNodeData>>();
 </script>
 
 <template>

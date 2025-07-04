@@ -3,12 +3,14 @@ import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormMultiFieldsMultiInput from '@/components/layouts/form/FormMultiFieldsMultiInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { VariableType } from '@/enums/common';
+import { ExecutionNodeType } from '@/enums/workflow';
 import type { Variable } from '@/types/common';
 import type { FormInstance } from '@/types/form';
+import type { VueFlowNodeData } from '@/types/workflow';
 import { Node } from '@vue-flow/core';
 import { PropType, computed, reactive, ref } from 'vue';
 import WorkflowNodeConditionFormData from './WorkflowNodeConditionFormData.vue';
-import { ExecutionNodeType } from '@/enums/workflow';
+import WorkflowNodeLLMCallFormData from './WorkflowNodeLLMCallFormData.vue';
 
 
 const props = defineProps({
@@ -227,7 +229,7 @@ const submitNodeFormData = computed(() => {
   return obj;
 });
 
-const updateConditionNodeData = (nodeData: object) => {
+const updateConditionNodeData = (nodeData: VueFlowNodeData) => {
   const conditionNodeForm = nodeForm.get('conditionNodeForm')?.formInstance;
   if (!conditionNodeForm) return;
   nodeData.config.script = conditionNodeForm.get("conditionStatement")?.editableContent;
@@ -248,7 +250,7 @@ const registerRef = async (key:string, instance: any) => {
 
 <template>
   <FormInput :label-name="'Node Name'" :label-id="'nodeName'" :content="nodeData.label" :placeholder="'Enter node name'" :ref="el => registerRef('nodeName', el)" />
-  <FormTextarea v-if="nodeData.type === 'llmCall'" :label-name="'Prompt Template'" :label-id="'nodeScript'" :content="nodeData.promptTemplate" :rows="10" :ref="el => registerRef('promptTemplate', el)" />
+  <WorkflowNodeLLMCallFormData v-if="nodeData.type === 'llmCall'" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
   <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" :ref="el => registerRef('script', el)" />
   <WorkflowNodeConditionFormData v-if="nodeData.type === 'condition'" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
   <FormMultiFieldsMultiInput

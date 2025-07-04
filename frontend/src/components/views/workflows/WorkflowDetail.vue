@@ -3,6 +3,7 @@ import { apiService } from '@/api/apiService';
 import ContextMenu from '@/components/layouts/flow/ContextMenu.vue';
 import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
+import LLMCallNode from '@/components/layouts/flow/LLMCallNode.vue';
 import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
 import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
@@ -45,6 +46,7 @@ const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
 const nodeTypes = {
   condition: markRaw(ConditionNode),
+  llmCall: markRaw(LLMCallNode),
   endEvent: markRaw(EndEventNode),
   startEvent: markRaw(StartEventNode),
 }
