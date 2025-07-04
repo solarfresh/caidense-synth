@@ -9,13 +9,14 @@ import Container from '@/components/shared/Container.vue';
 import { ExecutionNodeType } from '@/enums/workflow';
 import { useBlocktStore } from '@/stores/block';
 import { useWorkflowStore } from '@/stores/workflow';
-import type { Block } from '@/types/blocks';
+import type { Block, BlockConfig } from '@/types/blocks';
 import type { ExecutionNode } from '@/types/workflow';
 import { Thinking, Workflow } from '@/types/workflow';
 import { Edge, Node, useVueFlow, VueFlow } from '@vue-flow/core';
 import { ObjectId } from 'bson';
 import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import ConditionNode from '../../layouts/flow/ConditionNode.vue';
 import WorkflowDetailSidebar from './WorkflowDetailSidebar.vue';
 import WorkflowNodeFormData from './WorkflowNodeFormData.vue';
 import WorkflowTest from './WorkflowTest.vue';
@@ -34,6 +35,7 @@ const connectingNodeId = ref('');
 const contextMenuStyle = ref({});
 const currentEdgeId = ref('');
 const draggedType = ref<string | null>(null);
+const draggedConfig = ref<BlockConfig>({});
 const isDragOver = ref(false);
 const isDragging = ref(false);
 const isEditNode = ref(false);
@@ -42,6 +44,7 @@ const isShowContextMenu  = ref(false);
 const edges = ref<Edge[]>([]);
 const nodes = ref<Node[]>([]);
 const nodeTypes = {
+  condition: markRaw(ConditionNode),
   endEvent: markRaw(EndEventNode),
   startEvent: markRaw(StartEventNode),
 }
@@ -237,14 +240,15 @@ const handleNodeSubmit = async () => {
   isEditNode.value = false;
 };
 
-const onDragStart = (event: DragEvent, type: string) => {
+const onDragStart = (event: DragEvent, type: string, config: BlockConfig) => {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', type)
     event.dataTransfer.effectAllowed = 'move'
   }
 
-  draggedType.value = type
-  isDragging.value = true
+  draggedType.value = type;
+  draggedConfig.value = config;
+  isDragging.value = true;
 
   document.addEventListener('drop', onDragEnd)
 }
@@ -284,7 +288,14 @@ const onDrop = (event: DragEvent) => {
     id: nodeId,
     type: draggedType.value || undefined,
     position,
-    data: { label: nodeId },
+    data: {
+      label: nodeId.slice(0, 10),
+      config: draggedConfig.value,
+      incoming: [],
+      inputs: [],
+      outgoing: [],
+      outputs: [],
+    },
   }
 
   /**

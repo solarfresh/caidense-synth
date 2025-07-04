@@ -7,9 +7,10 @@ const props = defineProps<NodeProps<{ data?: VueFlowNodeData; }>>();
 </script>
 
 <template>
-  <div :id="id" class="node" style="background-color: #90f090">
+  <div :id="id" class="node" style="background-color: #FFC107">
     <Handle type="target" :position="Position.Left" />
-    <div>{{ data?.label || 'End Node' }}</div>
+    <div>{{ data?.label || 'Condition Node' }}</div>
+    <Handle type="source" :position="Position.Right" />
   </div>
 </template>
 

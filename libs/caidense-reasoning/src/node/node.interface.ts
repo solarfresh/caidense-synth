@@ -2,10 +2,11 @@ import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
 export enum ExecutionNodeType {
-  LLM_CALL = 'llmCall',
-  START_EVENT = 'startEvent',
+  CONDITION = 'condition',
   END_EVENT = 'endEvent',
+  LLM_CALL = 'llmCall',
   SCRIPT = 'script',
+  START_EVENT = 'startEvent',
 }
 
 export interface Position {
@@ -74,11 +75,6 @@ export interface ExecutionNode {
    * These define what data the node expects from the execution context.
    */
   inputs?: Variable[];
-
-  /**
-   * Optional script code to be executed by this node type.
-   */
-  script?: string
 
   /**
    * Optional array of IDs representing the outgoing sequence edges from this node.
