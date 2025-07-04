@@ -4,7 +4,7 @@ import RemoveButton from '@/components/base/buttons/RemoveButton.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormSelect from '@/components/layouts/form/FormSelect.vue';
 import { FormInstance, FormProps } from '@/types/form';
-import { computed, ref, shallowRef } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 
 
 const props = defineProps({
@@ -38,6 +38,10 @@ const formInfo = computed(() => {
 
     return obj;
   });
+});
+
+watch(() => props.componentGroup, (newValue) => {
+  formGroup.value = newValue;
 });
 
 defineExpose({

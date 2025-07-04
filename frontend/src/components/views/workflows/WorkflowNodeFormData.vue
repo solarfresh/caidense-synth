@@ -7,6 +7,7 @@ import type { Variable } from '@/types/common';
 import type { FormInstance } from '@/types/form';
 import { Node } from '@vue-flow/core';
 import { PropType, computed, reactive, ref } from 'vue';
+import WorkflowNodeConditionFormData from './WorkflowNodeConditionFormData.vue';
 
 
 const props = defineProps({
@@ -235,6 +236,7 @@ const registerRef = async (key:string, instance: any) => {
   <FormInput :label-name="'Node Name'" :label-id="'nodeName'" :content="nodeData.label" :placeholder="'Enter node name'" :ref="el => registerRef('nodeName', el)" />
   <FormTextarea v-if="nodeData.type === 'llmCall'" :label-name="'Prompt Template'" :label-id="'nodeScript'" :content="nodeData.promptTemplate" :rows="10" :ref="el => registerRef('promptTemplate', el)" />
   <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" :ref="el => registerRef('script', el)" />
+  <WorkflowNodeConditionFormData v-if="nodeData.type === 'condition'" :node-config="props.nodeConfig" />
   <FormMultiFieldsMultiInput
     :ref="el => registerRef('inputs', el)"
     :add-button-name="'Add Input'"
