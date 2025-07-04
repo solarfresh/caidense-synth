@@ -27,7 +27,9 @@ const components = shallowRef(new Map([
   ['select', FormSelect],
 ]))
 const formGroup = ref(props.componentGroup);
-const formInstanceArray = ref<[Map<string, FormInstance>]>([new Map()]);
+const formInstanceArray = ref<Map<string, FormInstance>[]>(formGroup.value.map((info) => {
+  return new Map<string, FormInstance>();
+}));
 
 const formInfo = computed(() => {
   const copyObj = JSON.parse(JSON.stringify(props.componentGroup[0]));
@@ -42,6 +44,9 @@ const formInfo = computed(() => {
 
 watch(() => props.componentGroup, (newValue) => {
   formGroup.value = newValue;
+  formInstanceArray.value = newValue.map((info) => {
+    return new Map<string, FormInstance>();
+  })
 });
 
 defineExpose({

@@ -20,7 +20,7 @@ export class ConditionExecutor extends ExecutorBase {
       console.error(`ConditionExecutor received unexpected node type: ${node.type}`);
     }
 
-    const script = new vm.Script(node.config.script);
+    const script = new vm.Script(`statement = ${node.config.script}`);
     const sandbox = await this.getInputs(node, tracker)
     const context = vm.createContext(sandbox);
     const vmTimeout = this.configService.get('VM_TIMEOUT') | 1000;
@@ -30,7 +30,10 @@ export class ConditionExecutor extends ExecutorBase {
         console.error('VM execution error:', err.message);
     }
 
-    const statement = context.statement;
-    node.outgoing = [node.config[statement]];
+    if (context.statement) {
+      node.outgoing = [node.config.truePathEdgeId];
+    } else {
+      node.outgoing = [node.config.falsePathEdgeId];
+    }
   }
 }
