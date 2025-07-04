@@ -1,3 +1,4 @@
+import { ConditionExecutor } from '@caidense/reasoning/executor/generic/condition.service';
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
 import { GoogleGenaiService } from '@caidense/reasoning/executor/genai/google/google.service';
 import { ScriptExecutor } from '@caidense/reasoning/executor/generic/script.service';
@@ -34,6 +35,7 @@ import { ExecutionProducer } from './execution.producer';
     },
     ExecutionGraphService,
     ExecutionProducer,
+    ConditionExecutor,
     GoogleGenaiService,
     LLMCallExecutor,
     ReasoningThinkingService,
