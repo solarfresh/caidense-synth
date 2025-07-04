@@ -17,7 +17,7 @@ const props = defineProps({
 
 const conditionStatement = ref('');
 const truePathEdgeId = ref('');
-const falsePathEdigeId = ref('');
+const falsePathEdgeId = ref('');
 const outgoingOptions = ref<FormSelectOption[]>([]);
 const formInstance = reactive<Map<string, FormInstance>>(new Map());
 
@@ -27,8 +27,10 @@ const registerRef = async (key:string, instance: any) => {
   }
 }
 
-watch(() => props.nodeConfig?.data.script, (newScript) => {
-  conditionStatement.value = newScript;
+watch(() => props.nodeConfig?.data.config, (newConfig) => {
+  conditionStatement.value = newConfig.script;
+  truePathEdgeId.value = props.nodeConfig?.data.config.truePathEdgeId;
+  falsePathEdgeId.value = props.nodeConfig?.data.config.falsePathEdgeId;
 });
 
 watch(() => props.nodeConfig?.data.outgoing, (newOutgoing) => {
@@ -43,7 +45,9 @@ watch(() => props.nodeConfig?.data.outgoing, (newOutgoing) => {
 });
 
 onMounted(() => {
-  conditionStatement.value = props.nodeConfig?.data.script;
+  conditionStatement.value = props.nodeConfig?.data.config.script;
+  truePathEdgeId.value = props.nodeConfig?.data.config.truePathEdgeId;
+  falsePathEdgeId.value = props.nodeConfig?.data.config.falsePathEdgeId;
   outgoingOptions.value = props.nodeConfig?.data.outgoing.map((edgeId: string) => {
     const edge = flowStore.findEdge(edgeId);
     const targetNode = flowStore.findNode(edge?.target);
@@ -61,6 +65,8 @@ defineExpose({
 
 <template>
   <FormTextarea :label-name="'Condition Statement'" :label-id="'conditionStatement'" :content="conditionStatement" :placeholder="'Enter the condition statement'" :ref="el => registerRef('conditionStatement', el)" />
-  <FormSelect :label-name="'True Path'" :label-id="'truePath'" :options="outgoingOptions" :ref="el => registerRef('truePath', el)" />
-  <FormSelect :label-name="'False Path'" :label-id="'falsePath'" :options="outgoingOptions" :ref="el => registerRef('falsePath', el)" />
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+    <FormSelect :label-name="'True Path'" :label-id="'truePath'" :content="truePathEdgeId" :options="outgoingOptions" :ref="el => registerRef('truePath', el)" />
+    <FormSelect :label-name="'False Path'" :label-id="'falsePath'" :content="falsePathEdgeId" :options="outgoingOptions" :ref="el => registerRef('falsePath', el)" />
+  </div>
 </template>
