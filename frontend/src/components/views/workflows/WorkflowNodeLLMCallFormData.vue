@@ -8,7 +8,6 @@ import { Node, useVueFlow } from '@vue-flow/core';
 import { PropType, onMounted, reactive, ref, watch } from 'vue';
 
 
-const flowStore = useVueFlow();
 const store = useRepositoryStore();
 
 const props = defineProps({
@@ -35,13 +34,17 @@ const registerRef = async (key:string, instance: any) => {
 watch(() => props.nodeConfig?.data.config, (newConfig) => {
   promptTemplate.value = newConfig.promptTemplate;
   isInference.value = newConfig.isInference;
+  repositoryId.value = newConfig.repositoryId;
+  promptId.value = newConfig.promptTemplateId;
 });
 
-onMounted(() => {
+onMounted(async () => {
   promptTemplate.value = props.nodeConfig?.data.config.promptTemplate;
   isInference.value = props.nodeConfig?.data.config.isInference;
-  fetchRepositories();
-  fetchPrompts();
+  repositoryId.value = props.nodeConfig?.data.config.repositoryId;
+  promptId.value = props.nodeConfig?.data.config.promptTemplateId;
+  await fetchPrompts();
+  await fetchRepositories();
 });
 
 const fetchPrompts = async () => {
@@ -67,6 +70,15 @@ const fetchRepositories = async () => {
       name: repository.name
     }
   });
+
+  if (repositoryId.value) {
+    promptOptions.value = store.prompts.get(repositoryId.value)?.map((prompt) => {
+      return {
+        id: prompt.id,
+        name: prompt.name
+      }
+    }) || [];
+  };
 };
 
 const handleSelectRepository = (newRepositoryId: string) => {
@@ -82,6 +94,7 @@ const handleSelectRepository = (newRepositoryId: string) => {
 const handleSelectPrompt = (newPromptId: string) => {
   promptId.value = newPromptId;
   promptTemplate.value = store.prompts.get(repositoryId.value)?.find(prompt => prompt.id === promptId.value)?.promptText || '';
+  formInstance.set('promptTemplate', {editableContent: promptTemplate.value});
 };
 
 const parsePromptContent = () => {
@@ -109,15 +122,15 @@ const parsePromptContent = () => {
 };
 
 defineExpose({
-  formInstance
+  formInstance,
 });
 </script>
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
-    <FormSelect @change="handleSelectRepository" :labelId="'selectRepository'" :labelName="'Repository'" :options="repositoryOptions" :ref="el => registerRef('selectRepository', el)" />
-    <FormSelect @change="handleSelectPrompt" :labelId="'selectPromptTemplate'" :labelName="'Prompt Template'" :options="promptOptions" :ref="el => registerRef('selectPromptTemplate', el)" />
-    <FormCheckbox :label-id="'isInference'" :label-name="'Inference?'" :ref="el => registerRef('isInference', el)" />
+    <FormSelect @change="handleSelectRepository" :labelId="'selectRepository'" :labelName="'Repository'" :options="repositoryOptions" :content="repositoryId" :ref="el => registerRef('selectRepository', el)" />
+    <FormSelect @change="handleSelectPrompt" :labelId="'selectPromptTemplate'" :labelName="'Prompt Template'" :options="promptOptions" :content="promptId" :ref="el => registerRef('selectPromptTemplate', el)" />
+    <FormCheckbox :label-id="'isInference'" :label-name="'Inference?'" :content="isInference" :ref="el => registerRef('isInference', el)" />
   </div>
 
   <div v-if="promptTemplate" class="bg-gray-50 font-mono p-4 rounded-md text-sm whitespace-pre-wrap break-words border border-gray-200 h-64 overflow-y-auto">

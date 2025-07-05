@@ -117,10 +117,8 @@ export interface ExecutionEdge {
 }
 
 export interface ExecutionNodeConfig {
-  // Depending on the 'type' property of IFlowNode,
-  // this object will have different properties.
-  // Example: { type: 'llm-call', model: string, promptTemplateId: string, ... }
-  // Example: { type: 'tool-call', toolName: string, toolInputMapping: object, ... }
+  isInference?: boolean;
+  promptTemplate?: string;
   [key: string]: any; // Placeholder - will be replaced by a specific union or interface later
 }
 

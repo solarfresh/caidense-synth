@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormMultiFieldsMultiInput from '@/components/layouts/form/FormMultiFieldsMultiInput.vue';
+import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { VariableType } from '@/enums/common';
 import { ExecutionNodeType } from '@/enums/workflow';
@@ -203,7 +204,11 @@ const submitNodeFormData = computed(() => {
 
   if (props.nodeConfig?.type === ExecutionNodeType.CONDITION) {
     updateConditionNodeData(updatedNodeData);
-  }
+  };
+
+  if (props.nodeConfig?.type === ExecutionNodeType.LLM_CALL) {
+    updateLLMCallNodeData(updatedNodeData);
+  };
 
   updatedNodeData.inputs = nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
     return {
@@ -237,6 +242,15 @@ const updateConditionNodeData = (nodeData: VueFlowNodeData) => {
   nodeData.config.falsePathEdgeId = conditionNodeForm.get("falsePath")?.editableContent;
 };
 
+const updateLLMCallNodeData = (nodeData: VueFlowNodeData) => {
+  const llmCallNodeForm = nodeForm.get('llmCallNodeForm')?.formInstance;
+  if (!llmCallNodeForm) return;
+  nodeData.config.promptTemplate = llmCallNodeForm.get('promptTemplate')?.editableContent as string;
+  nodeData.config.isInference = llmCallNodeForm.get('isInference')?.editableContent as boolean;
+  nodeData.config.repositoryId = llmCallNodeForm.get('selectRepository')?.editableContent as string;
+  nodeData.config.promptTemplateId = llmCallNodeForm.get('selectPromptTemplate')?.editableContent as string;
+}
+
 defineExpose({
   submitNodeFormData
 });
@@ -249,16 +263,32 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormInput :label-name="'Node Name'" :label-id="'nodeName'" :content="nodeData.label" :placeholder="'Enter node name'" :ref="el => registerRef('nodeName', el)" />
-  <WorkflowNodeLLMCallFormData v-if="nodeData.type === 'llmCall'" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
-  <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" :ref="el => registerRef('script', el)" />
-  <WorkflowNodeConditionFormData v-if="nodeData.type === 'condition'" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
-  <FormMultiFieldsMultiInput
-    :ref="el => registerRef('inputs', el)"
-    :add-button-name="'Add Input'"
-    :componentGroup="inputsComponentGroup" />
-  <FormMultiFieldsMultiInput
-    :ref="el => registerRef('outputs', el)"
-    :add-button-name="'Add Output'"
-    :componentGroup="outputsComponentGroup" />
+  <FormSection :title="'Basic Information'">
+    <template #fields>
+      <FormInput :label-name="'Node Name'" :label-id="'nodeName'" :content="nodeData.label" :placeholder="'Enter node name'" :ref="el => registerRef('nodeName', el)" />
+    </template>
+  </FormSection>
+  <FormSection :title="'Configuration'">
+    <template #fields>
+      <WorkflowNodeLLMCallFormData v-if="nodeData.type === 'llmCall'" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
+      <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" :ref="el => registerRef('script', el)" />
+      <WorkflowNodeConditionFormData v-if="nodeData.type === 'condition'" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
+    </template>
+  </FormSection>
+  <FormSection :title="'Input Variables'">
+    <template #fields>
+      <FormMultiFieldsMultiInput
+        :ref="el => registerRef('inputs', el)"
+        :add-button-name="'Add Input'"
+        :componentGroup="inputsComponentGroup" />
+    </template>
+  </FormSection>
+  <FormSection :title="'Output Variables'">
+    <template #fields>
+      <FormMultiFieldsMultiInput
+        :ref="el => registerRef('outputs', el)"
+        :add-button-name="'Add Output'"
+        :componentGroup="outputsComponentGroup" />
+    </template>
+  </FormSection>
 </template>
