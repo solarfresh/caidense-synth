@@ -244,14 +244,14 @@ const submitNodeFormData = computed(() => {
 
   updatedNodeData.inputs = nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
     return {
-      name: instance.get('inputName')?.editableContent,
+      name: (instance.get('inputName')?.editableContent as string)?.trim(),
       type: variableTypeArray.value[instance.get('inputType')?.editableContent ? Number(instance.get('inputType')?.editableContent) : 0].name.toLowerCase(),
       description: instance.get('inputDescription')?.editableContent
     }
   }).filter(obj => obj.name !== undefined);
   updatedNodeData.outputs = nodeForm.get('outputs')?.formInstanceArray?.map((instance) => {
     return {
-      name: instance.get('outputName')?.editableContent,
+      name: (instance.get('outputName')?.editableContent as string)?.trim(),
       type: variableTypeArray.value[instance.get('outputType')?.editableContent ? Number(instance.get('outputType')?.editableContent) : 0].name.toLowerCase(),
       description: instance.get('outputDescription')?.editableContent,
       systemRef: instance.get('outputSystemRef')?.editableContent

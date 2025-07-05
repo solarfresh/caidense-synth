@@ -36,6 +36,7 @@ watch(() => props.nodeConfig?.data.config, (newConfig) => {
   isInference.value = newConfig.isInference;
   repositoryId.value = newConfig.repositoryId;
   promptId.value = newConfig.promptTemplateId;
+  formInstance.set('promptTemplate', {editableContent: promptTemplate.value});
 });
 
 onMounted(async () => {
@@ -43,6 +44,7 @@ onMounted(async () => {
   isInference.value = props.nodeConfig?.data.config.isInference;
   repositoryId.value = props.nodeConfig?.data.config.repositoryId;
   promptId.value = props.nodeConfig?.data.config.promptTemplateId;
+  formInstance.set('promptTemplate', {editableContent: promptTemplate.value});
   await fetchPrompts();
   await fetchRepositories();
 });
