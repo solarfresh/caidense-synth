@@ -7,3 +7,8 @@ export interface ExecutorResult {
   // Any other results the orchestrator needs (e.g., a specific return value for decisions)
   returnValue?: any; // For decision nodes, script results etc.
 }
+
+export interface SwitchCase {
+  key: string,
+  value: string,
+};

@@ -4,8 +4,9 @@ import DeleteButton from '@/components/base/buttons/DeleteButton.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormSelect from '@/components/layouts/form/FormSelect.vue';
 import type { FormInstance, FormSelectOption } from '@/types/form';
-import type { SwitchCases } from '@/types/workflow';
+import type { SwitchCase } from '@/types/workflow';
 import { Node, useVueFlow } from '@vue-flow/core';
+import { keyBy } from 'lodash';
 import { PropType, onMounted, reactive, ref, watch } from 'vue';
 
 
@@ -19,7 +20,7 @@ const props = defineProps({
 });
 
 const switchType = ref('');
-const switchCases = ref<SwitchCases[]>([]);
+const switchCases = ref<SwitchCase[]>([]);
 const outgoingOptions = ref<FormSelectOption[]>([]);
 const formInstance = reactive<Map<string, FormInstance>>(new Map());
 const formInstanceArray = ref<Map<string, FormInstance>[]>([new Map<string, FormInstance>()]);
@@ -36,7 +37,12 @@ const registerRef = async (key:string, instance: any, index: number | null = nul
 
 watch(() => props.nodeConfig?.data.config, (newConfig) => {
   switchType.value = newConfig.script;
-  switchCases.value = newConfig.switchCases;
+  switchCases.value = Object.entries(newConfig.switchCases).map(([key, value]) => {
+    return {
+      key: key,
+      value: value
+    } as SwitchCase
+  });
   formInstanceArray.value = switchCases.value.map((switchCase) => {
     return new Map<string, FormInstance>();
   });
@@ -55,8 +61,13 @@ watch(() => props.nodeConfig?.data.outgoing, (newOutgoing) => {
 
 onMounted(() => {
   switchType.value = props.nodeConfig?.data.config.script;
-  switchCases.value = props.nodeConfig?.data.config.switchCases;
-  formInstanceArray.value = switchCases.value.map((switchCase) => {
+  switchCases.value = Object.entries(props.nodeConfig?.data.config.switchCases).map(([key, value]) => {
+    return {
+      key: key,
+      value: value
+    } as SwitchCase
+  });
+  formInstanceArray.value = switchCases.value.map((_: any) => {
     return new Map<string, FormInstance>();
   });
   outgoingOptions.value = props.nodeConfig?.data.outgoing.map((edgeId: string) => {

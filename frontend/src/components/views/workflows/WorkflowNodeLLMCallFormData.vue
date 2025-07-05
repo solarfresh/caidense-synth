@@ -4,7 +4,7 @@ import FormCheckbox from '@/components/layouts/form/FormCheckbox.vue';
 import FormSelect from '@/components/layouts/form/FormSelect.vue';
 import { useRepositoryStore } from '@/stores/repository';
 import type { FormInstance, FormSelectOption } from '@/types/form';
-import { Node, useVueFlow } from '@vue-flow/core';
+import { Node } from '@vue-flow/core';
 import { PropType, onMounted, reactive, ref, watch } from 'vue';
 
 

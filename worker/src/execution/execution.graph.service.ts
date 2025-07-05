@@ -138,6 +138,7 @@ export class ExecutionGraphService {
         case ExecutionNodeType.LLM_CALL:
         case ExecutionNodeType.SCRIPT:
         case ExecutionNodeType.START_EVENT:
+        case ExecutionNodeType.SWITCH:
           console.log(`Completion of ${node.type}: ${node.label}`);
           await this.taskNodeHandler(node, engine);
           nodesProcessedInThisIteration++

@@ -7,7 +7,7 @@ import { VariableType } from '@/enums/common';
 import { ExecutionNodeType } from '@/enums/workflow';
 import type { Variable } from '@/types/common';
 import type { FormInstance } from '@/types/form';
-import type { SwitchCases, VueFlowNodeData } from '@/types/workflow';
+import type { VueFlowNodeData } from '@/types/workflow';
 import { Node } from '@vue-flow/core';
 import { PropType, computed, reactive, ref } from 'vue';
 import WorkflowNodeConditionFormData from './WorkflowNodeConditionFormData.vue';
@@ -294,12 +294,12 @@ const updateSwitchNodeData = (nodeData: VueFlowNodeData) => {
   if (!switchNodeForm) return;
 
   nodeData.config.script = switchNodeForm.get('switchType')?.editableContent as string;
-  nodeData.config.switchCases = switchNodeFormArray?.map((formInstance) => {
-    return {
-      key: formInstance.get('switchCase')?.editableContent,
-      value: formInstance.get('switchPath')?.editableContent
-    }
-  }) as SwitchCases[];
+  nodeData.config.switchCases = switchNodeFormArray?.reduce((acc, formInstance) => {
+    const key = formInstance.get('switchCase')?.editableContent as string;
+    const value = formInstance.get('switchPath')?.editableContent as string;
+    acc[key] = value;
+    return acc
+  }, {} as {[key: string]: any}) as {[key: string]: any};
 };
 
 defineExpose({

@@ -1,3 +1,4 @@
+import type { SwitchCase } from '@caidense/reasoning/executor/executor.interface';
 import { ExecutorBase } from '@caidense/reasoning/executor/executor.service';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
@@ -20,6 +21,7 @@ export class SwitchExecutor extends ExecutorBase {
     }
 
     const inputs = await this.getInputs(node, tracker);
-    node.outgoing = [inputs[node.config.script]];
+    const switchCase = inputs[node.config.script];
+    node.outgoing = [node.config.switchCases[switchCase]];
   }
 }
