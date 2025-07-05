@@ -2,6 +2,7 @@ import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interfa
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
 import { ConditionExecutor } from '@caidense/reasoning/executor/generic/condition.service';
 import { ScriptExecutor } from '@caidense/reasoning/executor/generic/script.service';
+import { SwitchExecutor } from '@caidense/reasoning/executor/generic/switch.service';
 import { ExecutionGraph, ExecutionGraphConfig } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
@@ -18,6 +19,7 @@ const ExcutorMap: Record<ExecutionNodeType, any> = {
   [ExecutionNodeType.END_EVENT]: null,
   [ExecutionNodeType.LLM_CALL]: LLMCallExecutor,
   [ExecutionNodeType.SCRIPT]: ScriptExecutor,
+  [ExecutionNodeType.SWITCH]: SwitchExecutor,
   [ExecutionNodeType.START_EVENT]: null,
 };
 
