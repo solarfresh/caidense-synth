@@ -1,6 +1,7 @@
 export enum ExecutionNodeType {
-  LLM_CALL = 'llmCall',
-  START_EVENT = 'startEvent',
+  CONDITION = 'condition',
   END_EVENT = 'endEvent',
+  LLM_CALL = 'llmCall',
   SCRIPT = 'script',
+  START_EVENT = 'startEvent',
 }

@@ -7,8 +7,9 @@ const props = defineProps<NodeProps<VueFlowNodeData>>();
 </script>
 
 <template>
-  <div :id="id" class="node" style="background-color: #f0f090">
-    <div>{{ data?.label || 'Start Node' }}</div>
+  <div :id="id" class="node" style="background-color: #FFC107">
+    <Handle type="target" :position="Position.Left" />
+    <div>{{ data?.label || 'Condition Node' }}</div>
     <Handle type="source" :position="Position.Right" />
   </div>
 </template>

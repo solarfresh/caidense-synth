@@ -3,12 +3,12 @@ import type { VueFlowNodeData } from '@/types/workflow';
 import { Handle, Position, type NodeProps } from '@vue-flow/core';
 
 // props were passed from the slot using `v-bind="customNodeProps"`
-const props = defineProps<NodeProps<{ data?: VueFlowNodeData; }>>();
+const props = defineProps<NodeProps<VueFlowNodeData>>();
 </script>
 
 <template>
   <div :id="id" class="node" style="background-color: #90f090">
-    <Handle type="target" :position="Position.Top" />
+    <Handle type="target" :position="Position.Left" />
     <div>{{ data?.label || 'End Node' }}</div>
   </div>
 </template>

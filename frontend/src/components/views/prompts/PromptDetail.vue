@@ -30,7 +30,7 @@ const store = {
 const route = useRoute();
 const router = useRouter();
 
-const availablePrompTemplates = ref();
+const availablePromptTemplates = ref();
 const prompt = ref<Prompt | null>(null);
 const promptVariables = ref<FormInstance | null>(null);
 const promptEvaluationTemplate = ref();
@@ -71,7 +71,7 @@ onMounted(async () => {
     }
 
     response = await apiService.prompt.getAll({filter: JSON.stringify({promptSetId: prompt.value.promptSetId})});
-    availablePrompTemplates.value = response.data.map(prompt => {
+    availablePromptTemplates.value = response.data.map(prompt => {
       store.prompt.prompts.set(prompt.id, prompt);
       return {id: prompt.id, name: prompt.name}
     });
@@ -235,7 +235,7 @@ const runEvaluation = async () => {
         <PromptVariableViewSection :ref="'promptVariables'" />
       </div>
 
-      <PromptEvaluationSection @runEvaluation="runEvaluation" :availablePrompTemplates="availablePrompTemplates" :isEvaluating="isEvaluating" :evaluationResult="evaluationResult" :ref="'promptEvaluationTemplate'" />
+      <PromptEvaluationSection @runEvaluation="runEvaluation" :availablePromptTemplates="availablePromptTemplates" :isEvaluating="isEvaluating" :evaluationResult="evaluationResult" :ref="'promptEvaluationTemplate'" />
     </template>
   </Details>
 </template>

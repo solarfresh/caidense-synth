@@ -92,7 +92,7 @@ export class ExecutionNodeDto {
   constructor(document: any) {
     const plainObject = document.toJSON ? document.toJSON() : document;
 
-    this._id = plainObject._id.toHexString ? plainObject._id.toHexString() : plainObject._id;
+    this._id = plainObject._id?.toHexString ? plainObject._id.toHexString() : plainObject.id ? plainObject.id : plainObject._id;
     this.type = plainObject.type;
     this.label = plainObject.label;
     this.position = plainObject.position;

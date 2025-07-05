@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Block } from '@/types/blocks';
+import type { Block, BlockConfig } from '@/types/blocks';
 
 
 const props = defineProps<{
@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'dragstart', event: DragEvent, type: string): void;
+  (e: 'dragstart', event: DragEvent, type: string, config: BlockConfig): void;
 }>();
 </script>
 
@@ -15,7 +15,7 @@ const emits = defineEmits<{
   <aside>
     <h2 class="text-lg font-semibold text-gray-700 mb-4">Block Library</h2>
     <div class="space-y-2">
-      <button v-for="block in blocks" class="block w-full text-left px-3 py-2 rounded-md hover:bg-gray-200 focus:outline-none focus:bg-gray-200 cursor-grab" :draggable="true" @dragstart="(event) => $emit('dragstart', event, 'inputData')">
+      <button v-for="block in blocks" class="block w-full text-left px-3 py-2 rounded-md hover:bg-gray-200 focus:outline-none focus:bg-gray-200 cursor-grab" :draggable="true" @dragstart="(event) => $emit('dragstart', event, block.type, block.config || {})">
         {{ block.name }}
       </button>
     </div>

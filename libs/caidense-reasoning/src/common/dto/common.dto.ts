@@ -76,7 +76,7 @@ export class VariableDto {
   constructor(document: any) { // 'any' or a more specific source type
     const plainObject = document.toJSON ? document.toJSON() : document;
 
-    this._id = plainObject._id.toHexString ? plainObject._id.toHexString() : plainObject._id;
+    this._id = plainObject._id?.toHexString ? plainObject._id.toHexString() : plainObject.id ? plainObject.id : plainObject._id;
     this.name = plainObject.name;
     this.type = plainObject.type;
     this.description = plainObject.description;
