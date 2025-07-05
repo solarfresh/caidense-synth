@@ -119,6 +119,7 @@ export interface ExecutionEdge {
 export interface ExecutionNodeConfig {
   isInference?: boolean;
   promptTemplate?: string;
+  script?: string;
   [key: string]: any; // Placeholder - will be replaced by a specific union or interface later
 }
 

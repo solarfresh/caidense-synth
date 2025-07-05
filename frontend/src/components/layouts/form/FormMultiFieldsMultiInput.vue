@@ -73,7 +73,7 @@ const removeComponent = async (index: number) => {
 <template>
   <div class="space-y-4" :class="{'mb-5': props.hasMargin}">
     <div v-for="(componentInfo, index) in formGroup" class="flex flex-row items-center justify-center sm:w-full space-x-4 mb-2">
-      <div class="grid grid-cols-1 gap-6 flex-grow" :class="{'md:grid-cols-2': componentInfo?.length !== 3, 'md:grid-cols-3': componentInfo?.length === 3}">
+      <div class="grid grid-cols-1 gap-4 flex-grow" :class="{'md:grid-cols-2': componentInfo?.length !== 3, 'md:grid-cols-3': componentInfo?.length === 3}">
         <component v-for="info in componentInfo" :is="components.get(info.name)" v-bind="info.props" :ref="el => registerRef(index, info.props.labelId, el)" />
       </div>
       <RemoveButton :icon-only="true" :button-name="'Remove'" class="inline-flex" @click="removeComponent(index)" />
