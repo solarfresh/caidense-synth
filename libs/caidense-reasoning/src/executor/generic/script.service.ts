@@ -4,6 +4,7 @@ import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
 import { ExecutionContextTracker } from '@caidense/reasoning/state/state.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import MarkdownIt from 'markdown-it';
 import * as vm from 'vm';
 
 
@@ -22,6 +23,9 @@ export class ScriptExecutor extends ExecutorBase {
 
     const script = new vm.Script(node.config.script);
     const sandbox = await this.getInputs(node, tracker)
+
+    sandbox['MarkdownIt'] = MarkdownIt;
+
     const context = vm.createContext(sandbox);
     const vmTimeout = this.configService.get('VM_TIMEOUT') | 1000;
     try {
