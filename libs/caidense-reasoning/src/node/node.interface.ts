@@ -7,6 +7,7 @@ export enum ExecutionNodeType {
   LLM_CALL = 'llmCall',
   SCRIPT = 'script',
   START_EVENT = 'startEvent',
+  SWITCH = 'switch',
 }
 
 export interface Position {

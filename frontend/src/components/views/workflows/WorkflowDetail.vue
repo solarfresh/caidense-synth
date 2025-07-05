@@ -6,6 +6,7 @@ import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import LLMCallNode from '@/components/layouts/flow/LLMCallNode.vue';
 import ScriptNode from '@/components/layouts/flow/ScriptNode.vue';
 import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
+import SwitchNode from '@/components/layouts/flow/SwitchNode.vue';
 import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
 import { ExecutionNodeType } from '@/enums/workflow';
@@ -51,6 +52,7 @@ const nodeTypes = {
   endEvent: markRaw(EndEventNode),
   script: markRaw(ScriptNode),
   startEvent: markRaw(StartEventNode),
+  switch: markRaw(SwitchNode),
 }
 const workflow = ref<Workflow | null>(null);
 

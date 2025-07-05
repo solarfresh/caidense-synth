@@ -25,6 +25,11 @@ interface Position {
   y: number;
 };
 
+export interface SwitchCases {
+  key: string;
+  value: string;
+}
+
 interface Variable {
   id: string;
 
@@ -120,6 +125,7 @@ export interface ExecutionNodeConfig {
   isInference?: boolean;
   promptTemplate?: string;
   script?: string;
+  switchCases: SwitchCases[];
   [key: string]: any; // Placeholder - will be replaced by a specific union or interface later
 }
 

@@ -7,11 +7,12 @@ import { VariableType } from '@/enums/common';
 import { ExecutionNodeType } from '@/enums/workflow';
 import type { Variable } from '@/types/common';
 import type { FormInstance } from '@/types/form';
-import type { VueFlowNodeData } from '@/types/workflow';
+import type { SwitchCases, VueFlowNodeData } from '@/types/workflow';
 import { Node } from '@vue-flow/core';
 import { PropType, computed, reactive, ref } from 'vue';
 import WorkflowNodeConditionFormData from './WorkflowNodeConditionFormData.vue';
 import WorkflowNodeLLMCallFormData from './WorkflowNodeLLMCallFormData.vue';
+import WorkflowNodeSwitchFormData from './WorkflowNodeSwitchFormData.vue';
 
 
 const props = defineProps({
@@ -237,6 +238,10 @@ const submitNodeFormData = computed(() => {
     updateScriptNodeData(updatedNodeData);
   };
 
+  if (props.nodeConfig?.type === ExecutionNodeType.SWITCH) {
+    updateSwitchNodeData(updatedNodeData);
+  }
+
   updatedNodeData.inputs = nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
     return {
       name: instance.get('inputName')?.editableContent,
@@ -283,6 +288,20 @@ const updateScriptNodeData = (nodeData: VueFlowNodeData) => {
   nodeData.config.script = nodeForm.get('scriptNodeForm')?.editableContent as string;
 };
 
+const updateSwitchNodeData = (nodeData: VueFlowNodeData) => {
+  const switchNodeForm = nodeForm.get('switchNodeForm')?.formInstance;
+  const switchNodeFormArray = nodeForm.get('switchNodeForm')?.formInstanceArray;
+  if (!switchNodeForm) return;
+
+  nodeData.config.script = switchNodeForm.get('switchType')?.editableContent as string;
+  nodeData.config.switchCases = switchNodeFormArray?.map((formInstance) => {
+    return {
+      key: formInstance.get('switchCase')?.editableContent,
+      value: formInstance.get('switchPath')?.editableContent
+    }
+  }) as SwitchCases[];
+};
+
 defineExpose({
   submitNodeFormData
 });
@@ -302,9 +321,10 @@ const registerRef = async (key:string, instance: any) => {
   </FormSection>
   <FormSection :title="'Configuration'">
     <template #fields>
-      <WorkflowNodeLLMCallFormData v-if="nodeData.type === 'llmCall'" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
-      <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="props.nodeConfig?.data.config.script" :placeholder="'Enter a script'" :ref="el => registerRef('scriptNodeForm', el)" />
-      <WorkflowNodeConditionFormData v-if="nodeData.type === 'condition'" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
+      <WorkflowNodeLLMCallFormData v-if="nodeData.type === ExecutionNodeType.LLM_CALL" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
+      <FormTextarea v-if="nodeData.type === ExecutionNodeType.SCRIPT" :label-name="'Scripts'" :label-id="'nodeScript'" :content="props.nodeConfig?.data.config.script" :placeholder="'Enter a script'" :ref="el => registerRef('scriptNodeForm', el)" />
+      <WorkflowNodeConditionFormData v-if="nodeData.type === ExecutionNodeType.CONDITION" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
+      <WorkflowNodeSwitchFormData v-if="nodeData.type === ExecutionNodeType.SWITCH" :node-config="props.nodeConfig" :ref="el => registerRef('switchNodeForm', el)" />
     </template>
   </FormSection>
   <FormSection :title="'Input Variables'">
