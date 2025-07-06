@@ -1,6 +1,6 @@
 {
   "name": "caidense-synth-api",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A TypeScript toolkit for systematic LLM prompt engineering, with robust management, testing, and LangChain.js integration.",
   "author": "Caidense",
   "private": false,
