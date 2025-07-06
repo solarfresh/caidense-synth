@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
-import TestButton from '@/components/base/buttons/TestButton.vue';
+import ExecuteButton from '@/components/base/buttons/ExecuteButton.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import { FormInstance } from '@/types/form';
 import type { CreateExecution, Variable } from '@/types/workflow';
 import { PropType, computed, ref } from 'vue';
 
@@ -17,16 +18,18 @@ const props = defineProps({
   }
 })
 
+const isRunning = ref<Boolean>(false);
+const requestPayload = ref<FormInstance | null>(null);
 const testOutputs = ref({});
 
 const requestContent = computed(() => {
-  if (!submitFormData.value?.config) return;
+  if (!defaultFormData.value?.config) return;
 
-  const obj = submitFormData.value.config.inputs;
+  const obj = defaultFormData.value.config.inputs;
   return JSON.stringify(obj, null, 2);
 });
 
-const submitFormData = computed(() => {
+const defaultFormData = computed(() => {
   let obj = props.workflowInputs?.reduce((acc, variable: Variable) => {
     let defaultValue = undefined;
     switch (variable.type) {
@@ -52,17 +55,27 @@ const submitFormData = computed(() => {
 });
 
 const handleTest = async () => {
-  if (!submitFormData.value) return;
-  const response = await apiService.workflow.executeWorkflow(submitFormData.value as CreateExecution);
+  if (!requestPayload.value) return;
+
+  isRunning.value = true;
+  const submitFormData = {
+    thinkingId: props.thinkingId,
+    config: {
+      inputs: JSON.parse(requestPayload.value.editableContent as string),
+    }
+  };
+
+  const response = await apiService.workflow.executeWorkflow(submitFormData as CreateExecution);
   testOutputs.value = response.data.data.variables;
+  isRunning.value = false;
 };
 </script>
 
 <template>
-<FormTextarea :label-name="'Request Payload'" :label-id="'testRequest'" :content="requestContent" :rows="10" />
+<FormTextarea :label-name="'Request Payload'" :label-id="'testRequest'" :content="requestContent" :rows="10" :ref="'requestPayload'" />
 
 <div class="mt-5 sm:mt-6 space-x-2 flex justify-end">
-  <TestButton @click="handleTest" :button-name="'Run Test'" />
+  <ExecuteButton @click="handleTest" :is-running="isRunning.valueOf()" :button-name="'Run'" :dynamic-button-name="'Running...'" />
 </div>
 
 <div class="mt-5">

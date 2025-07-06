@@ -4,7 +4,9 @@ import ContextMenu from '@/components/layouts/flow/ContextMenu.vue';
 import EndEventNode from '@/components/layouts/flow/EndEventNode.vue';
 import FlowBackground from '@/components/layouts/flow/FlowBackground.vue';
 import LLMCallNode from '@/components/layouts/flow/LLMCallNode.vue';
+import ScriptNode from '@/components/layouts/flow/ScriptNode.vue';
 import StartEventNode from '@/components/layouts/flow/StartEventNode.vue';
+import SwitchNode from '@/components/layouts/flow/SwitchNode.vue';
 import FormModal from '@/components/layouts/form/FormModal.vue';
 import Container from '@/components/shared/Container.vue';
 import { ExecutionNodeType } from '@/enums/workflow';
@@ -48,7 +50,9 @@ const nodeTypes = {
   condition: markRaw(ConditionNode),
   llmCall: markRaw(LLMCallNode),
   endEvent: markRaw(EndEventNode),
+  script: markRaw(ScriptNode),
   startEvent: markRaw(StartEventNode),
+  switch: markRaw(SwitchNode),
 }
 const workflow = ref<Workflow | null>(null);
 
@@ -144,11 +148,11 @@ const deleteEdge = () => {
 };
 
 const fetchBlocks = async () => {
-  blocks.value = store.block.getBlocks;
+  blocks.value = store.block.getBlocks.sort((a, b) => a.name.localeCompare(b.name));
 
   if (blocks.value.length < 1) {
     const response = await apiService.block.getAll();
-    blocks.value = response.data;
+    blocks.value = response.data.sort((a, b) => a.name.localeCompare(b.name));
     store.block.updateBlocks(blocks.value);
   }
 };

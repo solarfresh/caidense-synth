@@ -69,7 +69,7 @@ async function fetchAvailableRepositories() {
 }
 
 const extractVariables = () => {
-  const content = templateForm.get('templateContent')?.editableContent || '';
+  const content = templateForm.get('templateContent')?.editableContent as string || '';
   const regex = /\{([A-Z0-9_]+)\}/g; // Matches [PARAM_NAME]
   let match;
   const extractedNames = new Set<string>();
@@ -110,7 +110,7 @@ const validateForm = () => {
     }
   }
 
-  const name = templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent;
+  const name = templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent as string;
   if (!name || !name.trim()) {
     errors.name = 'Template name is required.';
     isValid = false;
@@ -123,7 +123,7 @@ const validateForm = () => {
     return isValid;
   }
 
-  const content = templateForm.get('templateContent')?.editableContent;
+  const content = templateForm.get('templateContent')?.editableContent as string;
   if (!content || !content.trim()) {
     errors.name = 'Prompt text is required.';
     isValid = false;
@@ -176,10 +176,10 @@ const handleSubmit = async () => {
     })) || [];
 
     const newTemplateData: UpdatePrompt = {
-      name: templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent || '',
-      promptSetId: templateForm.get('multiFields')?.formInstance?.get('repositoryName')?.editableContent || '',
-      description: templateForm.get('description')?.editableContent || '',
-      promptText: templateForm.get('templateContent')?.editableContent || '',
+      name: templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent as string || '',
+      promptSetId: templateForm.get('multiFields')?.formInstance?.get('repositoryName')?.editableContent as string || '',
+      description: templateForm.get('description')?.editableContent as string || '',
+      promptText: templateForm.get('templateContent')?.editableContent as string || '',
       variables: variablesData,
       status: 'draft' as DocumentStatus,
       // Add other relevant fields like createdBy

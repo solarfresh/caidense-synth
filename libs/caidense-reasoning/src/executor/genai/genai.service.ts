@@ -49,14 +49,10 @@ export class LLMCallExecutor extends ExecutorBase {
 
   async composePrompt(promptTemplate: string, node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<string> {
     const inputs = await this.getInputs(node, tracker)
-    const inputEntries = Object.entries(inputs)
-    if (!inputEntries.length) {
-      return '';
-    }
 
-    return inputEntries.reduce((acc, input) => {
-      let [key, value] = input
-      return acc.replace(`{{${key}}}`, value)
-    }, promptTemplate)
+    return promptTemplate.replace(/\{([A-Z0-9_]+)\}/g, (match, varName) => {
+      const value = inputs[varName];
+      return value !== undefined ? String(value) : match; // Replace or keep original placeholder if not found
+    });
   }
 }

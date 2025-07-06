@@ -22,6 +22,9 @@ export class ScriptExecutor extends ExecutorBase {
 
     const script = new vm.Script(node.config.script);
     const sandbox = await this.getInputs(node, tracker)
+
+    sandbox['require'] = require;
+
     const context = vm.createContext(sandbox);
     const vmTimeout = this.configService.get('VM_TIMEOUT') | 1000;
     try {

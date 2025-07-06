@@ -12,6 +12,7 @@ import { Node } from '@vue-flow/core';
 import { PropType, computed, reactive, ref } from 'vue';
 import WorkflowNodeConditionFormData from './WorkflowNodeConditionFormData.vue';
 import WorkflowNodeLLMCallFormData from './WorkflowNodeLLMCallFormData.vue';
+import WorkflowNodeSwitchFormData from './WorkflowNodeSwitchFormData.vue';
 
 
 const props = defineProps({
@@ -26,7 +27,7 @@ const nodeData = ref({
   inputs: props.nodeConfig?.data.inputs || [{name: '', type: 'text', description: ''}],
   outputs: props.nodeConfig?.data.outputs || [{name: '', type: 'text', description: ''}],
   promptTemplate: props.nodeConfig?.data.config?.promptTemplate || '',
-  script: props.nodeConfig?.data?.script || '',
+  config: props.nodeConfig?.data?.config || {},
   type: props.nodeConfig?.type || '',
 });
 const nodeForm = reactive<Map<string, FormInstance>>(new Map());
@@ -157,6 +158,18 @@ const outputsComponentGroup = computed(() => {
           placeholder: 'e.g., The article content',
           type: 'text'
         }
+      },
+      {
+        name: 'input',
+        props: {
+          content: variable.systemRef,
+          hasMargin: false,
+          labelId: 'outputSystemRef',
+          labelName: 'System Reference',
+          isRequired: false,
+          placeholder: 'llmOutput',
+          type: 'text'
+        }
       }
     ]})
   } else {
@@ -193,6 +206,17 @@ const outputsComponentGroup = computed(() => {
           placeholder: 'e.g., The article content',
           type: 'text'
         }
+      },
+      {
+        name: 'input',
+        props: {
+          hasMargin: false,
+          labelId: 'outputSystemRef',
+          labelName: 'System Reference',
+          isRequired: false,
+          placeholder: 'llmOutput',
+          type: 'text'
+        }
       }
     ]]
   }
@@ -210,18 +234,27 @@ const submitNodeFormData = computed(() => {
     updateLLMCallNodeData(updatedNodeData);
   };
 
+  if (props.nodeConfig?.type === ExecutionNodeType.SCRIPT) {
+    updateScriptNodeData(updatedNodeData);
+  };
+
+  if (props.nodeConfig?.type === ExecutionNodeType.SWITCH) {
+    updateSwitchNodeData(updatedNodeData);
+  }
+
   updatedNodeData.inputs = nodeForm.get('inputs')?.formInstanceArray?.map((instance) => {
     return {
-      name: instance.get('inputName')?.editableContent,
+      name: (instance.get('inputName')?.editableContent as string)?.trim(),
       type: variableTypeArray.value[instance.get('inputType')?.editableContent ? Number(instance.get('inputType')?.editableContent) : 0].name.toLowerCase(),
       description: instance.get('inputDescription')?.editableContent
     }
   }).filter(obj => obj.name !== undefined);
   updatedNodeData.outputs = nodeForm.get('outputs')?.formInstanceArray?.map((instance) => {
     return {
-      name: instance.get('outputName')?.editableContent,
+      name: (instance.get('outputName')?.editableContent as string)?.trim(),
       type: variableTypeArray.value[instance.get('outputType')?.editableContent ? Number(instance.get('outputType')?.editableContent) : 0].name.toLowerCase(),
-      description: instance.get('outputDescription')?.editableContent
+      description: instance.get('outputDescription')?.editableContent,
+      systemRef: instance.get('outputSystemRef')?.editableContent
     }
   }).filter(obj => obj.name !== undefined);
 
@@ -237,9 +270,9 @@ const submitNodeFormData = computed(() => {
 const updateConditionNodeData = (nodeData: VueFlowNodeData) => {
   const conditionNodeForm = nodeForm.get('conditionNodeForm')?.formInstance;
   if (!conditionNodeForm) return;
-  nodeData.config.script = conditionNodeForm.get("conditionStatement")?.editableContent;
-  nodeData.config.truePathEdgeId = conditionNodeForm.get("truePath")?.editableContent;
-  nodeData.config.falsePathEdgeId = conditionNodeForm.get("falsePath")?.editableContent;
+  nodeData.config.script = conditionNodeForm.get("conditionStatement")?.editableContent as string;
+  nodeData.config.truePathEdgeId = conditionNodeForm.get("truePath")?.editableContent as string;
+  nodeData.config.falsePathEdgeId = conditionNodeForm.get("falsePath")?.editableContent as string;
 };
 
 const updateLLMCallNodeData = (nodeData: VueFlowNodeData) => {
@@ -250,6 +283,24 @@ const updateLLMCallNodeData = (nodeData: VueFlowNodeData) => {
   nodeData.config.repositoryId = llmCallNodeForm.get('selectRepository')?.editableContent as string;
   nodeData.config.promptTemplateId = llmCallNodeForm.get('selectPromptTemplate')?.editableContent as string;
 }
+
+const updateScriptNodeData = (nodeData: VueFlowNodeData) => {
+  nodeData.config.script = nodeForm.get('scriptNodeForm')?.editableContent as string;
+};
+
+const updateSwitchNodeData = (nodeData: VueFlowNodeData) => {
+  const switchNodeForm = nodeForm.get('switchNodeForm')?.formInstance;
+  const switchNodeFormArray = nodeForm.get('switchNodeForm')?.formInstanceArray;
+  if (!switchNodeForm) return;
+
+  nodeData.config.script = switchNodeForm.get('switchType')?.editableContent as string;
+  nodeData.config.switchCases = switchNodeFormArray?.reduce((acc, formInstance) => {
+    const key = formInstance.get('switchCase')?.editableContent as string;
+    const value = formInstance.get('switchPath')?.editableContent as string;
+    acc[key] = value;
+    return acc
+  }, {} as {[key: string]: any}) as {[key: string]: any};
+};
 
 defineExpose({
   submitNodeFormData
@@ -270,9 +321,10 @@ const registerRef = async (key:string, instance: any) => {
   </FormSection>
   <FormSection :title="'Configuration'">
     <template #fields>
-      <WorkflowNodeLLMCallFormData v-if="nodeData.type === 'llmCall'" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
-      <FormTextarea v-if="nodeData.type === 'script'" :label-name="'Scripts'" :label-id="'nodeScript'" :content="nodeData.script" :placeholder="'Enter a script'" :ref="el => registerRef('script', el)" />
-      <WorkflowNodeConditionFormData v-if="nodeData.type === 'condition'" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
+      <WorkflowNodeLLMCallFormData v-if="nodeData.type === ExecutionNodeType.LLM_CALL" :node-config="props.nodeConfig" :ref="el => registerRef('llmCallNodeForm', el)" />
+      <FormTextarea v-if="nodeData.type === ExecutionNodeType.SCRIPT" :label-name="'Scripts'" :label-id="'nodeScript'" :content="props.nodeConfig?.data.config.script" :placeholder="'Enter a script'" :ref="el => registerRef('scriptNodeForm', el)" />
+      <WorkflowNodeConditionFormData v-if="nodeData.type === ExecutionNodeType.CONDITION" :node-config="props.nodeConfig" :ref="el => registerRef('conditionNodeForm', el)" />
+      <WorkflowNodeSwitchFormData v-if="nodeData.type === ExecutionNodeType.SWITCH" :node-config="props.nodeConfig" :ref="el => registerRef('switchNodeForm', el)" />
     </template>
   </FormSection>
   <FormSection :title="'Input Variables'">
