@@ -1,3 +1,5 @@
+import BlockOverview from '@/components/views/blocks/BlockOverview.vue';
+import CreateBlock from '@/components/views/blocks/CreateBlock.vue';
 import CreatePrompt from '@/components/views/prompts/CreatePrompt.vue';
 import EditPrompt from '@/components/views/prompts/EditPrompt.vue';
 import PromptDetail from '@/components/views/prompts/PromptDetail.vue';
@@ -5,8 +7,50 @@ import CreateRepository from '@/components/views/repositories/CreateRepository.v
 import EditRepository from '@/components/views/repositories/EditRepository.vue';
 import RepositoryDetails from '@/components/views/repositories/RepositoryDetails.vue';
 import RepositoryOverview from '@/components/views/repositories/RepositoryOverview.vue';
+import CreateWorkflow from '@/components/views/workflows/CreateWorkflow.vue';
+import WorkflowDetail from '@/components/views/workflows/WorkflowDetail.vue';
+import WorkflowOverview from '@/components/views/workflows/WorkflowOverview.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import EditBlock from '@/components/views/blocks/EditBlock.vue';
 
+
+const blockRoutes = [
+  {
+    path: '/blocks',
+    name: 'BlockOverview',
+    component: BlockOverview
+  },
+  {
+    path: '/blocks/create',
+    name: 'CreateBlock',
+    component: CreateBlock
+  },
+  {
+    path: '/blocks/:id',
+    name: 'EditBlock',
+    component: EditBlock,
+    props: true,
+  }
+]
+
+const workflowRoutes = [
+  {
+    path: '/workflows',
+    name: 'WorkflowOverview',
+    component: WorkflowOverview
+  },
+  {
+    path: '/workflows/create',
+    name: 'CreateWorkflow',
+    component: CreateWorkflow
+  },
+  {
+    path: '/workflows/:id',
+    name: 'WorkflowDetail',
+    component: WorkflowDetail,
+    // props: true,
+  }
+]
 
 const promptRoutes = [
   {
@@ -56,10 +100,12 @@ const repositoryRoutes = [
 const routes = [
   {
     path: '/',
-    name: 'RepositoryOverview',
-    component: RepositoryOverview,
+    name: 'Home',
+    component: WorkflowOverview,
   }
 ]
+  .concat(blockRoutes)
+  .concat(workflowRoutes)
   .concat(promptRoutes)
   .concat(repositoryRoutes)
 

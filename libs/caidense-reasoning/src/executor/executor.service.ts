@@ -30,7 +30,7 @@ export abstract class ExecutorBase {
 
   async setOutputs(results: Record<string, any>, node: ExecutionNodeDto, tracker: ExecutionContextTracker): Promise<void> {
     node.outputs.map(variable => {
-      let value = results[variable.systemRef]
+      let value = results[variable.systemRef];
       if (value) {
         tracker.setVariable(variable.name, value)
       }

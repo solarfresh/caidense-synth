@@ -1,6 +1,6 @@
 import { Variable } from '@caidense/reasoning/common/common.interface';
-import { VariableSchema } from '@caidense/reasoning/common/common.schemas';
-import { ExecutionNode, ExecutionNodeConfig, ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
+import { VariableSchema, VariableSchemaClass } from '@caidense/reasoning/common/common.schemas';
+import { ExecutionNode, ExecutionNodeConfig, ExecutionNodeType, Position } from '@caidense/reasoning/node/node.interface';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema, Types } from 'mongoose';
 
@@ -9,6 +9,10 @@ import { Schema as MongooseSchema, Types } from 'mongoose';
   timestamps: true,
   toJSON: {
     virtuals: true,
+    transform(doc: any, ret: any) {
+      delete ret.__v;
+      delete ret._id;
+    }
   },
 })
 export class ExecutionNodeClass implements ExecutionNode {
@@ -23,6 +27,9 @@ export class ExecutionNodeClass implements ExecutionNode {
    */
   @Prop({ type: String })
   label?: string;
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  position?: Position;
 
   /**
    * Optional configuration object specific to the node type.
@@ -44,14 +51,7 @@ export class ExecutionNodeClass implements ExecutionNode {
    * Maps to inputs.
    */
   @Prop({ type: [VariableSchema] })
-  inputs?: Variable[];
-
-  /**
-   * Optional script code to be executed by this node type.
-   * Maps to script.
-   */
-  @Prop({ type: String })
-  script?: string;
+  inputs?: VariableSchemaClass[];
 
   /**
    * Optional array of IDs representing the outgoing sequence edges from this node.
@@ -65,7 +65,7 @@ export class ExecutionNodeClass implements ExecutionNode {
    * Maps to outputs.
    */
   @Prop({ type: [VariableSchema] })
-  outputs?: Variable[];
+  outputs?: VariableSchemaClass[];
 
   @Prop(Date)
   createdAt: Date;

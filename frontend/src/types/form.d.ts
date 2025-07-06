@@ -7,10 +7,11 @@ export interface FormErrors {
 }
 
 export interface FormInstance {
-  editableContent?: string;
+  editableContent?: string | boolean;
   editableVariables?: CreateVariable[];
   formInstance?: Map<string, FormInstance>;
-  $el: HTMLElement;
+  formInstanceArray?: [Map<string, FormInstance>];
+  $el?: HTMLElement;
 }
 
 export interface FormSelectOption {
@@ -29,6 +30,7 @@ export interface FormProps {
   optionName?: string;
   options?: array<FormSelectOption>;
   placeholder?: string;
+  rows?: number;
   subLabelName?: string;
   type?: string;
 }

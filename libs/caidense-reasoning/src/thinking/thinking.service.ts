@@ -1,8 +1,8 @@
 import { BaseService } from '@caidense/reasoning/common/common.service';
+import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking.schemas';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ReasoningThinkingDocument } from './thinking.schemas';
 
 
 @Injectable()

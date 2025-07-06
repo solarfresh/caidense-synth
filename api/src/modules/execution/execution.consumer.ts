@@ -1,7 +1,5 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import * as amqp from 'amqplib';
-import { BaseRabbitMQService } from '@caidense/reasoning/message/message.service';
-import { ExecutionConfig } from '@caidense/reasoning/message/message.interface';
 
 
 @Injectable()

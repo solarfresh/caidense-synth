@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { FormProps } from '@/types/form';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 
 const props = defineProps<FormProps>();
 const editableContent = ref(props.content);
 const hasMargin = ref(props.hasMargin || true);
+
+watch(() => props.content, (newValue) => {
+  editableContent.value = newValue;
+});
 
 defineExpose({
   editableContent

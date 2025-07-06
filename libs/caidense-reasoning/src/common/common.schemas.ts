@@ -7,6 +7,10 @@ import { Schema as MongooseSchema } from 'mongoose';
   timestamps: true,
   toJSON: {
     virtuals: true,
+    transform(doc: any, ret: any) {
+      delete ret.__v;
+      delete ret._id;
+    }
   },
 })
 export class VariableSchemaClass implements Variable {

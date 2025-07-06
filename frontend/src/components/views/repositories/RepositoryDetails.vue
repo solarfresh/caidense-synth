@@ -55,6 +55,8 @@ onMounted(async () => {
       prompts.value = response.data || [];
       store.repository.updatePrompts(prompts.value);
       store.prompt.updatePrompts(prompts.value);
+    } else {
+      prompts.value = store.prompt.getPrompts;
     }
   } catch (error) {
     console.error('Error fetching repository details:', error);

@@ -2,10 +2,10 @@
 import { apiService } from '@/api/apiService';
 import CancelButton from '@/components/base/buttons/CancelButton.vue';
 import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
-import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormMultiFields from '@/components/layouts/form/FormMultiFields.vue';
 import FormSection from '@/components/layouts/form/FormSection.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import Container from '@/components/shared/Container.vue';
 import { usePromptStore } from '@/stores/prompt';
 import { useRepositoryStore } from '@/stores/repository';
 import type { CreateVariable, DocumentStatus } from '@/types/common';
@@ -45,7 +45,6 @@ onMounted(async () => {
     store.prompt.updateState({currentPromptId: promptId})
     isLoading.value = true;
     promptData.value = store.prompt.getPrompt;
-    console.log('getPrompt', promptData.value)
     if (!promptData.value) {
       const response = await apiService.prompt.get(promptId);
       promptData.value = response.data;
@@ -70,7 +69,7 @@ async function fetchAvailableRepositories() {
 }
 
 const extractVariables = () => {
-  const content = templateForm.get('templateContent')?.editableContent || '';
+  const content = templateForm.get('templateContent')?.editableContent as string || '';
   const regex = /\{([A-Z0-9_]+)\}/g; // Matches [PARAM_NAME]
   let match;
   const extractedNames = new Set<string>();
@@ -111,7 +110,7 @@ const validateForm = () => {
     }
   }
 
-  const name = templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent;
+  const name = templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent as string;
   if (!name || !name.trim()) {
     errors.name = 'Template name is required.';
     isValid = false;
@@ -124,7 +123,7 @@ const validateForm = () => {
     return isValid;
   }
 
-  const content = templateForm.get('templateContent')?.editableContent;
+  const content = templateForm.get('templateContent')?.editableContent as string;
   if (!content || !content.trim()) {
     errors.name = 'Prompt text is required.';
     isValid = false;
@@ -177,10 +176,10 @@ const handleSubmit = async () => {
     })) || [];
 
     const newTemplateData: UpdatePrompt = {
-      name: templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent || '',
-      promptSetId: templateForm.get('multiFields')?.formInstance?.get('repositoryName')?.editableContent || '',
-      description: templateForm.get('description')?.editableContent || '',
-      promptText: templateForm.get('templateContent')?.editableContent || '',
+      name: templateForm.get('multiFields')?.formInstance?.get('templateName')?.editableContent as string || '',
+      promptSetId: templateForm.get('multiFields')?.formInstance?.get('repositoryName')?.editableContent as string || '',
+      description: templateForm.get('description')?.editableContent as string || '',
+      promptText: templateForm.get('templateContent')?.editableContent as string || '',
       variables: variablesData,
       status: 'draft' as DocumentStatus,
       // Add other relevant fields like createdBy
@@ -213,8 +212,8 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormContainer :title="'Edit Prompt Template'" :is-loading="isLoading" :loading-description="'Loading template details...'" :item-found="promptFound" :item-found-description="'Template not found!'">
-    <template #page>
+  <Container :page-title="'Edit Prompt Template'" :is-loading="isLoading" :loading-description="'Loading template details...'" :item-found="promptFound" :item-found-description="'Template not found!'">
+    <template #content>
       <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormSection :title="'Basic Information'">
           <template #fields>
@@ -263,5 +262,5 @@ const registerRef = async (key:string, instance: any) => {
         </div>
       </form>
     </template>
-  </FormContainer>
+  </Container>
 </template>

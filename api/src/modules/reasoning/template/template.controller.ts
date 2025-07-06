@@ -1,5 +1,7 @@
 import { BaseController } from '@/modules/base/base.controller';
-import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { CreateReasoningThinkingDto } from '@/modules/reasoning/thinking/dto/create-thinking.dto';
+import { UpdateReasoningThinkingDto } from '@/modules/reasoning/thinking/dto/update-thinking.dto';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, ValidationPipe } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import for Swagger documentation
 import { CreateReasoningTemplateDto } from './dto/create-template.dto';
 import { UpdateReasoningTemplateDto } from './dto/update-template.dto';
@@ -50,11 +52,14 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       type: [ReasoningTemplateDocument],
   })
   @ApiResponse({ status: 404, description: 'Not Found - No templates found.' })
-  async findAll(): Promise<ReasoningTemplateDocument[]> {
-     // Call the base controller's findAll method.
-     // If you need filtering via query params, you'd add @Query() here
-     // and potentially pass it to super.findAll().
-     return super.findAll();
+  async findAll(@Query() query?: any): Promise<ReasoningTemplateDocument[]> {
+    const filter = query?.filter
+    if (filter){
+      const parsedFilter = JSON.parse(filter);
+      return this.reasoningTemplateService.findAll(parsedFilter);
+    }
+
+    return this.reasoningTemplateService.findAll();
   }
 
   /**
@@ -75,7 +80,7 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning template with the given ID not found.' })
   async findById(@Param('id') id: string): Promise<ReasoningTemplateDocument> {
      // Call the base controller's findById method.
-     return super.findById(id);
+     return this.reasoningTemplateService.findById(id);
   }
 
   @Put(':id')
@@ -104,6 +109,34 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
   async deleteOne(@Param('id') id: string): Promise<void> {
     // Call the base controller's remove method.
     await super.deleteOne(id);
+  }
+
+  @Post(':id/thinking/create')
+  @ApiOperation({ summary: 'Create a new reasoning thinking for a template' })
+  @ApiBody({ type: CreateReasoningThinkingDto })
+  @ApiResponse({
+      status: 201,
+      description: 'Successfully created a new reasoning thinking.',
+      type: ReasoningTemplateDocument,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' })
+  async createThinking(@Param('id') id: string, @Body(ValidationPipe) createReasoningThinkingDto: CreateReasoningThinkingDto): Promise<ReasoningTemplateDocument> {
+    // Call the base controller's create method, passing the validated DTO.
+    // The base method will delegate to the service.
+    return this.service.createThinking(id, createReasoningThinkingDto);
+  }
+
+  @Put(':id/thinking/update')
+  @ApiOperation({ summary: 'Update a new reasoning thinking for a template' })
+  @ApiBody({ type: UpdateReasoningThinkingDto })
+  @ApiResponse({
+      status: 201,
+      description: 'Successfully updated a new reasoning thinking.',
+      type: ReasoningTemplateDocument,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' })
+  async updateThinking(@Param('id') id: string, @Body(ValidationPipe) updateReasoningThinkingDto: UpdateReasoningThinkingDto): Promise<ReasoningTemplateDocument> {
+    return this.service.updateThinking(id, updateReasoningThinkingDto);
   }
 
   // Customized endpoints can be added here.

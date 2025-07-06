@@ -3,11 +3,12 @@ import { Document } from 'mongoose';
 
 
 export interface ReasoningNodeConfig {
-  // Depending on the 'type' property of IFlowNode,
-  // this object will have different properties.
-  // Example: { type: 'llm-call', model: string, promptTemplateId: string, ... }
-  // Example: { type: 'tool-call', toolName: string, toolInputMapping: object, ... }
-  [key: string]: any; // Placeholder - will be replaced by a specific union or interface later
+  modelName?: string;
+  promptTemplate?: string;
+  promptTemplateId?: string;
+  provider?: string;
+  script?: string;
+  [key: string]: any;
 }
 
 
@@ -17,6 +18,16 @@ export interface ReasoningNodeConfig {
  * execution context.
  */
 export interface ReasoningNode extends Document {
+  /**
+   * A readable name for the block
+   */
+  name: string;
+
+  /**
+   * To describe the purpose or functionality of the block.
+   */
+  description?: string;
+
   /**
    * The type of the node, determining its function and behavior in the flow.
    * This could be a system-defined type (e.g., 'start', 'end', 'systemLogic', 'aiCall')
@@ -43,11 +54,6 @@ export interface ReasoningNode extends Document {
    * These define what data the node expects from the execution context.
    */
   inputs?: Variable[];
-
-  /**
-   * Optional script code to be executed by this node type.
-   */
-  script?: string
 
   /**
    * Optional array defining the outputs specific to this node's logic.

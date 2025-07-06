@@ -17,10 +17,6 @@ const props = defineProps({
     type: String,
     required: true
   },
-  detailsName: {
-    type: String,
-    required: true
-  },
   detailsDescription: {
     type: String,
     default: ''
@@ -33,48 +29,10 @@ const props = defineProps({
     type: Array<string>,
     default: []
   },
-  editButtonName: {
-    type: String,
-    default: ''
-  },
-  deleteButtonName: {
-    type: String,
-    default: ''
-  },
-  duplicateButtonName: {
-    type: String,
-    default: ''
-  },
-  goBackButtonName: {
-    type: String,
-    default: ''
-  },
-  goBackRouterName: {
-    type: String,
-    default: ''
-  }
 })
-const emits = defineEmits<{
-  (e: 'delete'): void;
-  (e: 'duplicate'): void;
-  (e: 'edit'): void;
-}>();
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-    <GoBackButton v-if="goBackButtonName" :button-name="goBackButtonName" :go-back-router-name="goBackRouterName" />
-
-    <h1 class="text-4xl font-extrabold text-gray-900 mb-4 md:mb-0">
-      {{ detailsName }}
-    </h1>
-    <div class="flex space-x-3">
-      <EditButton v-if="editButtonName" :button-name="editButtonName" @click="$emit('edit')" />
-      <DuplicateButton v-if="duplicateButtonName" :button-name="duplicateButtonName" @click="$emit('duplicate')" />
-      <DeleteButton v-if="deleteButtonName" :button-name="deleteButtonName" @click="$emit('delete')" />
-    </div>
-  </div>
-
   <div class="bg-white rounded-lg shadow-sm p-6 mb-8 border border-gray-200">
     <p class="text-gray-700 text-lg mb-4">{{ detailsDescription }}</p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 text-sm text-gray-600">

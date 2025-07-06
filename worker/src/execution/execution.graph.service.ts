@@ -1,6 +1,8 @@
 import { ExecutionStatus } from '@caidense/reasoning/execution/execution.interface';
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
+import { ConditionExecutor } from '@caidense/reasoning/executor/generic/condition.service';
 import { ScriptExecutor } from '@caidense/reasoning/executor/generic/script.service';
+import { SwitchExecutor } from '@caidense/reasoning/executor/generic/switch.service';
 import { ExecutionGraph, ExecutionGraphConfig } from '@caidense/reasoning/graph/graph.interface';
 import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { ExecutionNodeType } from '@caidense/reasoning/node/node.interface';
@@ -13,9 +15,11 @@ import { GraphTraversalEngine } from '../traverse/traverse.service';
 
 
 const ExcutorMap: Record<ExecutionNodeType, any> = {
+  [ExecutionNodeType.CONDITION]: ConditionExecutor,
   [ExecutionNodeType.END_EVENT]: null,
   [ExecutionNodeType.LLM_CALL]: LLMCallExecutor,
   [ExecutionNodeType.SCRIPT]: ScriptExecutor,
+  [ExecutionNodeType.SWITCH]: SwitchExecutor,
   [ExecutionNodeType.START_EVENT]: null,
 };
 
@@ -129,10 +133,12 @@ export class ExecutionGraphService {
 
       console.log(`Processing node: ${node.label} (${node.type})`);
       switch (node.type) {
+        case ExecutionNodeType.CONDITION:
+        case ExecutionNodeType.END_EVENT:
         case ExecutionNodeType.LLM_CALL:
         case ExecutionNodeType.SCRIPT:
         case ExecutionNodeType.START_EVENT:
-        case ExecutionNodeType.END_EVENT:
+        case ExecutionNodeType.SWITCH:
           console.log(`Completion of ${node.type}: ${node.label}`);
           await this.taskNodeHandler(node, engine);
           nodesProcessedInThisIteration++

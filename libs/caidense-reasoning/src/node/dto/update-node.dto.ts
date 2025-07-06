@@ -27,6 +27,16 @@ export class UpdateExecutionNodeDto {
   label?: string;
 
   @ApiProperty({
+    description: "An optional position object defining the node's coordinates in a visual layout.",
+    required: false,
+    example: { x: 10, y: 100 },
+  })
+  @IsOptional()
+  @IsObject()
+  @Type(() => Object)
+  position?: object;
+
+  @ApiProperty({
     description: 'Optional configuration object specific to the node type.',
     required: false,
     example: { logicType: 'sumAndCompare', threshold: 100 },
@@ -58,15 +68,6 @@ export class UpdateExecutionNodeDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateVariableDto)
   inputs?: UpdateVariableDto[];
-
-  @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  @IsOptional()
-  @IsString()
-  script?: string;
 
   @ApiProperty({
     description: 'Optional array of IDs representing the outgoing sequence edges from this node.',

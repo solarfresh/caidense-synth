@@ -2,9 +2,9 @@
 import { apiService } from '@/api/apiService';
 import CancelButton from '@/components/base/buttons/CancelButton.vue';
 import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
-import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import Container from '@/components/shared/Container.vue';
 import { useRepositoryStore } from '@/stores/repository';
 import { FormErrors, FormInstance } from '@/types/form';
 import { reactive, ref } from 'vue';
@@ -40,7 +40,7 @@ const handleSubmit = async () => {
     const newRepositoryData = {
       name: repositoryName,
       description: repositoryForm.get('description')?.editableContent || '',
-      prompts: [],
+      promptTextIds: [],
       tags: tagsArray || []
     }
 
@@ -68,9 +68,9 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormContainer :title="'Create New Repository'">
-    <template #page>
-      <form @submit.prevent="handleSubmit">
+  <Container :page-title="'Create New Repository'">
+    <template #content>
+      <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormInput :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
         <FormTextarea :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />
         <FormInput :description="'Separate tags with commas.'" :isRequired="false" :labelId="'tags'" :labelName="'Categories/Tags (comma-separated)'" :placeholder="'e.g., general, utility, marketing'" :type="'text'" :ref="el => registerRef('tags', el)" />
@@ -81,5 +81,5 @@ const registerRef = async (key:string, instance: any) => {
         </div>
       </form>
     </template>
-  </FormContainer>
+  </Container>
 </template>

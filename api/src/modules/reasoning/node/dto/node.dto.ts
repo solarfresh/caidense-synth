@@ -15,6 +15,18 @@ export class ReasoningNodeDto {
   _id: string;
 
   @ApiProperty({
+    description: 'A readable name for the block.',
+    example: 'LLM Call',
+  })
+  name: string;
+
+  @ApiProperty({
+    description: 'To describe the purpose or functionality of the block.',
+    example: 'Invoke a Large Language Model with a prompt template.',
+  })
+  description: string;
+
+  @ApiProperty({
     description: 'The type of the node, determining its function and behavior in the flow.',
     example: 'systemLogic',
   })
@@ -46,13 +58,6 @@ export class ReasoningNodeDto {
   inputs?: VariableDto[];
 
   @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  script: string;
-
-  @ApiProperty({
     description: 'Optional array defining the outputs specific to this node\'s logic.',
     type: [VariableDto],
     isArray: true,
@@ -73,11 +78,12 @@ export class ReasoningNodeDto {
     const plainObject = document.toJSON ? document.toJSON() : document;
 
     this._id = plainObject._id.toHexString();
+    this.name = plainObject.name;
+    this.description = plainObject.description;
     this.type = plainObject.type;
     this.label = plainObject.label;
     this.config = plainObject.config;
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
-    this.script = plainObject.script;
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

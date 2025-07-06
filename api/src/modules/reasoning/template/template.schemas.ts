@@ -8,6 +8,9 @@ import { ReasoningTemplate } from './template.interface';
   timestamps: true,
   toJSON: {
     virtuals: true,
+    transform(doc: any, ret: any) {
+      delete ret.__v;
+    }
   },
 })
 export class ReasoningTemplateDocument extends Document implements ReasoningTemplate {
@@ -17,10 +20,13 @@ export class ReasoningTemplateDocument extends Document implements ReasoningTemp
   @Prop({ type: String })
   description?: string;
 
-  @Prop({ type: Types.ObjectId})
-  thinkingId?: Types.ObjectId;
+  @Prop({ type: [String] })
+  tags?: string[];
 
-  @Prop({ type: String, enum: ['draft', 'finalized'], default: 'draft' })
+  @Prop({ type: Types.ObjectId, ref: 'ReasoningThinkingDocument'})
+  activatedReasoningThinkingId?: Types.ObjectId;
+
+  @Prop({ type: String, default: DocumentStatus.DRAFT })
   status: DocumentStatus;
 
   @Prop(Date)

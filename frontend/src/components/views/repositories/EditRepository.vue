@@ -2,9 +2,9 @@
 import { apiService } from '@/api/apiService';
 import CancelButton from '@/components/base/buttons/CancelButton.vue';
 import SubmitButton from '@/components/base/buttons/SubmitButton.vue';
-import FormContainer from '@/components/layouts/form/FormContainer.vue';
 import FormInput from '@/components/layouts/form/FormInput.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
+import Container from '@/components/shared/Container.vue';
 import { useRepositoryStore } from '@/stores/repository';
 import { FormErrors, FormInstance } from '@/types/form';
 import { Repository } from '@/types/repositories';
@@ -95,9 +95,9 @@ const registerRef = async (key:string, instance: any) => {
 </script>
 
 <template>
-  <FormContainer :title="'Edit Repository'" :enhanced-title="repositoryData?.name || ''" :is-loading="isLoading" :loading-description="'Loading repository details...'" :item-found="repositoryFound" :item-found-description="'Repository not found!'">
-    <template #page>
-      <form @submit.prevent="handleSubmit">
+  <Container :page-title="'Edit Repository'" :is-loading="isLoading" :loading-description="'Loading repository details...'" :item-found="repositoryFound" :item-found-description="'Repository not found!'">
+    <template #content>
+      <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-8">
         <FormInput :content="repositoryData?.name || ''" :isRequired="true" :labelId="'name'" :labelName="'Repository Name'" :placeholder="'e.g., General Purpose Prompts'" :type="'text'" :ref="el => registerRef('name', el)" />
         <FormTextarea :content="repositoryData?.description || ''" :isRequired="false" :labelId="'description'" :labelName="'Description'" :placeholder="'A brief explanation of this collection\'s purpose and content.'" :ref="el => registerRef('description', el)" />
         <FormInput :content="repositoryData?.tags.join(', ') || ''" :description="'Separate tags with commas.'" :isRequired="false" :labelId="'tags'" :labelName="'Categories/Tags (comma-separated)'" :placeholder="'e.g., general, utility, marketing'" :type="'text'" :ref="el => registerRef('tags', el)" />
@@ -108,5 +108,5 @@ const registerRef = async (key:string, instance: any) => {
         </div>
       </form>
     </template>
-  </FormContainer>
+  </Container>
 </template>

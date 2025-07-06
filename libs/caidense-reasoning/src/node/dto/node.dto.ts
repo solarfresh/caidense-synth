@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { VariableDto } from '@caidense/reasoning/common/dto/common.dto';
+import { ExecutionNodeConfig } from '../node.interface';
 
 
 /**
@@ -28,13 +29,21 @@ export class ExecutionNodeDto {
   label?: string;
 
   @ApiProperty({
+    description: "An optional position object defining the node's coordinates in a visual layout.",
+    required: false,
+    example: { x: 10, y: 100 },
+  })
+  @Type(() => Object)
+  position?: object;
+
+  @ApiProperty({
     description: 'Optional configuration object specific to the node type.',
     required: false,
     // Use schema to provide a more specific structure example if possible
     example: { logicType: 'sumAndCompare', threshold: 100 },
   })
   @Type(() => Object)
-  config?: object;
+  config?: ExecutionNodeConfig;
 
   @ApiProperty({
     description: 'Optional array of IDs representing the incoming sequence edges to this node.',
@@ -53,13 +62,6 @@ export class ExecutionNodeDto {
   })
   @Type(() => VariableDto)
   inputs?: VariableDto[];
-
-  @ApiProperty({
-    description: 'Optional script code to be executed by this node type.',
-    required: false,
-    example: 'let sum = a + b; return sum > 100;'
-  })
-  script: string;
 
   @ApiProperty({
     description: 'Optional array of IDs representing the outgoing sequence edges from this node.',
@@ -90,14 +92,14 @@ export class ExecutionNodeDto {
   constructor(document: any) {
     const plainObject = document.toJSON ? document.toJSON() : document;
 
-    this._id = plainObject._id.toHexString();
+    this._id = plainObject._id?.toHexString ? plainObject._id.toHexString() : plainObject.id ? plainObject.id : plainObject._id;
     this.type = plainObject.type;
     this.label = plainObject.label;
+    this.position = plainObject.position;
     this.config = plainObject.config;
-    this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming.toHexString ? incoming.toHexString() : incoming) : [];
+    this.incoming = plainObject.incoming ? plainObject.incoming.map(incoming => incoming?.toHexString ? incoming.toHexString() : incoming) : [];
     this.inputs = plainObject.inputs ? plainObject.inputs.map(input => new VariableDto(input)) : [];
-    this.script = plainObject.script;
-    this.outgoing = plainObject.outgoing ? plainObject.outgoing.map(outgoing => outgoing.toHexString ? outgoing.toHexString() : outgoing) : [];
+    this.outgoing = plainObject.outgoing ? plainObject.outgoing.map(outgoing => outgoing?.toHexString ? outgoing.toHexString() : outgoing) : [];
     this.outputs = plainObject.outputs ? plainObject.outputs.map(output => new VariableDto(output)) : [];
     this.createdAt = plainObject.createdAt;
     this.updatedAt = plainObject.updatedAt;

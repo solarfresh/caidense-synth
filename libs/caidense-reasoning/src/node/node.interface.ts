@@ -2,11 +2,27 @@ import { Variable } from '@caidense/reasoning/common/common.interface';
 
 
 export enum ExecutionNodeType {
-  LLM_CALL = 'llmCall',
-  START_EVENT = 'startEvent',
+  CONDITION = 'condition',
   END_EVENT = 'endEvent',
+  LLM_CALL = 'llmCall',
   SCRIPT = 'script',
+  START_EVENT = 'startEvent',
+  SWITCH = 'switch',
 }
+
+export interface Position {
+  /**
+   * The x-coordinate of the node's position in a visual layout.
+   * Typically represents horizontal placement.
+   */
+  x: number;
+
+  /**
+   * The y-coordinate of the node's position in a visual layout.
+   * Typically represents vertical placement.
+   */
+  y: number;
+};
 
 export interface ExecutionNodeConfig {
   // Depending on the 'type' property of IFlowNode,
@@ -37,6 +53,11 @@ export interface ExecutionNode {
   label?: string;
 
   /**
+   * An optional position object defining the node's coordinates in a visual layout.
+   */
+  position?: Position;
+
+  /**
    * Optional configuration object specific to this node's type.
    * Contains parameters needed for the node's execution logic.
    * @example { templateId: 'abc123', analysisType: 'criteria_evaluation' }
@@ -55,11 +76,6 @@ export interface ExecutionNode {
    * These define what data the node expects from the execution context.
    */
   inputs?: Variable[];
-
-  /**
-   * Optional script code to be executed by this node type.
-   */
-  script?: string
 
   /**
    * Optional array of IDs representing the outgoing sequence edges from this node.

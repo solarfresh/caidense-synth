@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FormProps } from '@/types/form';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 
 const props = defineProps<FormProps>();
@@ -9,6 +9,10 @@ const emits = defineEmits<{
 }>();
 const editableContent = ref(props.content)
 const hasMargin = ref(props.hasMargin || true);
+
+watch(() => props.content, (newValue) => {
+  editableContent.value = newValue;
+});
 
 defineExpose({
   editableContent
@@ -25,7 +29,7 @@ defineExpose({
     <textarea
       :id="labelId"
       v-model="editableContent"
-      rows="4"
+      :rows="props.rows || 4"
       class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       :placeholder="placeholder"
       @input="$emit('input')"
