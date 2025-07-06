@@ -79,7 +79,7 @@ defineExpose({
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-semibold text-gray-800 py-2">Evaluation & Optimization</h2>
       <FormSelect :labelId="'selectPromptTemplate'" :labelName="'Evaluation Template'" :options="availablePromptTemplates" :ref="el => registerRef('selectPromptTemplate', el)" />
-      <ExecuteButton @click="$emit('runEvaluation')" :isEvaluating="isEvaluating" :buttonName="'Run Evaluation'" :dynamicButtonName="'Evaluating...'" />
+      <ExecuteButton @click="$emit('runEvaluation')" :isRunning="isEvaluating" :buttonName="'Run Evaluation'" :dynamicButtonName="'Evaluating...'" />
     </div>
 
 <!--

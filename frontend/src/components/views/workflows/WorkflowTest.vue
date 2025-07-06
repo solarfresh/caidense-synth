@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { apiService } from '@/api/apiService';
-import TestButton from '@/components/base/buttons/TestButton.vue';
+import ExecuteButton from '@/components/base/buttons/ExecuteButton.vue';
 import FormTextarea from '@/components/layouts/form/FormTextarea.vue';
 import { FormInstance } from '@/types/form';
 import type { CreateExecution, Variable } from '@/types/workflow';
@@ -18,6 +18,7 @@ const props = defineProps({
   }
 })
 
+const isRunning = ref<Boolean>(false);
 const requestPayload = ref<FormInstance | null>(null);
 const testOutputs = ref({});
 
@@ -56,6 +57,7 @@ const defaultFormData = computed(() => {
 const handleTest = async () => {
   if (!requestPayload.value) return;
 
+  isRunning.value = true;
   const submitFormData = {
     thinkingId: props.thinkingId,
     config: {
@@ -65,6 +67,7 @@ const handleTest = async () => {
 
   const response = await apiService.workflow.executeWorkflow(submitFormData as CreateExecution);
   testOutputs.value = response.data.data.variables;
+  isRunning.value = false;
 };
 </script>
 
@@ -72,7 +75,7 @@ const handleTest = async () => {
 <FormTextarea :label-name="'Request Payload'" :label-id="'testRequest'" :content="requestContent" :rows="10" :ref="'requestPayload'" />
 
 <div class="mt-5 sm:mt-6 space-x-2 flex justify-end">
-  <TestButton @click="handleTest" :button-name="'Run Test'" />
+  <ExecuteButton @click="handleTest" :is-running="isRunning.valueOf()" :button-name="'Run'" :dynamic-button-name="'Running...'" />
 </div>
 
 <div class="mt-5">
