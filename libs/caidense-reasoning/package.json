@@ -9,5 +9,8 @@
     "google-auth-library": "^10.1.0",
     "langchain": "^0.3.30",
     "markdown-it": "^14.1.0"
+  },
+  "devDependencies": {
+    "@nestjs/swagger": "^11.2.0"
   }
 }
