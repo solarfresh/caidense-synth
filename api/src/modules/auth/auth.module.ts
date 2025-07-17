@@ -2,7 +2,6 @@ import { AppConfigModule } from '@/config/config.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwksFetcherService } from './jwks-fetcher.service'; // Import JWKS fetcher
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
@@ -19,7 +18,6 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   providers: [
-    JwksFetcherService, // Provide the JWKS fetcher
     JwtStrategy,        // Provide the JWT verification strategy
   ],
   exports: [

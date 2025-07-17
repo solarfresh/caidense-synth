@@ -76,6 +76,7 @@
     "google-auth-library": "^10.1.0",
     "joi": "^17.13.3",
     "jose": "^6.0.12",
+    "jwks-rsa": "^3.2.0",
     "langchain": "^0.3.30",
     "mongoose": "^8.16.3",
     "passport-jwt": "^4.0.1",

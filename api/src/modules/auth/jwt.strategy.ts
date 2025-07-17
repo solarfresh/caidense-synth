@@ -1,34 +1,31 @@
+import { AppConfigService } from '@/config/config.service';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
-import { JwksFetcherService } from './jwks-fetcher.service'; // Import JWKS fetcher
-import { AppConfigService } from '@/config/config.service';
+import * as jwksRsa from 'jwks-rsa';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
 
   constructor(
-    private jwksFetcherService: JwksFetcherService, // Inject JWKS fetcher
     private appConfigService: AppConfigService,
   ) {
+    const authServerUrl = appConfigService.get('AUTH_SERVER_URL');
+    const jwksUri = `${authServerUrl}/auth/.well-known/jwks.json`;
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Extract JWT from Authorization header
       ignoreExpiration: false, // Do not ignore token expiration
       // Provide the secret/public key dynamically using a callback.
       // This callback is called by passport-jwt to get the key for verification.
-      secretOrKeyProvider: async (request, rawJwtToken, done) => {
-        try {
-          // This uses jose's createRemoteJWKSet which handles fetching and key selection by 'kid'.
-          const jwksSet = this.jwksFetcherService.getJwksSet();
-          const { header } = await jwksSet.getJwk(rawJwtToken); // Get the JWK header to find the kid
-          const key = await jwksSet.getJwk(header.kid); // Get the specific key by kid from the JWKS
-          done(null, key); // Pass the key to passport-jwt for verification
-        } catch (error) {
-          this.logger.error('Error fetching/providing JWT key:', error.message);
-          done(error, false); // Indicate failure
-        }
-      },
+      secretOrKeyProvider: jwksRsa.passportJwtSecret({
+        cache: true,              // Cache the signing keys to prevent excessive network requests
+        rateLimit: true,          // Prevent against too many requests from a single IP address
+        jwksRequestsPerMinute: 5, // Allow 5 requests per minute to the JWKS endpoint
+        jwksUri: jwksUri,         // The URL of your Auth Server's JWKS endpoint
+      }),
       // Optional: Validate issuer and audience for more robust security
       // issuer: appConfigService.getJwtIssuer(),
       // audience: appConfigService.getJwtAudience(),
