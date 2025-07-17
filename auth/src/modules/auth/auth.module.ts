@@ -8,6 +8,8 @@ import { AppConfigModule } from '@/config/config.module';
 import { AppConfigService } from '@/config/config.service';
 import { SecretsModule } from '@/secrets/secrets.module';
 import { SecretsService } from '@/secrets/secrets.service';
+import { JwksService } from './jwks.service';
+
 
 @Module({
   imports: [
@@ -51,8 +53,8 @@ import { SecretsService } from '@/secrets/secrets.service';
       inject: [AppConfigService, SecretsService], // Specify services to inject
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, JwksService],
   controllers: [AuthController],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService, JwksService, JwtModule],
 })
 export class AuthModule {}

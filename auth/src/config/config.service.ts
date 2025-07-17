@@ -14,7 +14,7 @@ export class AppConfigService {
     return value;
   }
 
-  getSecretSource(): 'file' | 'kubernetes' | 'aws' | 'gcp' | 'vault' { // <-- NEW
+  getSecretSource(): 'file' | 'kubernetes' | 'aws' | 'gcp' | 'vault' {
     return this.get<any>('SECRET_SOURCE');
   }
 

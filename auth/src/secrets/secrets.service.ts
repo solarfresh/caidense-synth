@@ -38,8 +38,7 @@ export class SecretsService implements OnModuleInit {
       switch (secretSource) {
         case 'file':
           // For local development, reading from specified file paths
-          const localFilePath = path.join(process.env.LOCAL_KEY_FILE_PATH, secretId);
-          secretValue = fs.readFileSync(localFilePath, 'utf8');
+          secretValue = fs.readFileSync(secretId, 'utf8');
           this.logger.warn(`Reading secret "${secretId}" from local file system.
             ⚠️ Use a secure secrets manager in production.`);
           break;

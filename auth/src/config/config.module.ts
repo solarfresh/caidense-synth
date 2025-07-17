@@ -8,10 +8,17 @@ import * as Joi from 'joi';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      // envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production', 'test', 'staging').default('development'),
-        SECRET_SOURCE: Joi.string().valid('file', 'kubernetes', 'aws', 'gcp', 'vault').default('file'), // <-- NEW
+        PORT: Joi.number().default(3000),
+        FRONTEND_PORTS: Joi.string().when('NODE_ENV', {
+          is: Joi.exist().valid('development'),
+          then: Joi.string().required(),
+          otherwise: Joi.optional()
+        }),
+        HOST_PORT: Joi.number().default(3000),
+        SECRET_SOURCE: Joi.string().valid('file', 'kubernetes', 'aws', 'gcp', 'vault').default('file'),
         JWT_SECRET: Joi.string().when('USE_ASYMMETRIC_KEYS', {
           is: Joi.exist().valid('false'),
           then: Joi.string().required(),
