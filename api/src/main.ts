@@ -14,7 +14,7 @@ async function bootstrap() {
   if (nodeEnv === 'development') {
     // Enable CORS for development
     // Allow requests from the frontend application
-    const HOST_PORT = configService.get<string>('HOST_PORT');
+    const HOST_PORT = configService.get<string>('API_HOST_PORT');
     const FRONTEND_PORTS = configService.get<string>('FRONTEND_PORTS');
     app.enableCors({
       origin: FRONTEND_PORTS.split(',').map(port => `http://localhost:${port}`),

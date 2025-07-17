@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { Client } from './client.interface';
+import { Document } from 'mongoose';
+import { Client } from './clients.interface';
 
 
 @Schema({
@@ -27,6 +27,9 @@ export class ClientDocument extends Document implements Client {
 
   @Prop({ default: Date.now })
   createdAt: Date;
+
+  @Prop(Date)
+  updatedAt: Date;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(ClientDocument);

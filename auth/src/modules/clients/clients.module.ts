@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ClientDocument, ClientSchema } from './client.schemas';
+import { ClientDocument, ClientSchema } from './clients.schemas';
 import { ClientsController } from './clients.controller';
 import { ClientsService } from './clients.service';
 

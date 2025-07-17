@@ -1,21 +1,20 @@
+import { AppConfigModule } from '@/config/config.module';
+import { AppConfigService } from '@/config/config.service';
+import { ClientsModule } from '@/modules/clients/clients.module';
+import { UsersModule } from '@/modules/users/users.module';
+import { SecretsModule } from '@/secrets/secrets.module';
+import { SecretsService } from '@/secrets/secrets.service';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-// import { UsersModule } from '../users/users.module';
-import { AppConfigModule } from '@/config/config.module';
-import { AppConfigService } from '@/config/config.service';
-import { SecretsModule } from '@/secrets/secrets.module';
-import { SecretsService } from '@/secrets/secrets.service';
 import { JwksService } from './jwks.service';
-import { ClientsService } from '@/modules/clients/clients.service';
-import { ClientsModule } from '@/modules/clients/clients.module';
 
 
 @Module({
   imports: [
-    // UsersModule,
+    UsersModule,
     ClientsModule,
     PassportModule,
     AppConfigModule, // Make app config available

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { Client } from './client.interface';
+import { Client } from './clients.interface';
 
 // DTO for client registration request
 class CreateClientDto {

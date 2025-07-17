@@ -4,4 +4,6 @@ export interface Client {
   name: string;
   allowedGrantTypes: string[]; // e.g., ['client_credentials', 'authorization_code']
   // Add other OAuth 2.0 related fields like redirect URIs, scopes, etc.
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -1,25 +1,24 @@
+import { Client } from '@/modules/clients/clients.interface';
+import { ClientsService } from '@/modules/clients/clients.service';
+import { UserService } from '@/modules/users/users.service'; // Injects the user service
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-// import { UserService } from '../users/users.service'; // Injects the user service
-import { ClientsService } from '@/modules/clients/clients.service';
-import { Client } from '@/modules/clients/client.interface';
 
 
 @Injectable()
 export class AuthService {
   constructor(
-    // private usersService: UserService,
+    private usersService: UserService,
     private clientsService: ClientsService,
     private jwtService: JwtService, // Injected to sign tokens
   ) {}
 
-  // 4. User Validation Logic: How the Auth Server verifies credentials
   async validateUser(username: string, pass: string): Promise<any> {
-    // const user = await this.usersService.findOne(username);
-    // if (user && user.password === pass) { // WARNING: Use bcrypt.compare() in real apps
-    //   const { password, ...result } = user; // Exclude password from the returned object
-    //   return result;
-    // }
+    const user = await this.usersService.findOne(username, pass); // Pass plaintext password to service
+    if (user) {
+      // user object returned by findOne already has password removed
+      return user;
+    }
     return null;
   }
 
@@ -33,11 +32,15 @@ export class AuthService {
   }
 
   async register(username: string, password: string): Promise<any> {
-    // In a real app, hash password before saving
-    // const newUser = await this.usersService.create(username, password);
-    // Optionally log in the user immediately after registration
-    // return this.login(newUser);
-    return null;
+    try {
+        const newUser = await this.usersService.create(username, password); // Service handles hashing
+        return this.login(newUser);
+    } catch (error) {
+        if (error.message.includes('User with this username already exists.')) {
+            throw new UnauthorizedException('Username already exists.');
+        }
+        throw new UnauthorizedException('Registration failed.');
+    }
   }
 
   async validateClientCredentials(clientId: string, clientSecret: string): Promise<Client | undefined> {

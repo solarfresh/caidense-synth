@@ -1,9 +1,9 @@
-import { Injectable, Logger, OnModuleInit  } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ClientDocument } from './client.schemas';
-import { Model } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid'; // npm install uuid @types/uuid
 import * as bcrypt from 'bcryptjs';
+import { Model } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import { ClientDocument } from './clients.schemas';
 
 
 @Injectable()
