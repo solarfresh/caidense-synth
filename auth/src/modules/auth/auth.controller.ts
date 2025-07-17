@@ -1,7 +1,10 @@
-import { Controller, Post, Body, Get, UnauthorizedException, BadRequestException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { JwksService } from './jwks.service';
 import { OAuthTokenDto } from './dto/oauth-token.dto';
+import { UserLoginDto } from './dto/users.login.dto';
+import { UserRegisterDto } from './dto/users.register.dto';
+import { JwksService } from './jwks.service';
 
 
 @Controller('auth')
@@ -16,6 +19,12 @@ export class AuthController {
    * Authenticates credentials and returns an access token.
    */
   @Post('login')
+  @ApiOperation({ summary: 'User login' }) // Describe the operation
+  @ApiResponse({ status: 200, description: 'User successfully logged in and access token issued.' }) // Describe successful response
+  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid credentials.' }) // Describe error response
+  @ApiBody({ type: UserLoginDto }) // Specify the DTO for request body
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) // Validate incoming data
+  @ApiTags('Authentication') // Group under "Authentication" in Swagger UI
   async login(@Body() req) {
     // This assumes req.username and req.password are in the request body.
     // For an AI agent, this might be agentId and secret.
@@ -26,11 +35,13 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  /**
-   * Endpoint for user/agent registration.
-   * Creates a new user/agent and returns an access token.
-   */
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user' }) // Describe the operation
+  @ApiResponse({ status: 201, description: 'User successfully registered and logged in.' }) // Describe successful response
+  @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' }) // Describe error response
+  @ApiBody({ type: UserRegisterDto })
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) // Validate incoming data
+  @ApiTags('Authentication') // Group under "Authentication" in Swagger UI
   async register(@Body() req) {
     // This assumes req.username and req.password for registration.
     return this.authService.register(req.username, req.password);
@@ -50,6 +61,12 @@ export class AuthController {
 
   @Post('oauth/token')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @ApiOperation({ summary: 'OAuth Token Endpoint' }) // Describe the operation
+  @ApiResponse({ status: 200, description: 'Access token issued successfully.' }) // Describe successful response
+  @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' }) // Describe error response
+  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid credentials.' }) // Describe error response
+  @ApiBody({ type: OAuthTokenDto }) // Specify the DTO for request body
+  @ApiTags('Authentication') // Group under "Authentication" in Swagger UI
   async getToken(@Body() oauthTokenDto: OAuthTokenDto) {
     const { grant_type, client_id, client_secret, username, password } = oauthTokenDto;
 
