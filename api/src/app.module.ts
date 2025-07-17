@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 
 // Core Modules
 import { DatabaseModule } from '@caidense/reasoning/database/database.module';
+import { AppConfigModule } from '@/config/config.module';
 
 // Feature Modules
 import { PromptModule } from '@/modules/prompt/prompt.module'
@@ -21,6 +22,7 @@ import { ExecutionModule } from './modules/execution/execution.module';
     }),
 
     DatabaseModule,
+    AppConfigModule,
     PromptModule,
     ReasoningModule,
     GenaiModule,
