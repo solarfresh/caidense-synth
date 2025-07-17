@@ -1,4 +1,5 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateExecutionDto } from './dto/create-execution.dto';
 import { ExecutionProducer } from './execution.producer';
@@ -18,6 +19,7 @@ export class ExecutionController {
     type: CreateExecutionDto,
   })
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   async sendMessage(@Body() createExecutionDto: CreateExecutionDto) {
     try {
       const result = await this.executionProducer.sendMessage(createExecutionDto);

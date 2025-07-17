@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from '@caidense/reasoning/database/database.module';
 import { AppConfigModule } from '@/config/config.module';
 import { AuthModule } from '@/modules/auth/auth.module';
+import { ClientsModule } from '@/modules/clients/clients.module';
 
 // Feature Modules
 
@@ -21,6 +22,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
     DatabaseModule,
     AppConfigModule,
     AuthModule,
+    ClientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

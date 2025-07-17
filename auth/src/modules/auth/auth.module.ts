@@ -9,11 +9,14 @@ import { AppConfigService } from '@/config/config.service';
 import { SecretsModule } from '@/secrets/secrets.module';
 import { SecretsService } from '@/secrets/secrets.service';
 import { JwksService } from './jwks.service';
+import { ClientsService } from '@/modules/clients/clients.service';
+import { ClientsModule } from '@/modules/clients/clients.module';
 
 
 @Module({
   imports: [
     // UsersModule,
+    ClientsModule,
     PassportModule,
     AppConfigModule, // Make app config available
     SecretsModule, // Make secrets service available

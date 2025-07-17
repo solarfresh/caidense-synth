@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 import { BaseController } from '@/modules/base/base.controller';
 import { CreateVariableDto, UpdateVariableDto, VariableDto } from '@caidense/reasoning/common/dto/common.dto';
 import { CreateExecutionEdgeDto } from '@caidense/reasoning/edge/dto/create-edge.dto';
@@ -8,7 +9,7 @@ import { ExecutionNodeDto } from '@caidense/reasoning/node/dto/node.dto';
 import { UpdateExecutionNodeDto } from '@caidense/reasoning/node/dto/update-node.dto';
 import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking.schemas';
 import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
@@ -45,6 +46,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid data.' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @UseGuards(JwtAuthGuard)
   async create(@Body(ValidationPipe) createReasoningThinkingDto: CreateReasoningThinkingDto): Promise<ReasoningThinkingDocument> {
     // Call the base controller's create method, passing the validated DTO.
     // The base method will delegate to the service.
@@ -63,6 +65,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     description: 'Successfully retrieved all ReasoningThinking documents.',
     type: [ReasoningThinkingDocument],
   })
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<ReasoningThinkingDocument[]> {
      // Call the base controller's findAll method.
      // If you need filtering via query params, you'd add @Query() here
@@ -86,6 +89,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 200, description: 'Successfully retrieved the document.', type: ReasoningThinkingDocument })
   @ApiResponse({ status: 404, description: 'Not Found - ReasoningThinking document not found.' })
+  @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string): Promise<ReasoningThinkingDocument> {
      // Call the base controller's findById method.
      return super.findById(id);
@@ -109,6 +113,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     description: 'Not Found - ReasoningThinking document not found.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data.' })
+  @UseGuards(JwtAuthGuard)
   async update(@Param('id') id: string, @Body(ValidationPipe) updateReasoningThinkingDto: UpdateReasoningThinkingDto): Promise<ReasoningThinkingDocument> {
      // Call the base controller's update method, passing the ID and validated DTO.
      return super.update(id, updateReasoningThinkingDto);
@@ -119,6 +124,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   @ApiParam({ name: 'id', description: 'ID of the ReasoningThinking document to delete', type: String })
   @ApiResponse({ status: 200, description: 'The ReasoningThinking document has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Not Found - ReasoningThinking document not found.' })
+  @UseGuards(JwtAuthGuard)
   async deleteOne(@Param('id') id: string): Promise<void> {
     // Call the base controller's remove method.
     await super.deleteOne(id);
@@ -142,6 +148,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     description: 'Not Found - Thinking flow document not found.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid node data.' })
+  @UseGuards(JwtAuthGuard)
   async createNode(
     @Param('id') id: string,
     @Body(ValidationPipe) createExecutionNodeDto: CreateExecutionNodeDto,
@@ -166,6 +173,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findNodes(@Param('id') id: string): Promise<ExecutionNodeDto[]> {
     const nodes = await this.reasoningThinkingService.findNestedDocuments(id, 'nodes');
     return nodes.map((node) => new ExecutionNodeDto(node));
@@ -188,6 +196,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or node not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findNodeById(
     @Param('id') id: string,
     @Param('nodeId') nodeId: string,
@@ -216,6 +225,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async updateNodeById(
     @Param('id') id: string,
     @Param('nodeId') nodeId: string,
@@ -242,6 +252,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or node not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async deleteNodeById(
     @Param('id') id: string,
     @Param('nodeId') nodeId: string,
@@ -268,6 +279,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid edge data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async createEdge(
     @Param('id') id: string,
     @Body() createReasoningThinkingEdgeDto: CreateExecutionEdgeDto,
@@ -296,6 +308,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findEdges(@Param('id') id: string): Promise<ExecutionEdgeDto[]> {
     const edges = await this.reasoningThinkingService.findNestedDocuments(
       id,
@@ -321,6 +334,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or edge not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findEdgeById(
     @Param('id') id: string,
     @Param('edgeId') edgeId: string,
@@ -353,6 +367,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async updateEdgeById(
     @Param('id') id: string,
     @Param('edgeId') edgeId: string,
@@ -384,6 +399,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or edge not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async deleteEdgeById(
     @Param('id') id: string,
     @Param('edgeId') edgeId: string,
@@ -410,6 +426,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid variable data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async createInputVariable(
     @Param('id') id: string,
     @Body() createVariableDto: CreateVariableDto,
@@ -438,6 +455,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findInputVariables(@Param('id') id: string): Promise<VariableDto[]> {
     const inputs = await this.reasoningThinkingService.findNestedDocuments(
       id,
@@ -463,6 +481,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or input variable not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findInputVariableById(
     @Param('id') id: string,
     @Param('variableId') variableId: string,
@@ -495,6 +514,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async updateInputVariableById(
     @Param('id') id: string,
     @Param('variableId') variableId: string,
@@ -526,6 +546,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or input variable not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async deleteInputVariableById(
     @Param('id') id: string,
     @Param('variableId') variableId: string,
@@ -552,6 +573,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid variable data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async createOutputVariable(
     @Param('id') id: string,
     @Body() createVariableDto: CreateVariableDto,
@@ -580,6 +602,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findOutputVariables(@Param('id') id: string): Promise<VariableDto[]> {
     const outputs = await this.reasoningThinkingService.findNestedDocuments(
       id,
@@ -605,6 +628,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or output variable not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async findOutputVariableById(
     @Param('id') id: string,
     @Param('variableId') variableId: string,
@@ -637,6 +661,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async updateOutputVariableById(
     @Param('id') id: string,
     @Param('variableId') variableId: string,
@@ -668,6 +693,7 @@ export class ReasoningThinkingController extends BaseController<ReasoningThinkin
     status: 404,
     description: 'Not Found - Thinking flow document or output variable not found.',
   })
+  @UseGuards(JwtAuthGuard)
   async deleteOutputVariableById(
     @Param('id') id: string,
     @Param('variableId') variableId: string,

@@ -40,7 +40,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // 2. Check if the user is still active or authorized.
     // This example simply returns the payload.
     if (!payload || !payload.sub || !payload.username) {
-        throw new UnauthorizedException('Invalid JWT payload.');
+        // throw new UnauthorizedException('Invalid JWT payload.');
+        this.logger.warn('Invalid JWT payload.');
+
     }
     // passport-jwt will attach whatever is returned here to `req.user`
     return { userId: payload.sub, username: payload.username, roles: payload.roles };

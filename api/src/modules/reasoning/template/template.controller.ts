@@ -1,7 +1,8 @@
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 import { BaseController } from '@/modules/base/base.controller';
 import { CreateReasoningThinkingDto } from '@/modules/reasoning/thinking/dto/create-thinking.dto';
 import { UpdateReasoningThinkingDto } from '@/modules/reasoning/thinking/dto/update-thinking.dto';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import for Swagger documentation
 import { CreateReasoningTemplateDto } from './dto/create-template.dto';
 import { UpdateReasoningTemplateDto } from './dto/update-template.dto';
@@ -18,21 +19,22 @@ import { ReasoningTemplateService } from './template.service';
 // @UseGuards(AuthGuard('jwt'))
 export class ReasoningTemplateController extends BaseController<ReasoningTemplateDocument, ReasoningTemplateService> {
   constructor(
-      private readonly reasoningTemplateService: ReasoningTemplateService, // Inject the specific service
+    private readonly reasoningTemplateService: ReasoningTemplateService, // Inject the specific service
   ) {
     // Call the constructor of the BaseController, passing the injected specific service.
     super(reasoningTemplateService);
-   }
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new reasoning template' })
   @ApiBody({ type: CreateReasoningTemplateDto })
   @ApiResponse({
-      status: 201,
-      description: 'The reasoning template has been successfully created.',
-      type: ReasoningTemplateDocument,
+    status: 201,
+    description: 'The reasoning template has been successfully created.',
+    type: ReasoningTemplateDocument,
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' })
+  @UseGuards(JwtAuthGuard)
   async create(@Body(ValidationPipe) createReasoningTemplateDto: CreateReasoningTemplateDto): Promise<ReasoningTemplateDocument> {
     // Call the base controller's create method, passing the validated DTO.
     // The base method will delegate to the service.
@@ -52,6 +54,7 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       type: [ReasoningTemplateDocument],
   })
   @ApiResponse({ status: 404, description: 'Not Found - No templates found.' })
+  @UseGuards(JwtAuthGuard)
   async findAll(@Query() query?: any): Promise<ReasoningTemplateDocument[]> {
     const filter = query?.filter
     if (filter){
@@ -78,9 +81,10 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       type: ReasoningTemplateDocument,
   })
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning template with the given ID not found.' })
+  @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: string): Promise<ReasoningTemplateDocument> {
-     // Call the base controller's findById method.
-     return this.reasoningTemplateService.findById(id);
+    // Call the base controller's findById method.
+    return this.reasoningTemplateService.findById(id);
   }
 
   @Put(':id')
@@ -88,14 +92,15 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
   @ApiParam({ name: 'id', description: 'ID of the reasoning template to update', type: String })
   @ApiBody({ type: UpdateReasoningTemplateDto })
   @ApiResponse({
-      status: 200,
-      description: 'Successfully updated the reasoning template.',
-      type: ReasoningTemplateDocument,
+    status: 200,
+    description: 'Successfully updated the reasoning template.',
+    type: ReasoningTemplateDocument,
   })
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning template with the given ID not found.' })
+  @UseGuards(JwtAuthGuard)
   async update(@Param('id') id: string, @Body(ValidationPipe) updateReasoningTemplateDto: UpdateReasoningTemplateDto): Promise<ReasoningTemplateDocument> {
-     // Call the base controller's update method, passing the ID and validated DTO.
-     return super.update(id, updateReasoningTemplateDto);
+    // Call the base controller's update method, passing the ID and validated DTO.
+    return super.update(id, updateReasoningTemplateDto);
   }
 
   @Delete(':id')
@@ -106,6 +111,7 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       description: 'Successfully deleted the reasoning template.',
   })
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning template with the given ID not found.' })
+  @UseGuards(JwtAuthGuard)
   async deleteOne(@Param('id') id: string): Promise<void> {
     // Call the base controller's remove method.
     await super.deleteOne(id);
@@ -120,6 +126,7 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       type: ReasoningTemplateDocument,
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' })
+  @UseGuards(JwtAuthGuard)
   async createThinking(@Param('id') id: string, @Body(ValidationPipe) createReasoningThinkingDto: CreateReasoningThinkingDto): Promise<ReasoningTemplateDocument> {
     // Call the base controller's create method, passing the validated DTO.
     // The base method will delegate to the service.
@@ -135,6 +142,7 @@ export class ReasoningTemplateController extends BaseController<ReasoningTemplat
       type: ReasoningTemplateDocument,
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' })
+  @UseGuards(JwtAuthGuard)
   async updateThinking(@Param('id') id: string, @Body(ValidationPipe) updateReasoningThinkingDto: UpdateReasoningThinkingDto): Promise<ReasoningTemplateDocument> {
     return this.service.updateThinking(id, updateReasoningThinkingDto);
   }

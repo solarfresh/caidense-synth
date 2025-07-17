@@ -18,6 +18,7 @@ import * as Joi from 'joi';
           otherwise: Joi.optional()
         }),
         HOST_PORT: Joi.number().default(3000),
+        MONGODB_URI: Joi.string().required().uri(),
         RABBITMQ_URL: Joi.string().default('amqp://guest:guest@localhost:5672'),
         RABBITMQ_EXECUTE_QUEUE_NAME: Joi.string().default('caidense_execute_queue'),
         RABBITMQ_WORKER_QUEUE_NAME: Joi.string().default('caidense_queue'),
