@@ -1,7 +1,7 @@
 {
   "name": "caidense-synth-auth",
-  "version": "0.3.0",
-  "description": "Its primary job is to verify the identity of users or applications trying to access your resources.",
+  "version": "0.4.0",
+  "description": "Its primary job is to verify user/app identity & issue access tokens.",
   "author": "Caidense",
   "private": false,
   "license": "Apache-2.0",

@@ -1,6 +1,6 @@
 {
   "name": "caidense-synth-worker",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Node Execution Worker service for the Caidense Synth project. Executes specific node logic within thinking flows.",
   "author": "Caidense",
   "private": false,
