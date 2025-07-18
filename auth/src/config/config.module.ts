@@ -18,6 +18,7 @@ import * as Joi from 'joi';
           otherwise: Joi.optional()
         }),
         HOST_PORT: Joi.number().default(3000),
+        AUTH_HOST_PORT: Joi.number().default(3000),
         MONGODB_URI: Joi.string().required().uri(),
         SECRET_SOURCE: Joi.string().valid('file', 'kubernetes', 'aws', 'gcp', 'vault').default('file'),
         JWT_SECRET: Joi.string().when('USE_ASYMMETRIC_KEYS', {

@@ -7,10 +7,11 @@ import { PromptSetDocument } from './set.schemas';
 import { PromptSetService } from './set.service';
 
 // Import Swagger decorators
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('Prompt Sets') // Tag the controller for Swagger UI
+@ApiBearerAuth()
 @Controller('prompt') // Define the specific base path for this controller
 // Apply the ClassSerializerInterceptor here as well, or rely on the one in BaseController
 // If you want specific interceptors for this controller, apply them here.

@@ -31,6 +31,7 @@ async function bootstrap() {
       .setTitle('Caidense Synth API')
       .setDescription('Provide a robust and systematic platform for managing, templating, testing, and evaluating Large Language Model (LLM) prompts. It aims to bring engineering rigor to the prompt development lifecycle, facilitating better collaboration, version control, testing, and optimization of prompts used in LLM-powered applications.')
       .setVersion('1.0')
+      .addBearerAuth()
       .addServer(`http://localhost:${HOST_PORT}/`, 'Local environment')
       .addTag('Caidense Synth')
       .build();

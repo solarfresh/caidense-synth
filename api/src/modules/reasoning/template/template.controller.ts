@@ -3,7 +3,7 @@ import { BaseController } from '@/modules/base/base.controller';
 import { CreateReasoningThinkingDto } from '@/modules/reasoning/thinking/dto/create-thinking.dto';
 import { UpdateReasoningThinkingDto } from '@/modules/reasoning/thinking/dto/update-thinking.dto';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import for Swagger documentation
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import for Swagger documentation
 import { CreateReasoningTemplateDto } from './dto/create-template.dto';
 import { UpdateReasoningTemplateDto } from './dto/update-template.dto';
 import { ReasoningTemplateDocument } from './template.schemas';
@@ -11,6 +11,7 @@ import { ReasoningTemplateService } from './template.service';
 
 
 @ApiTags('Reasoning Template') // Tag for Swagger documentation
+@ApiBearerAuth()
 @Controller('reasoning/template') // Define the specific base path for this controller
 // Apply the ClassSerializerInterceptor here as well, or rely on the one in BaseController
 // If you want specific interceptors for this controller, apply them here.

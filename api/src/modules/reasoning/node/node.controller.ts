@@ -13,6 +13,7 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -27,6 +28,7 @@ import { ReasoningNodeService } from './node.service';
 
 
 @ApiTags('Reasoning Nodes')
+@ApiBearerAuth()
 @Controller('reasoning/nodes')
 export class ReasoningNodeController extends BaseController<ReasoningNodeDocument, ReasoningNodeService> {
   constructor(private readonly reasoningNodeService: ReasoningNodeService) {

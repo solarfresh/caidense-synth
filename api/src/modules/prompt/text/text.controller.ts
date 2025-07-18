@@ -8,10 +8,11 @@ import { PromptTextDocument } from './text.schemas'; // Assuming text.schemas.ts
 import { PromptTextService } from './text.service'; // Assuming text.service.ts exists
 // Import Swagger decorators
 import { CreateVariableDto, UpdateVariableDto } from '@caidense/reasoning/common/dto/common.dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('Prompt Texts') // Tag the controller for Swagger UI
+@ApiBearerAuth()
 @Controller('prompt') // Define the specific base path for this controller
 // Apply the ClassSerializerInterceptor here as well, or rely on the one in BaseController
 // If you want specific interceptors for this controller, apply them here.

@@ -11,6 +11,7 @@ import { ReasoningThinkingDocument } from '@caidense/reasoning/thinking/thinking
 import { ReasoningThinkingService } from '@caidense/reasoning/thinking/thinking.service';
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -22,6 +23,7 @@ import { UpdateReasoningThinkingDto } from './dto/update-thinking.dto';
 
 
 @ApiTags('Reasoning Thinking') // Define the tag for Swagger documentation
+@ApiBearerAuth()
 @Controller('reasoning/thinking') // Define the specific base path for this controller
 // Apply the ClassSerializerInterceptor here as well, or rely on the one in BaseController
 // If you want specific interceptors for this controller, apply them here.

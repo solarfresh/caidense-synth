@@ -25,7 +25,7 @@ export class AuthService {
   // 5. JWT Payload Definition: What data is put into the token
   async login(user: any) {
     // This payload is what will be encoded in the JWT and decoded by the Resource Server
-    const payload = { username: user.username, sub: user.userId, roles: user.roles || ['user'] };
+    const payload = { username: user.username, sub: user._id, roles: user.roles || ['user'] };
     return {
       access_token: this.jwtService.sign(payload), // Uses the configuration from JwtModule
     };

@@ -1,10 +1,11 @@
 import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateExecutionDto } from './dto/create-execution.dto';
 import { ExecutionProducer } from './execution.producer';
 
 
+@ApiBearerAuth()
 @Controller('execution')
 export class ExecutionController {
   constructor(private readonly executionProducer: ExecutionProducer) {}
