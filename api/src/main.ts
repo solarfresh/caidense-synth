@@ -19,7 +19,7 @@ async function bootstrap() {
     app.enableCors({
       origin: FRONTEND_PORTS.split(',').map(port => `http://localhost:${port}`),
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      allowedHeaders: 'Content-Type, Accept',
+      allowedHeaders: 'Content-Type, Accept, Authorization',
     });
 
     // Enable Swagger for API documentation

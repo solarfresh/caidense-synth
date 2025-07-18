@@ -4,16 +4,22 @@ import type { CreatePrompt, Prompt, UpdatePrompt } from '@/types/prompts';
 import type { CreateRepository, Repository, UpdateRepository } from '@/types/repositories';
 import type { CreateExecution, CreateThinking, CreateWorkflow, UpdateThinking, Workflow } from '@/types/workflow';
 import axios, { AxiosResponse } from 'axios';
-import { GenAIEndPoints, NodeEndpoints, PromptEndpoints, RepositoryEndpoints, WorkflowEndpoints } from './endpoints';
+import { AuthEndpoints, GenAIEndPoints, NodeEndpoints, PromptEndpoints, RepositoryEndpoints, WorkflowEndpoints } from './endpoints';
 
 
 const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
+    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
   },
 });
 
 export const apiService = {
+  auth: {
+    login: (data: {username: string; password: string;}): Promise<AxiosResponse> => {
+      return apiClient.post(AuthEndpoints.login(), data);
+    },
+  },
   genai: {
     GoogleAIStudio: (data: GenAIRequest): Promise<AxiosResponse> => {
       return apiClient.post(GenAIEndPoints.GoogleAIStudio(), data);
