@@ -1,3 +1,4 @@
+import { AppConfigService } from '@/config/config.service';
 import { LLMCallExecutor } from '@caidense/reasoning/executor/genai/genai.service';
 import { GoogleGenaiService } from '@caidense/reasoning/executor/genai/google/google.service';
 import { ConditionExecutor } from '@caidense/reasoning/executor/generic/condition.service';
@@ -18,21 +19,23 @@ import { ExecutionProducer } from './execution.producer';
     MongooseModule.forFeature([{ name: ReasoningThinkingDocument.name, schema: ReasoningThinkingSchema }]),
   ],
   providers: [
+    AppConfigService,
     {
       provide: ExecutionConsumer,
       useFactory: (
+        appConfigService: AppConfigService,
         executionGraphService: ExecutionGraphService,
         reasoningThinkingService: ReasoningThinkingService
       ) => {
         return new ExecutionConsumer({
-          requestQueue: process.env.RABBITMQ_EXECUTE_QUEUE_NAME || 'caidense_execute_queue',
-          replyTimeoutMs: parseInt(process.env.RABBITMQ_RPC_TIMEOUT) || 5000, // Default to 5 seconds if not provided
-          url: process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672',
+          requestQueue: appConfigService.get<string>('RABBITMQ_EXECUTE_QUEUE_NAME'),
+          replyTimeoutMs: appConfigService.get<number>('RABBITMQ_RPC_TIMEOUT'),
+          url: appConfigService.get<string>('RABBITMQ_URL'),
         },
         executionGraphService,
         reasoningThinkingService);
       },
-      inject: [ExecutionGraphService, ReasoningThinkingService],
+      inject: [AppConfigService, ExecutionGraphService, ReasoningThinkingService],
     },
     ExecutionGraphService,
     ExecutionProducer,
@@ -45,6 +48,7 @@ import { ExecutionProducer } from './execution.producer';
   ],
   controllers: [],
   exports: [
+    AppConfigService,
     ExecutionGraphService,
     ExecutionProducer,
     GoogleGenaiService,

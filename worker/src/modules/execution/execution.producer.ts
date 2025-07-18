@@ -1,3 +1,4 @@
+import { AppConfigService } from '@/config/config.service';
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as amqp from 'amqplib';
 
@@ -5,12 +6,18 @@ import * as amqp from 'amqplib';
 export class ExecutionProducer implements OnModuleInit, OnModuleDestroy {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
-  private readonly queueName = process.env.RABBITMQ_QUEUE_NAME || 'caidense_queue';
-  private readonly rabbitmqUrl = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672';
+  private queueName: string;
+
+  constructor(
+    private appConfigService: AppConfigService,
+  ) {}
 
   async onModuleInit() {
+    const rabbitmqUrl = this.appConfigService.get<string>('RABBITMQ_URL')
+    this.queueName = this.appConfigService.get<string>('RABBITMQ_WORKER_QUEUE_NAME');
+
     try {
-      this.connection = await amqp.connect(this.rabbitmqUrl);
+      this.connection = await amqp.connect(rabbitmqUrl);
       this.channel = await this.connection.createChannel();
       await this.channel.assertQueue(this.queueName, { durable: false });
       console.log(`Producer connected to RabbitMQ and ready to send to queue: ${this.queueName}`);

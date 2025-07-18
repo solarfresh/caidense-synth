@@ -1,11 +1,12 @@
 # .dockerignore 範例
-node_modules
-dist
+**/node_modules
+**/dist
+**/Dockerfile
+**/*.pem
 coverage
 .env
 .git
 .gitignore
-Dockerfile
 docker-compose.yml
 npm-debug.log*
 yarn-debug.log*

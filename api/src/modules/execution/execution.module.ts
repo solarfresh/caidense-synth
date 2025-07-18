@@ -1,3 +1,4 @@
+import { AppConfigService } from '@/config/config.service';
 import { ExecutionConfig } from '@caidense/reasoning/message/message.interface';
 import { Module } from '@nestjs/common';
 import { ExecutionConsumer } from './execution.consumer';
@@ -7,19 +8,23 @@ import { ExecutionProducer } from './execution.producer';
 
 @Module({
   providers: [
+    AppConfigService,
     ExecutionConsumer,
     {
       provide: ExecutionProducer,
-      useFactory: () => {
+      useFactory: (
+        appConfigService: AppConfigService,
+      ) => {
         return new ExecutionProducer({
-          requestQueue: process.env.RABBITMQ_EXECUTE_QUEUE_NAME || 'caidense_execute_queue',
-          replyTimeoutMs: parseInt(process.env.RABBITMQ_RPC_TIMEOUT) || 5000, // Default to 5 seconds if not provided
-          url: process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672',
+          requestQueue: appConfigService.get<string>('RABBITMQ_EXECUTE_QUEUE_NAME'),
+          replyTimeoutMs: appConfigService.get<number>('RABBITMQ_RPC_TIMEOUT'),
+          url: appConfigService.get<string>('RABBITMQ_URL'),
         } as ExecutionConfig);
-      }
+      },
+      inject: [AppConfigService],
     },
   ],
   controllers: [ExecutionController],
-  exports: [ExecutionProducer],
+  exports: [AppConfigService, ExecutionProducer],
 })
 export class ExecutionModule {}

@@ -15,12 +15,34 @@ services:
     networks:
       - caidense_network
 
-  # Service for the Caidense Strategy API backend
+  # Service for the Caidense Synth Auth backend
+  caidense-synth-auth:
+    # Build the Docker image for the Auth service
+    build:
+      context: . # The build context is the current directory where docker-compose.yml is located
+      dockerfile: auth/Dockerfile # The name of the Dockerfile to use (assumes you have one)
+    # Map ports from the host machine to the container
+    # Format: "HOST_PORT:CONTAINER_PORT"
+    ports:
+      - "3002:3000" # Map host port 3000 to container port 3000 (where NestJS typically runs)
+    env_file:
+      - ./docker-var.env # Specify the path to the environment file to load
+    # Specify service dependencies
+    # Ensures the 'mongo' service is started before the 'api' service.
+    depends_on:
+      - mongo
+    # Restart policy
+    # 'unless-stopped': Restart the container unless it's explicitly stopped by the user.
+    restart: unless-stopped
+    networks:
+      - caidense_network
+
+  # Service for the Caidense Synth API backend
   caidense-synth-api:
     # Build the Docker image for the API service
     build:
-      context: ./api # The build context is the current directory where docker-compose.yml is located
-      dockerfile: Dockerfile # The name of the Dockerfile to use (assumes you have one)
+      context: . # The build context is the current directory where docker-compose.yml is located
+      dockerfile: api/Dockerfile # The name of the Dockerfile to use (assumes you have one)
     # Map ports from the host machine to the container
     # Format: "HOST_PORT:CONTAINER_PORT"
     ports:
@@ -39,8 +61,8 @@ services:
 
   caidense-synth-worker:
     build:
-      context: ./worker # The build context is the current directory where docker-compose.yml is located
-      dockerfile: Dockerfile # The name of the Dockerfile to use (assumes you have one)
+      context: . # The build context is the current directory where docker-compose.yml is located
+      dockerfile: worker/Dockerfile # The name of the Dockerfile to use (assumes you have one)
     env_file:
       - ./docker-var.env # Specify the path to the environment file to load
     depends_on:
