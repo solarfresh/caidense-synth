@@ -2,6 +2,8 @@
 docker-compose.override.yml
 docker-var.override.env
 
+**/*.pem
+
 # Logs
 logs
 *.log

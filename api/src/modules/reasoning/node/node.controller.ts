@@ -1,18 +1,19 @@
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 import { BaseController } from '@/modules/base/base.controller';
 import {
   Body,
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
-  NotFoundException,
   Param,
   Post,
   Put,
+  UseGuards,
   UsePipes,
-  ValidationPipe,
+  ValidationPipe
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -27,6 +28,7 @@ import { ReasoningNodeService } from './node.service';
 
 
 @ApiTags('Reasoning Nodes')
+@ApiBearerAuth()
 @Controller('reasoning/nodes')
 export class ReasoningNodeController extends BaseController<ReasoningNodeDocument, ReasoningNodeService> {
   constructor(private readonly reasoningNodeService: ReasoningNodeService) {
@@ -42,6 +44,7 @@ export class ReasoningNodeController extends BaseController<ReasoningNodeDocumen
     type: ReasoningNodeDocument,
   })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid input data.' })
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body(ValidationPipe) createReasoningNodeDto: CreateReasoningNodeDto,
   ): Promise<ReasoningNodeDocument> {
@@ -55,6 +58,7 @@ export class ReasoningNodeController extends BaseController<ReasoningNodeDocumen
     description: 'Successfully retrieved all reasoning nodes.',
     type: [ReasoningNodeDto],
   })
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<ReasoningNodeDocument[]> {
     return super.findAll();
   }
@@ -68,6 +72,7 @@ export class ReasoningNodeController extends BaseController<ReasoningNodeDocumen
     type: ReasoningNodeDto,
   })
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning node with the given ID not found.' })
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string): Promise<ReasoningNodeDocument> {
     return super.findById(id);
   }
@@ -84,6 +89,7 @@ export class ReasoningNodeController extends BaseController<ReasoningNodeDocumen
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning node with the given ID not found.' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data.' })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() updateReasoningNodeDto: UpdateReasoningNodeDto,
@@ -100,6 +106,7 @@ export class ReasoningNodeController extends BaseController<ReasoningNodeDocumen
     type: Object,
   })
   @ApiResponse({ status: 404, description: 'Not Found - Reasoning node with the given ID not found.' })
+  @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string): Promise<void> {
     await super.deleteOne(id);
   }
